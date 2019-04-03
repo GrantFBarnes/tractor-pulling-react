@@ -1,0 +1,23 @@
+{
+    "name": "tractorpulling",
+    "version": "1.0.0",
+    "engines": {
+        "node": "10.15.3",
+        "npm": "6.4.1"
+    },
+    "dependencies": {
+        "express": "^4.16.4"
+    },
+    "scripts": {
+        "start": "node backend/server.js"
+    },
+    "prettier": {
+        "printWidth": 120,
+        "tabWidth": 4,
+        "semi": true,
+        "singleQuote": false,
+        "trailingComma": "none",
+        "bracketSpacing": true,
+        "arrowParens": "avoid"
+    }
+}
