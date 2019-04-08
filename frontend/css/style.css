@@ -1,0 +1,7 @@
+:root {
+    --blue: #68a2ff;
+}
+
+table {
+    background-color: var(--blue);
+}

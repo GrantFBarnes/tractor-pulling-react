@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tractor Pulling</title>
+        <meta charset="utf-8" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="/file/js/home.js"></script>
+        <link rel="stylesheet" href="/file/css/style.css" />
+    </head>
+    <body>
+        <div id="scopediv" ng-app="tpApp" ng-controller="tpCtrl" ng-init="load()">
+            <table>
+                <tr>
+                    <th colspan="5">Pullers</th>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>First</td>
+                    <td>Last</td>
+                    <td>Role</td>
+                    <td>Member</td>
+                </tr>
+                <tr ng-repeat="puller in pullers">
+                    <td>{{ puller.id }}</td>
+                    <td>{{ puller.first_name }}</td>
+                    <td>{{ puller.last_name }}</td>
+                    <td>{{ puller.role }}</td>
+                    <td ng-if="puller.member">Yep</td>
+                    <td ng-if="!puller.member">-</td>
+                </tr>
+            </table>
+
+            <br />
+            <table>
+                <tr>
+                    <th colspan="4">Tractors</th>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Brand</td>
+                    <td>Model</td>
+                </tr>
+                <tr ng-repeat="tractor in tractors">
+                    <td>{{ tractor.id }}</td>
+                    <td>{{ tractor.name }}</td>
+                    <td>{{ tractor.brand }}</td>
+                    <td>{{ tractor.model }}</td>
+                </tr>
+            </table>
+
+            <br />
+            <table>
+                <tr>
+                    <th colspan="4">Pulls</th>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>Location</td>
+                    <td>Time</td>
+                    <td>Blacktop</td>
+                </tr>
+                <tr ng-repeat="pull in pulls">
+                    <td>{{ pull.id }}</td>
+                    <td>{{ pull.location }}</td>
+                    <td>{{ pull.time }}</td>
+                    <td ng-if="pull.blacktop">Blacktop</td>
+                    <td ng-if="!pull.blacktop">Dirt</td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
