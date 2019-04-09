@@ -1,8 +1,1 @@
-{
-    "type": "Puller",
-    "id": "723eb7a6-8192-4c67-b21f-de1e1293ac81",
-    "first_name": "Grant",
-    "last_name": "Barnes",
-    "role": "participant",
-    "member": true
-}
+{"type":"Puller","id":"723eb7a6-8192-4c67-b21f-de1e1293ac81","first_name":"Grant","last_name":"Barnes","role":"participant","member":true}

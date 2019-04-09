@@ -1,5 +1,7 @@
 const getUUID = require("uuid/v4");
 
+const constants = require("./constants.js");
+
 var allClasses = {};
 var allHooks = {};
 var allPulls = {};
@@ -63,8 +65,20 @@ class Pull extends Base {
         super(json);
         this.location = json.location ? json.location : "";
         this.date_time = json.date_time ? json.date_time : "";
+        this.notes = json.notes ? json.notes : "";
         this.blacktop = json.blacktop ? json.blacktop : false;
         this.classes = json.classes ? json.classes : []; // Class ids
+
+        this.getDateInfo();
+    }
+
+    getDateInfo() {
+        var date = new Date(this.date_time);
+        this.day = constants.days[date.getDay()];
+        this.month = constants.months[date.getMonth()];
+        this.year = date.getFullYear();
+        this.date = date.getDate();
+        this.time = date.toLocaleTimeString();
     }
 }
 

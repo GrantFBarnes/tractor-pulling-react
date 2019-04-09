@@ -12,38 +12,33 @@
         <div id="scopediv" ng-app="tpApp" ng-controller="tpCtrl" ng-init="load()">
             <table>
                 <tr>
-                    <th colspan="5">Pullers</th>
+                    <th colspan="4">Pullers</th>
                 </tr>
                 <tr>
-                    <td>ID</td>
                     <td>First</td>
                     <td>Last</td>
                     <td>Role</td>
                     <td>Member</td>
                 </tr>
                 <tr ng-repeat="puller in pullers">
-                    <td>{{ puller.id }}</td>
                     <td>{{ puller.first_name }}</td>
                     <td>{{ puller.last_name }}</td>
                     <td>{{ puller.role }}</td>
-                    <td ng-if="puller.member">Yep</td>
-                    <td ng-if="!puller.member">-</td>
+                    <td ng-if="puller.member">Yes</td>
                 </tr>
             </table>
 
             <br />
             <table>
                 <tr>
-                    <th colspan="4">Tractors</th>
+                    <th colspan="3">Tractors</th>
                 </tr>
                 <tr>
-                    <td>ID</td>
                     <td>Name</td>
                     <td>Brand</td>
                     <td>Model</td>
                 </tr>
                 <tr ng-repeat="tractor in tractors">
-                    <td>{{ tractor.id }}</td>
                     <td>{{ tractor.name }}</td>
                     <td>{{ tractor.brand }}</td>
                     <td>{{ tractor.model }}</td>
@@ -53,18 +48,22 @@
             <br />
             <table>
                 <tr>
-                    <th colspan="4">Pulls</th>
+                    <th colspan="6">Pulls</th>
                 </tr>
                 <tr>
-                    <td>ID</td>
-                    <td>Location</td>
+                    <td>Day</td>
+                    <td>Date</td>
                     <td>Time</td>
-                    <td>Blacktop</td>
+                    <td>Location</td>
+                    <td>Notes</td>
+                    <td></td>
                 </tr>
                 <tr ng-repeat="pull in pulls">
-                    <td>{{ pull.id }}</td>
-                    <td>{{ pull.location }}</td>
+                    <td>{{ pull.day }}</td>
+                    <td>{{ pull.month + " " + pull.date + ", " + pull.year }}</td>
                     <td>{{ pull.time }}</td>
+                    <td>{{ pull.location }}</td>
+                    <td>{{ pull.notes }}</td>
                     <td ng-if="pull.blacktop">Blacktop</td>
                     <td ng-if="!pull.blacktop">Dirt</td>
                 </tr>
