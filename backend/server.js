@@ -54,6 +54,7 @@ app.get("/", (request, response) => {
 function main() {
     app.listen(8080);
     persist.initData();
+    console.log("server running...");
 }
 
 main();

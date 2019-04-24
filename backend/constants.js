@@ -1,19 +1,16 @@
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
+const locations = [
+    "Afton, WI",
+    "Argyle, WI",
+    "Brooklyn, WI",
+    "Browntown, WI",
+    "Durand, IL",
+    "Monroe, WI",
+    "Freeport, IL",
+    "Brodhead, WI",
+    "Footville, WI",
+    "Albany, WI",
+    "New Glarus, WI",
+    "Blanchardville, WI"
 ];
 
-const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-module.exports.months = months;
-module.exports.days = days;
+module.exports.locations = locations;

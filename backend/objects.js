@@ -54,9 +54,9 @@ class Hook extends Base {
         this.puller = json.puller ? json.puller : ""; // Puller id
         this.tractor = json.tractor ? json.tractor : ""; // Tractor id
         this.distance = json.distance ? json.distance : 0;
+        this.position = json.position ? json.position : 0;
         this.cost = json.cost ? json.cost : 0;
-        this.place = json.place ? json.place : 0;
-        this.prize = json.prize ? json.prize : 0;
+        this.prize = json.winnings ? json.winnings : 0;
     }
 }
 
@@ -64,21 +64,11 @@ class Pull extends Base {
     constructor(json) {
         super(json);
         this.location = json.location ? json.location : "";
-        this.date_time = json.date_time ? json.date_time : "";
+        this.date = json.date ? json.date : "";
+        this.time = json.time ? json.time : "";
         this.notes = json.notes ? json.notes : "";
         this.blacktop = json.blacktop ? json.blacktop : false;
         this.classes = json.classes ? json.classes : []; // Class ids
-
-        this.getDateInfo();
-    }
-
-    getDateInfo() {
-        var date = new Date(this.date_time);
-        this.day = constants.days[date.getDay()];
-        this.month = constants.months[date.getMonth()];
-        this.year = date.getFullYear();
-        this.date = date.getDate();
-        this.time = date.toLocaleTimeString();
     }
 }
 
@@ -87,7 +77,7 @@ class Puller extends Base {
         super(json);
         this.first_name = json.first_name ? json.first_name : "";
         this.last_name = json.last_name ? json.last_name : "";
-        this.role = json.role ? json.role : ""; // participant, president, etc
+        this.position = json.position ? json.position : ""; // president, secretary, etc
         this.member = json.member ? json.member : false;
     }
 }
