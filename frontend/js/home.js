@@ -1,6 +1,7 @@
 var app = angular.module("tpApp", []);
 app.controller("tpCtrl", function($scope, $http) {
     $scope.load = function() {
+        $scope.locations = locations;
         callAPI();
     };
 });

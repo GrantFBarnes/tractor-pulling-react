@@ -41,8 +41,8 @@ router.get("/api/tractors", (request, response) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-app.get("/file/:folder/:file", (request, response) => {
-    response.sendFile(request.params.file, { root: "./frontend/" + request.params.folder });
+app.get("/file*", (request, response) => {
+    response.sendFile(request.params["0"], { root: "./" });
 });
 
 app.get("/", (request, response) => {

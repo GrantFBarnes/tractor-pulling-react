@@ -12,5 +12,3 @@ const locations = [
     "New Glarus, WI",
     "Blanchardville, WI"
 ];
-
-module.exports.locations = locations;

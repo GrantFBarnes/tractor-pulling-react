@@ -7,8 +7,9 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" />
-        <script src="/file/js/home.js"></script>
-        <link rel="stylesheet" href="/file/css/style.css" />
+        <script src="/file/backend/constants.js"></script>
+        <script src="/file/frontend/js/home.js"></script>
+        <link rel="stylesheet" href="/file/frontend/css/style.css" />
     </head>
     <body>
         <div class="jumbotron">
@@ -19,7 +20,36 @@
                 <div class="row">
                     <table class="table">
                         <tr>
-                            <th colspan="4">Pullers</th>
+                            <th colspan="0">Add Pull</th>
+                        </tr>
+                        <tr>
+                            <td>Location</td>
+                            <td>Date</td>
+                            <td>Time</td>
+                            <td>Notes</td>
+                            <td>Blacktop</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select class="form-control">
+                                    <option ng-repeat="location in locations">{{location}}</option>
+                                </select>
+                            </td>
+                            <td><input class="form-control" type="text" /></td>
+                            <td><input class="form-control" type="text" /></td>
+                            <td><input class="form-control" type="text" /></td>
+                            <td><input type="checkbox" /></td>
+                            <td><button type="button" class="btn btn-success">Add</button></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <br />
+                <div class="row">
+                    <table class="table">
+                        <tr>
+                            <th colspan="0">Pullers</th>
                         </tr>
                         <tr>
                             <td>First</td>
@@ -40,7 +70,7 @@
                 <div class="row">
                     <table class="table">
                         <tr>
-                            <th colspan="3">Tractors</th>
+                            <th colspan="0">Tractors</th>
                         </tr>
                         <tr>
                             <td>Name</td>
@@ -59,7 +89,7 @@
                 <div class="row">
                     <table class="table">
                         <tr>
-                            <th colspan="6">Pulls</th>
+                            <th colspan="0">Pulls</th>
                         </tr>
                         <tr>
                             <td>Date</td>
