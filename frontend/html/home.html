@@ -7,7 +7,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" />
-        <script src="/file/backend/constants.js"></script>
+        <script src="/file/frontend/js/constants.js"></script>
         <script src="/file/frontend/js/home.js"></script>
         <link rel="stylesheet" href="/file/frontend/css/style.css" />
     </head>
@@ -25,22 +25,64 @@
                         <tr>
                             <td>Location</td>
                             <td>Date</td>
-                            <td>Time</td>
+                            <td>Month</td>
+                            <td colspan="3">Time</td>
                             <td>Notes</td>
-                            <td>Blacktop</td>
+                            <td>Track</td>
                             <td></td>
                         </tr>
                         <tr>
                             <td>
-                                <select class="form-control">
+                                <select class="form-control" id="newPull.location">
                                     <option ng-repeat="location in locations">{{location}}</option>
                                 </select>
                             </td>
-                            <td><input class="form-control" type="text" /></td>
-                            <td><input class="form-control" type="text" /></td>
-                            <td><input class="form-control" type="text" /></td>
-                            <td><input type="checkbox" /></td>
-                            <td><button type="button" class="btn btn-success">Add</button></td>
+                            <td>
+                                <select class="form-control" id="newPull.date">
+                                    <option ng-repeat="date in monthDates" value="{{date}}">{{date+1}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" id="newPull.month" onchange="monthChange()">
+                                    <option ng-repeat="(key,month) in months" value="{{key}}">{{month}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" id="newPull.hour">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                    <option>11</option>
+                                    <option>12</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" id="newPull.minute">
+                                    <option>00</option>
+                                    <option>30</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" id="newPull.meridiem">
+                                    <option>AM</option>
+                                    <option>PM</option>
+                                </select>
+                            </td>
+                            <td><input class="form-control" type="text" id="newPull.notes" /></td>
+                            <td>
+                                <select class="form-control" id="newPull.blacktop">
+                                    <option value="">Dirt</option>
+                                    <option value="true">Blacktop</option>
+                                </select>
+                            </td>
+                            <td><button type="button" class="btn btn-success" onclick="addPull()">Add</button></td>
                         </tr>
                     </table>
                 </div>

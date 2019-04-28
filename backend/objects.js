@@ -1,11 +1,10 @@
 const getUUID = require("uuid/v4");
 
-const constants = require("./constants.js");
-
 var allClasses = {};
 var allHooks = {};
 var allPulls = {};
 var allPullers = {};
+var allSeasons = {};
 var allTractors = {};
 
 class Base {
@@ -63,9 +62,12 @@ class Hook extends Base {
 class Pull extends Base {
     constructor(json) {
         super(json);
+        this.season = json.season ? json.season : ""; // Season id
         this.location = json.location ? json.location : "";
         this.date = json.date ? json.date : "";
-        this.time = json.time ? json.time : "";
+        this.hour = json.hour ? json.hour : "";
+        this.minute = json.minute ? json.minute : "";
+        this.meridiem = json.meridiem ? json.meridiem : "";
         this.notes = json.notes ? json.notes : "";
         this.blacktop = json.blacktop ? json.blacktop : false;
         this.classes = json.classes ? json.classes : []; // Class ids
@@ -79,6 +81,14 @@ class Puller extends Base {
         this.last_name = json.last_name ? json.last_name : "";
         this.position = json.position ? json.position : ""; // president, secretary, etc
         this.member = json.member ? json.member : false;
+    }
+}
+
+class Season extends Base {
+    constructor(json) {
+        super(json);
+        this.year = json.year ? json.year : "";
+        this.pulls = json.pulls ? json.pulls : ""; // Pull unique_ids
     }
 }
 
@@ -104,6 +114,8 @@ function createObject(json) {
         allPulls[json.id] = new Pull(json);
     } else if (json.type == "Puller") {
         allPullers[json.id] = new Puller(json);
+    } else if (json.type == "Season") {
+        allSeasons[json.id] = new Season(json);
     } else if (json.type == "Tractor") {
         allTractors[json.id] = new Tractor(json);
     }
