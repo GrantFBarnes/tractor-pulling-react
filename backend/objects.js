@@ -1,5 +1,7 @@
 const getUUID = require("uuid/v4");
 
+const persist = require("./persist.js");
+
 var allClasses = {};
 var allHooks = {};
 var allPulls = {};
@@ -14,24 +16,21 @@ class Base {
     }
 
     toJSON() {
-        var json = {};
-        for (var f in this) {
+        let json = {};
+        for (let f in this) {
             json[f] = this[f];
         }
         return json;
     }
 
     get(field) {
-        if (Object.keys(this).indexOf(field) >= 0) {
-            return JSON.parse(JSON.stringify(this[field]));
-        }
-        return null;
+        if (this[field] === undefined) return null;
+        return JSON.parse(JSON.stringify(this[field]));
     }
 
     set(field, value) {
-        if (Object.keys(this).indexOf(field) >= 0) {
-            this[field] = value;
-        }
+        if (this[field] === undefined) return;
+        this[field] = value;
     }
 }
 
@@ -39,7 +38,7 @@ class Class extends Base {
     constructor(json) {
         super(json);
         this.pull = json.pull ? json.pull : ""; // Pull id
-        this.group = json.group ? json.group : ""; // farm, antique
+        this.category = json.category ? json.category : ""; // farm, antique
         this.weight = json.weight ? json.weight : 0;
         this.speed = json.speed ? json.speed : 0;
         this.hooks = json.hooks ? json.hooks : []; // Hook ids
@@ -54,8 +53,6 @@ class Hook extends Base {
         this.tractor = json.tractor ? json.tractor : ""; // Tractor id
         this.distance = json.distance ? json.distance : 0;
         this.position = json.position ? json.position : 0;
-        this.cost = json.cost ? json.cost : 0;
-        this.prize = json.winnings ? json.winnings : 0;
     }
 }
 
@@ -88,37 +85,46 @@ class Season extends Base {
     constructor(json) {
         super(json);
         this.year = json.year ? json.year : "";
-        this.pulls = json.pulls ? json.pulls : ""; // Pull unique_ids
+        this.pulls = json.pulls ? json.pulls : []; // Pull ids
     }
 }
 
 class Tractor extends Base {
     constructor(json) {
         super(json);
-        this.name = json.name ? json.name : "";
         this.brand = json.brand ? json.brand : "";
         this.model = json.model ? json.model : "";
+        this.name = json.name ? json.name : "";
     }
 }
 
 function createObject(json) {
-    if (!json.id) {
-        json.id = getUUID();
-    }
+    if (!json.id) json.id = getUUID();
 
-    if (json.type == "Class") {
+    let data = {};
+    if (json.type === "Class") {
         allClasses[json.id] = new Class(json);
-    } else if (json.type == "Hook") {
+        data = allClasses[json.id].toJSON();
+    } else if (json.type === "Hook") {
         allHooks[json.id] = new Hook(json);
-    } else if (json.type == "Pull") {
+        data = allHooks[json.id].toJSON();
+    } else if (json.type === "Pull") {
         allPulls[json.id] = new Pull(json);
-    } else if (json.type == "Puller") {
+        data = allPulls[json.id].toJSON();
+    } else if (json.type === "Puller") {
         allPullers[json.id] = new Puller(json);
-    } else if (json.type == "Season") {
+        data = allPullers[json.id].toJSON();
+    } else if (json.type === "Season") {
         allSeasons[json.id] = new Season(json);
-    } else if (json.type == "Tractor") {
+        data = allSeasons[json.id].toJSON();
+    } else if (json.type === "Tractor") {
         allTractors[json.id] = new Tractor(json);
+        data = allTractors[json.id].toJSON();
+    } else {
+        return { statusCode: 400, data: "object type not found" };
     }
+    persist.saveData();
+    return { statusCode: 200, data: data };
 }
 
 module.exports.createObject = createObject;

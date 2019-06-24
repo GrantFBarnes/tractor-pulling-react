@@ -11,8 +11,8 @@ function saveData() {
         Puller: obj.allPullers,
         Tractor: obj.allTractors
     };
-    for (var c in classes) {
-        for (var id in classes[c]) {
+    for (let c in classes) {
+        for (let id in classes[c]) {
             fs.writeFileSync(dataDir + "/" + c + "/" + id + ".json", JSON.stringify(classes[c][id]));
         }
     }
@@ -20,9 +20,9 @@ function saveData() {
 
 function initData() {
     var folders = fs.readdirSync(dataDir, "utf-8");
-    for (var className of folders) {
+    for (let className of folders) {
         var files = fs.readdirSync(dataDir + "/" + className, "utf-8");
-        for (var fileName of files) {
+        for (let fileName of files) {
             var file = fs.readFileSync(dataDir + "/" + className + "/" + fileName, "utf-8");
             obj.createObject(JSON.parse(file));
         }
