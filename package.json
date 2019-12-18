@@ -1,26 +1,53 @@
 {
-    "name": "tractorpulling",
+    "name": "tractor-pulling",
     "version": "1.0.0",
+    "private": true,
     "engines": {
         "node": "10.15.3",
         "npm": "6.4.1"
     },
     "dependencies": {
-        "express": "^4.16.4",
+        "body-parser": "^1.19.0",
+        "carbon-components": "^10.7.4",
+        "carbon-components-react": "^7.7.4",
+        "cookie-parser": "^1.4.4",
+        "express": "^4.17.1",
+        "express-session": "^1.17.0",
         "fs": "0.0.1-security",
-        "uuid": "^3.3.2"
+        "https": "^1.0.0",
+        "openssl-self-signed-certificate": "^1.1.6",
+        "react": "^16.12.0",
+        "react-dom": "^16.12.0",
+        "react-router-dom": "^5.1.2",
+        "react-scripts": "^3.3.0",
+        "request": "^2.88.0",
+        "socket.io": "^2.3.0",
+        "uuid": "^3.3.3"
     },
     "scripts": {
         "start": "node backend/server.js",
-        "local": "nodemon backend/server.js"
+        "local": "react-scripts start | node backend/server.js",
+        "build": "react-scripts build"
     },
     "prettier": {
-        "printWidth": 120,
+        "printWidth": 80,
         "tabWidth": 4,
         "semi": true,
         "singleQuote": false,
         "trailingComma": "none",
         "bracketSpacing": true,
         "arrowParens": "avoid"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
     }
 }

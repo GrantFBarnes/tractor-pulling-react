@@ -1,60 +1,51 @@
+const cookieParser = require("cookie-parser");
 const express = require("express");
+const https = require("https");
+const parser = require("body-parser");
+const selfSigned = require("openssl-self-signed-certificate");
+const session = require("express-session");
 
-const obj = require("./objects.js");
-const persist = require("./persist.js");
+const socket = require("./communication/socket.js");
 
-const router = express.Router();
 const app = express();
-app.use(router);
+app.use(express.static(`./build`));
+
+app.use(parser.json({ limit: "50mb" }));
+app.use(cookieParser());
+
+app.use(require("./communication/api"));
+
+app.use(
+    session({
+        name: "tractor-pulling",
+        secret: "secret",
+        resave: false,
+        saveUninitialized: false
+    })
+);
+app.use(parser.urlencoded({ extended: false }));
 
 ////////////////////////////////////////////////////////////////////////////////
-
-router.get("/api/classes", (request, response) => {
-    response.writeHead(200, { "Content-Type": "application/json" });
-    response.write(JSON.stringify(obj.allClasses));
-    response.end();
-});
-
-router.get("/api/hooks", (request, response) => {
-    response.writeHead(200, { "Content-Type": "application/json" });
-    response.write(JSON.stringify(obj.allHooks));
-    response.end();
-});
-
-router.get("/api/pulls", (request, response) => {
-    response.writeHead(200, { "Content-Type": "application/json" });
-    response.write(JSON.stringify(obj.allPulls));
-    response.end();
-});
-
-router.get("/api/pullers", (request, response) => {
-    response.writeHead(200, { "Content-Type": "application/json" });
-    response.write(JSON.stringify(obj.allPullers));
-    response.end();
-});
-
-router.get("/api/tractors", (request, response) => {
-    response.writeHead(200, { "Content-Type": "application/json" });
-    response.write(JSON.stringify(obj.allTractors));
-    response.end();
-});
-
-////////////////////////////////////////////////////////////////////////////////
-
-app.get("/file*", (request, response) => {
-    response.sendFile(request.params["0"], { root: "./" });
-});
-
-app.get("/", (request, response) => {
-    response.sendFile("home.html", { root: "./frontend/html" });
+app.get("*", function(request, response) {
+    response.sendFile("index.html", { root: "./build/" });
 });
 
 ////////////////////////////////////////////////////////////////////////////////
 
 function main() {
-    app.listen(8080);
-    persist.initData();
-    console.log("server running...");
+    const server = https
+        .createServer(
+            {
+                key: selfSigned.key,
+                cert: selfSigned.cert,
+                requestCert: false,
+                rejectUnauthorized: false
+            },
+            app
+        )
+        .listen(8080);
+    console.log("Running local environment on https://localhost:8080");
+    socket.connect(server);
 }
 
 main();

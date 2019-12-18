@@ -13,7 +13,10 @@ function saveData() {
     };
     for (let c in classes) {
         for (let id in classes[c]) {
-            fs.writeFileSync(dataDir + "/" + c + "/" + id + ".json", JSON.stringify(classes[c][id]));
+            fs.writeFileSync(
+                dataDir + "/" + c + "/" + id + ".json",
+                JSON.stringify(classes[c][id])
+            );
         }
     }
 }
@@ -23,7 +26,10 @@ function initData() {
     for (let className of folders) {
         var files = fs.readdirSync(dataDir + "/" + className, "utf-8");
         for (let fileName of files) {
-            var file = fs.readFileSync(dataDir + "/" + className + "/" + fileName, "utf-8");
+            var file = fs.readFileSync(
+                dataDir + "/" + className + "/" + fileName,
+                "utf-8"
+            );
             obj.createObject(JSON.parse(file));
         }
     }
