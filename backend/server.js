@@ -6,6 +6,7 @@ const selfSigned = require("openssl-self-signed-certificate");
 const session = require("express-session");
 
 const socket = require("./communication/socket.js");
+const util = require("./util.js");
 
 const app = express();
 app.use(express.static(`./build`));
@@ -18,7 +19,7 @@ app.use(require("./communication/api"));
 app.use(
     session({
         name: "tractor-pulling",
-        secret: "secret",
+        secret: "tractor-pulling-secret",
         resave: false,
         saveUninitialized: false
     })
@@ -33,18 +34,22 @@ app.get("*", function(request, response) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function main() {
-    const server = https
-        .createServer(
-            {
-                key: selfSigned.key,
-                cert: selfSigned.cert,
-                requestCert: false,
-                rejectUnauthorized: false
-            },
-            app
-        )
-        .listen(8080);
-    console.log("Running local environment on https://localhost:8080");
+    const server = https.createServer(
+        {
+            key: selfSigned.key,
+            cert: selfSigned.cert,
+            requestCert: false,
+            rejectUnauthorized: false
+        },
+        app
+    );
+    if (util.isProd) {
+        server.listen(80);
+        console.log("Running in production");
+    } else {
+        server.listen(8080);
+        console.log("Running local environment on https://localhost:8080");
+    }
     socket.connect(server);
 }
 

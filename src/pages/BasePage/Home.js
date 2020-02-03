@@ -16,7 +16,7 @@ class Home extends BasePage {
         return (
             <div>
                 {this.state.loading ? <Loading withOverlay={true} /> : null}
-                Hello, World!
+                Website is under development...
             </div>
         );
     }
