@@ -1,5 +1,6 @@
 const cookieParser = require("cookie-parser");
 const express = require("express");
+const http = require("http");
 const https = require("https");
 const parser = require("body-parser");
 const selfSigned = require("openssl-self-signed-certificate");
@@ -34,7 +35,7 @@ app.get("*", function(request, response) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function main() {
-    const server = https.createServer(
+    const httpsServer = https.createServer(
         {
             key: selfSigned.key,
             cert: selfSigned.cert,
@@ -43,14 +44,21 @@ function main() {
         },
         app
     );
+    const httpServer = http.createServer(function(req, res) {
+        res.writeHead(301, {
+            Location: "https://" + req.headers["host"] + req.url
+        });
+        res.end();
+    });
     if (util.isProd) {
-        server.listen(80);
+        httpsServer.listen(443);
+        httpServer.listen(80);
         console.log("Running in production");
     } else {
-        server.listen(8080);
+        httpsServer.listen(8080);
         console.log("Running local environment on https://localhost:8080");
     }
-    socket.connect(server);
+    socket.connect(httpsServer);
 }
 
 main();
