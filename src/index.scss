@@ -1,0 +1,11 @@
+@import "~carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/themes/theme-maps";
+$carbon--theme: $carbon--theme--g90;
+@import "~carbon-components/scss/globals/scss/styles.scss";
+@import "~@carbon/elements/scss/type/_styles";
+
+body {
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

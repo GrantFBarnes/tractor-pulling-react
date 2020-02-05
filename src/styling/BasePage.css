@@ -6,3 +6,11 @@ html {
 body {
     height: 100%;
 }
+
+.pageContainer {
+    padding: 3.5em 0 0 3.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}

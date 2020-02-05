@@ -4,7 +4,6 @@ const http = require("http");
 const parser = require("body-parser");
 const session = require("express-session");
 
-const socket = require("./communication/socket.js");
 const util = require("./util.js");
 
 const app = express();
@@ -13,7 +12,7 @@ app.use(express.static(`./build`));
 app.use(parser.json({ limit: "50mb" }));
 app.use(cookieParser());
 
-app.use(require("./communication/api"));
+app.use(require("./api"));
 
 app.use(
     session({
@@ -41,7 +40,6 @@ function main() {
         server.listen(8080);
         console.log("Running local environment on http://localhost:8080");
     }
-    socket.connect(server);
 }
 
 main();

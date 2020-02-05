@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "./index.scss";
 
 import Home from "./pages/BasePage/Home";
 import Reroute from "./pages/BasePage/Reroute";

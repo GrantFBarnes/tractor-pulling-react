@@ -9,6 +9,7 @@ function saveData() {
         Hook: obj.allHooks,
         Pull: obj.allPulls,
         Puller: obj.allPullers,
+        Season: obj.allSeasons,
         Tractor: obj.allTractors
     };
     for (let c in classes) {
