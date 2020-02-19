@@ -2,12 +2,8 @@ const getUUID = require("uuid/v4");
 
 const persist = require("./persist.js");
 
+var allObjects = {};
 var allClasses = {};
-var allHooks = {};
-var allPulls = {};
-var allPullers = {};
-var allSeasons = {};
-var allTractors = {};
 
 class Base {
     constructor(json) {
@@ -29,8 +25,20 @@ class Base {
     }
 
     set(field, value) {
-        if (this[field] === undefined) return;
+        if (this[field] === undefined) return null;
         this[field] = value;
+        return "success";
+    }
+
+    update(newJSON) {
+        let result = "success";
+        for (let field in newJSON) {
+            const setRes = this.set(field, newJSON[field]);
+            if (setRes !== "success") {
+                result = setRes;
+            }
+        }
+        return result;
     }
 }
 
@@ -101,36 +109,70 @@ class Tractor extends Base {
 function createObject(json) {
     if (!json.id) json.id = getUUID();
 
-    let data = {};
-    if (json.type === "Class") {
-        allClasses[json.id] = new Class(json);
-        data = allClasses[json.id].toJSON();
-    } else if (json.type === "Hook") {
-        allHooks[json.id] = new Hook(json);
-        data = allHooks[json.id].toJSON();
-    } else if (json.type === "Pull") {
-        allPulls[json.id] = new Pull(json);
-        data = allPulls[json.id].toJSON();
-    } else if (json.type === "Puller") {
-        allPullers[json.id] = new Puller(json);
-        data = allPullers[json.id].toJSON();
-    } else if (json.type === "Season") {
-        allSeasons[json.id] = new Season(json);
-        data = allSeasons[json.id].toJSON();
-    } else if (json.type === "Tractor") {
-        allTractors[json.id] = new Tractor(json);
-        data = allTractors[json.id].toJSON();
-    } else {
-        return { statusCode: 400, data: "object type not found" };
+    let obj = {};
+    switch (json.type) {
+        case "Class":
+            obj = new Class(json);
+            break;
+
+        case "Hook":
+            obj = new Hook(json);
+            break;
+
+        case "Pull":
+            obj = new Pull(json);
+            break;
+
+        case "Puller":
+            obj = new Puller(json);
+            break;
+
+        case "Season":
+            obj = new Season(json);
+            break;
+
+        case "Tractor":
+            obj = new Tractor(json);
+            break;
+
+        default:
+            return { statusCode: 400, data: "object type not found" };
     }
-    persist.saveData();
-    return { statusCode: 200, data: data };
+
+    if (!allClasses[json.type]) allClasses[json.type] = new Set();
+    allClasses[json.type].add(obj.id);
+    allObjects[obj.id] = obj.type;
+    persist.saveObject(obj);
+    return { statusCode: 200, data: obj };
+}
+
+function updateObj(json) {
+    if (!json.id) return { statusCode: 400, data: "id not defined" };
+    const obj = allObjects[json.id];
+    if (!obj) return { statusCode: 400, data: "obj not found" };
+
+    const result = obj.update(json);
+    if (result !== "success") return { statusCode: 400, data: result };
+    persist.saveObject(obj);
+    return { statusCode: 200, data: obj.toJSON() };
+}
+
+function deleteObject(id) {
+    if (!id) return { statusCode: 400, data: "id not defined" };
+    const obj = allObjects[id];
+    if (!obj) return { statusCode: 400, data: "obj not found" };
+
+    if (!allClasses[json.type]) allClasses[json.type] = new Set();
+    allClasses[json.type].delete(id);
+    if (!allClasses[json.type].size) delete allClasses[json.type];
+    delete allObjects[id];
+    persist.deleteObj(obj);
+    return { statusCode: 200, data: "success" };
 }
 
 module.exports.createObject = createObject;
+module.exports.updateObj = updateObj;
+module.exports.deleteObject = deleteObject;
 
+module.exports.allObjects = allObjects;
 module.exports.allClasses = allClasses;
-module.exports.allHooks = allHooks;
-module.exports.allPulls = allPulls;
-module.exports.allPullers = allPullers;
-module.exports.allTractors = allTractors;

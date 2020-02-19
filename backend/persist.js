@@ -1,40 +1,37 @@
 const fs = require("fs");
-const obj = require("./objects.js");
+const objects = require("./objects.js");
 
 const dataDir = __dirname.substring(0, __dirname.length - 7) + "data";
 
-function saveData() {
-    var classes = {
-        Class: obj.allClasses,
-        Hook: obj.allHooks,
-        Pull: obj.allPulls,
-        Puller: obj.allPullers,
-        Season: obj.allSeasons,
-        Tractor: obj.allTractors
-    };
-    for (let c in classes) {
-        for (let id in classes[c]) {
-            fs.writeFileSync(
-                dataDir + "/" + c + "/" + id + ".json",
-                JSON.stringify(classes[c][id])
-            );
-        }
-    }
+function deleteObject(obj) {
+    if (!obj.type) return;
+    if (!obj.id) return;
+    fs.unlinkSync(dataDir + "/" + obj.type + "/" + obj.id + ".json");
+}
+
+function saveObject(obj) {
+    if (!obj.type) return;
+    if (!obj.id) return;
+    fs.writeFileSync(
+        dataDir + "/" + obj.type + "/" + obj.id + ".json",
+        JSON.stringify(obj)
+    );
 }
 
 function initData() {
-    var folders = fs.readdirSync(dataDir, "utf-8");
+    const folders = fs.readdirSync(dataDir, "utf-8");
     for (let className of folders) {
-        var files = fs.readdirSync(dataDir + "/" + className, "utf-8");
+        const files = fs.readdirSync(dataDir + "/" + className, "utf-8");
         for (let fileName of files) {
-            var file = fs.readFileSync(
+            const file = fs.readFileSync(
                 dataDir + "/" + className + "/" + fileName,
                 "utf-8"
             );
-            obj.createObject(JSON.parse(file));
+            objects.createObject(JSON.parse(file));
         }
     }
 }
 
-module.exports.saveData = saveData;
+module.exports.deleteObject = deleteObject;
+module.exports.saveObject = saveObject;
 module.exports.initData = initData;

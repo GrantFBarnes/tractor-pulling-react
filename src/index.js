@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.scss";
 
 import Home from "./pages/BasePage/Home";
+import Results from "./pages/BasePage/Results";
 import Reroute from "./pages/BasePage/Reroute";
 
 import * as serviceWorker from "./serviceWorker";
@@ -13,6 +14,7 @@ const routing = (
     <BrowserRouter>
         <Switch>
             <Route exact path="/home" component={Home} />
+            <Route exact path="/results" component={Results} />
             <Route exact path="*" component={Reroute} />
         </Switch>
     </BrowserRouter>

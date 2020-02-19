@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import "../styling/BasePage.css";
+
 class BasePage extends Component {
     constructor() {
         super();
