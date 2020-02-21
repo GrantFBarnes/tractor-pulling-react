@@ -22,8 +22,9 @@ class BaseNav extends Component {
 
     render() {
         return (
-            <Header>
+            <Header aria-label="header">
                 <HeaderMenuButton
+                    aria-label="header menu button"
                     onClick={() => {
                         this.setState({
                             sideExpanded: !this.state.sideExpanded
@@ -32,7 +33,10 @@ class BaseNav extends Component {
                     isActive={this.state.sideExpanded}
                 />
                 <HeaderName prefix="CATP">Tractor Pulling</HeaderName>
-                <SideNav expanded={this.state.sideExpanded}>
+                <SideNav
+                    aria-label="side nav"
+                    expanded={this.state.sideExpanded}
+                >
                     <SideNavItems>
                         <SideNavLink renderIcon={Home20} href="/home">
                             Home
@@ -41,13 +45,13 @@ class BaseNav extends Component {
                             renderIcon={CollapseCategories32}
                             title="Results"
                         >
-                            <SideNavMenuItem href="/results">
+                            <SideNavMenuItem href="/results?season=2020">
                                 2020 Season
                             </SideNavMenuItem>
-                            <SideNavMenuItem href="/results">
+                            <SideNavMenuItem href="/results?season=2019">
                                 2019 Season
                             </SideNavMenuItem>
-                            <SideNavMenuItem href="/results">
+                            <SideNavMenuItem href="/results?season=2018">
                                 2018 Season
                             </SideNavMenuItem>
                         </SideNavMenu>

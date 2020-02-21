@@ -106,6 +106,30 @@ class Tractor extends Base {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+function getObject(id) {
+    if (!id) return { statusCode: 400, data: "id not defined" };
+    const obj = allObjects[id];
+    if (!obj) return { statusCode: 400, data: "obj not found" };
+    return { statusCode: 200, data: obj.toJSON() };
+}
+
+function getObjectsByType(type) {
+    if (!allClasses[type]) return { statusCode: 400, data: "type not valid" };
+    let objects = {};
+    for (let i in allClasses[type]) {
+        objects[i] = allObjects[i].toJSON();
+    }
+    return { statusCode: 200, data: objects };
+}
+
+function getAllObjects() {
+    return { statusCode: 200, data: allObjects };
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 function createObject(json) {
     if (!json.id) json.id = getUUID();
 
@@ -169,6 +193,10 @@ function deleteObject(id) {
     persist.deleteObj(obj);
     return { statusCode: 200, data: "success" };
 }
+
+module.exports.getObject = getObject;
+module.exports.getObjectsByType = getObjectsByType;
+module.exports.getAllObjects = getAllObjects;
 
 module.exports.createObject = createObject;
 module.exports.updateObj = updateObj;

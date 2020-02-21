@@ -32,6 +32,30 @@ router.get("/api/heartbeat", (request, response) => {
     returnSuccess(response);
 });
 
+// Get object by ID
+router.get("/api/object/:id", (request, response) => {
+    returnResponse(response, objects.getObject(request.params.id, user));
+});
+
+// Get objects by type
+router.get("/api/objects/:id", (request, response) => {
+    returnResponse(response, objects.getObjectsByType(request.params.id, user));
+});
+
+// Get all objects
+router.get("/api/objects", (request, response) => {
+    returnResponse(response, objects.getAllObjects(request.params.id, user));
+});
+
+// Check if user is authenticated
+router.get("/api/authenticated", (request, response) => {
+    if (!authentication.isAuthorized(request)) {
+        returnSuccess(response);
+    } else {
+        rejectUnauthorized(response);
+    }
+});
+
 // Get edit token if body is correct
 router.post("/api/token", (request, response) => {
     if (authentication.requestToken(request.body)) {

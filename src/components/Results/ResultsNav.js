@@ -1,6 +1,6 @@
 import React from "react";
 import BaseNav from "../BaseNav";
 
-class HomeNav extends BaseNav {}
+class ResultsNav extends BaseNav {}
 
-export default HomeNav;
+export default ResultsNav;
