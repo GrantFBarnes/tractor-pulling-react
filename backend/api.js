@@ -49,7 +49,7 @@ router.get("/api/objects", (request, response) => {
 
 // Check if user is authenticated
 router.get("/api/authenticated", (request, response) => {
-    if (!authentication.isAuthorized(request)) {
+    if (authentication.isAuthorized(request)) {
         returnSuccess(response);
     } else {
         rejectUnauthorized(response);
