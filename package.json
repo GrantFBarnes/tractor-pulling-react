@@ -14,6 +14,7 @@
         "carbon-components-react": "^7.9.3",
         "carbon-icons": "^7.0.7",
         "cookie-parser": "^1.4.4",
+        "cors": "^2.8.5",
         "express": "^4.17.1",
         "express-session": "^1.17.0",
         "fs": "0.0.1-security",
