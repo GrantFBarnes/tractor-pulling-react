@@ -1,17 +1,10 @@
 import React from "react";
 import BasePage from "../BasePage";
-import { Loading } from "carbon-components-react";
-
-import HomeNav from "../../components/Home/HomeNav";
 
 class Home extends BasePage {
-    doneMounting() {}
-
-    render() {
+    contentRender() {
         return (
-            <div className="pageContainer">
-                {this.state.loading ? <Loading withOverlay={true} /> : null}
-                <HomeNav />
+            <div>
                 <h3>Website is under development...</h3>
             </div>
         );

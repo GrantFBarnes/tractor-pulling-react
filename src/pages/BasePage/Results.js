@@ -1,9 +1,8 @@
 import React from "react";
 import BasePage from "../BasePage";
-import { Loading, Dropdown, Tab, Tabs } from "carbon-components-react";
+import { Dropdown, Tab, Tabs } from "carbon-components-react";
 
-import ResultsNav from "../../components/Results/ResultsNav";
-import ResultsTable from "../../components/Results/ResultsTable";
+import ResultsTable from "../../components/ResultsTable";
 
 class Results extends BasePage {
     constructor() {
@@ -49,11 +48,9 @@ class Results extends BasePage {
         return { id: "", display: this.state.season };
     };
 
-    render() {
+    contentRender() {
         return (
-            <div className="pageContainer">
-                {this.state.loading ? <Loading withOverlay={true} /> : null}
-                <ResultsNav />
+            <div>
                 <Dropdown
                     id="seasons_dropdown"
                     label="Season"

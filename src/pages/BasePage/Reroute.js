@@ -6,7 +6,7 @@ class Reroute extends BasePage {
         window.location.href = "/home";
     };
 
-    render() {
+    contentRender() {
         return <div>{this.renderRedirect()}</div>;
     }
 }

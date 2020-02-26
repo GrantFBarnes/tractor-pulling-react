@@ -3,6 +3,8 @@ import {
     Header,
     HeaderName,
     HeaderMenuButton,
+    HeaderGlobalBar,
+    HeaderGlobalAction,
     SideNav,
     SideNavMenu,
     SideNavMenuItem,
@@ -11,6 +13,7 @@ import {
 } from "carbon-components-react/lib/components/UIShell";
 
 import CollapseCategories32 from "@carbon/icons-react/lib/collapse-categories/32";
+import Edit20 from "@carbon/icons-react/lib/edit/20";
 import Home20 from "@carbon/icons-react/lib/home/20";
 import Video20 from "@carbon/icons-react/lib/video/20";
 
@@ -63,6 +66,18 @@ class BaseNav extends Component {
                         </SideNavLink>
                     </SideNavItems>
                 </SideNav>
+                <HeaderGlobalBar>
+                    {this.props.canEdit ? null : (
+                        <HeaderGlobalAction
+                            title="Enter Edit Mode"
+                            onClick={e => {
+                                this.props.toggleEditModal();
+                            }}
+                        >
+                            <Edit20 />
+                        </HeaderGlobalAction>
+                    )}
+                </HeaderGlobalBar>
             </Header>
         );
     }
