@@ -69,6 +69,11 @@ class BasePage extends Component {
     };
 
     doneMounting() {}
+    updateComponent() {}
+
+    updatePageWidth() {
+        this.setState({ sideExpanded: window.innerWidth > 1056 });
+    }
 
     componentWillMount() {
         let server_host = window.location.origin;
@@ -90,11 +95,31 @@ class BasePage extends Component {
                 that.setState({ loading: false, canEdit: false });
             });
         this.doneMounting();
+        this.updateComponent();
+        this.updatePageWidth();
+        window.addEventListener("resize", this.updatePageWidth.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updatePageWidth.bind(this));
+    }
+
+    componentDidUpdate(oldProps) {
+        if (oldProps !== this.props) {
+            this.updateComponent();
+        }
     }
 
     render() {
         return (
-            <div className="container">
+            <div
+                className={
+                    "container " +
+                    (this.state.sideExpanded
+                        ? "containerSideExpanded"
+                        : "containerSideCollapsed")
+                }
+            >
                 {this.state.loading ? <Loading withOverlay={true} /> : null}
                 <Header aria-label="header">
                     <HeaderMenuButton
@@ -106,7 +131,9 @@ class BasePage extends Component {
                         }}
                         isActive={this.state.sideExpanded}
                     />
-                    <HeaderName prefix="CATP" href="/home">Tractor Pulling</HeaderName>
+                    <HeaderName prefix="CATP" href="/home">
+                        Tractor Pulling
+                    </HeaderName>
                     <SideNav
                         aria-label="side nav"
                         expanded={this.state.sideExpanded}

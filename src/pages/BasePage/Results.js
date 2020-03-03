@@ -187,17 +187,6 @@ class Results extends BasePage {
         this.setState(newState);
     }
 
-    componentWillMount() {
-        super.componentWillMount();
-        this.updateComponent();
-    }
-
-    componentDidUpdate(oldProps) {
-        if (oldProps !== this.props) {
-            this.updateComponent();
-        }
-    }
-
     doneMounting() {
         const search = this.props.location.search;
         if (!search) return;
@@ -336,7 +325,16 @@ class Results extends BasePage {
                     </div>
                 </div>
                 <div className="contentRow">
-                    <div className="tableScroll">{this.genResultsTable()}</div>
+                    <div
+                        className={
+                            "tableContainer " +
+                            (this.state.sideExpanded
+                                ? "tableContainerSideExpanded"
+                                : "tableContainerSideCollapsed")
+                        }
+                    >
+                        {this.genResultsTable()}
+                    </div>
                 </div>
             </div>
         );

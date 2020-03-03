@@ -19,16 +19,16 @@ body {
     text-align: center;
 }
 
-.tableScroll {
-    position: absolute;
-    overflow: auto;
-    height: calc(100vh - 175px);
-    width: calc(100vw - 40px);
-    display: inline-block;
+.containerSideExpanded {
+    padding-left: 16rem;
+}
+
+.containerSideCollapsed {
+    padding-left: 0;
 }
 
 .container {
-    padding: 3.5em 0 0 0;
+    padding-top: 3.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,6 +40,21 @@ body {
     z-index: 0;
     height: 100%;
     width: 100%;
+}
+
+.tableContainerSideExpanded {
+    width: calc(100vw - 40px - 16rem);
+}
+
+.tableContainerSideCollapsed {
+    width: calc(100vw - 40px);
+}
+
+.tableContainer {
+    position: absolute;
+    overflow: auto;
+    height: calc(100vh - 175px);
+    display: inline-block;
 }
 
 .contentContainer {
