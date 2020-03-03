@@ -68,6 +68,20 @@ class BasePage extends Component {
             });
     };
 
+    itemToString = item => {
+        if (item) return item.display;
+        return "";
+    };
+
+    getSelected = (field, options) => {
+        for (let i in options) {
+            if (options[i].id === this.state[field]) {
+                return options[i];
+            }
+        }
+        return { id: "", display: this.state[field] };
+    };
+
     doneMounting() {}
     updateComponent() {}
 
@@ -145,6 +159,11 @@ class BasePage extends Component {
                             <SideNavLink renderIcon={ListNum32} href="/results">
                                 Results
                             </SideNavLink>
+                            {this.state.canEdit ? (
+                                <SideNavLink renderIcon={Edit20} href="/edit">
+                                    Edit
+                                </SideNavLink>
+                            ) : null}
                             <SideNavLink
                                 renderIcon={Video20}
                                 href={this.youtube_link}
@@ -162,7 +181,7 @@ class BasePage extends Component {
                                     this.toggleTokenModal();
                                 }}
                             >
-                                <Edit20 />
+                                Edit
                             </HeaderGlobalAction>
                         )}
                     </HeaderGlobalBar>

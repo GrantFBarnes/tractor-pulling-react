@@ -100,9 +100,9 @@ class Season extends Base {
 class Tractor extends Base {
     constructor(json) {
         super(json);
+        this.owner = json.owner ? json.owner : ""; // Puller id
         this.brand = json.brand ? json.brand : "";
         this.model = json.model ? json.model : "";
-        this.name = json.name ? json.name : "";
     }
 }
 

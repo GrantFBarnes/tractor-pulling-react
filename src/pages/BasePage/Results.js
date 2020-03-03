@@ -207,21 +207,6 @@ class Results extends BasePage {
         this.setState(newState);
     }
 
-    itemToString = item => {
-        if (item) return item.display;
-        return "";
-    };
-
-    getSelected = field => {
-        const options = this.state[field + "Options"];
-        for (let i in options) {
-            if (options[i].id === this.state[field]) {
-                return options[i];
-            }
-        }
-        return { id: "", display: this.state[field] };
-    };
-
     genResultsTable = () => {
         return (
             <DataTable
@@ -277,8 +262,14 @@ class Results extends BasePage {
                             light={false}
                             items={this.state.seasonOptions}
                             itemToString={this.itemToString}
-                            selectedItem={this.getSelected("season")}
-                            initialSelectedItem={this.getSelected("season")}
+                            selectedItem={this.getSelected(
+                                "season",
+                                this.state.seasonOptions
+                            )}
+                            initialSelectedItem={this.getSelected(
+                                "season",
+                                this.state.seasonOptions
+                            )}
                             onChange={e => {
                                 if (!e.selectedItem) {
                                     e.selectedItem = { id: "" };
@@ -295,8 +286,14 @@ class Results extends BasePage {
                             light={false}
                             items={this.state.pullOptions}
                             itemToString={this.itemToString}
-                            selectedItem={this.getSelected("pull")}
-                            initialSelectedItem={this.getSelected("pull")}
+                            selectedItem={this.getSelected(
+                                "pull",
+                                this.state.pullOptions
+                            )}
+                            initialSelectedItem={this.getSelected(
+                                "pull",
+                                this.state.pullOptions
+                            )}
                             onChange={e => {
                                 if (!e.selectedItem) {
                                     e.selectedItem = { id: "" };
@@ -313,8 +310,14 @@ class Results extends BasePage {
                             light={false}
                             items={this.state.classOptions}
                             itemToString={this.itemToString}
-                            selectedItem={this.getSelected("class")}
-                            initialSelectedItem={this.getSelected("class")}
+                            selectedItem={this.getSelected(
+                                "class",
+                                this.state.classOptions
+                            )}
+                            initialSelectedItem={this.getSelected(
+                                "class",
+                                this.state.classOptions
+                            )}
                             onChange={e => {
                                 if (!e.selectedItem) {
                                     e.selectedItem = { id: "" };

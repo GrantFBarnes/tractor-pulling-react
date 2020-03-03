@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.scss";
 
+import Edit from "./pages/BasePage/Edit";
 import Home from "./pages/BasePage/Home";
 import Results from "./pages/BasePage/Results";
 import Reroute from "./pages/BasePage/Reroute";
@@ -15,6 +16,7 @@ const routing = (
         <Switch>
             <Route exact path="/home" component={Home} />
             <Route exact path="/results" component={Results} />
+            <Route exact path="/edit" component={Edit} />
             <Route exact path="*" component={Reroute} />
         </Switch>
     </BrowserRouter>
