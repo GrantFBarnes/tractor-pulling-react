@@ -3,6 +3,7 @@ import BasePage from "../BasePage";
 import { Button, Dropdown, DataTable } from "carbon-components-react";
 
 import Add20 from "@carbon/icons-react/lib/add/20";
+import Delete20 from "@carbon/icons-react/lib/delete/20";
 
 const {
     Table,
@@ -19,54 +20,115 @@ const {
 class Edit extends BasePage {
     constructor() {
         super();
-        this.state.objectType = "";
-        this.state.objectTypeOptions = [
-            { id: "season", display: "Seasons" },
-            { id: "pull", display: "Pulls" },
-            { id: "hook", display: "Hooks" },
-            { id: "tractor", display: "Tractor" },
-            { id: "puller", display: "Pullers" },
-            { id: "class", display: "Classes" }
+        this.state.objType = "";
+        this.state.objTypeOptions = [
+            { id: "Season", display: "Seasons" },
+            { id: "Pull", display: "Pulls" },
+            { id: "Hook", display: "Hooks" },
+            { id: "Tractor", display: "Tractor" },
+            { id: "Puller", display: "Pullers" },
+            { id: "Class", display: "Classes" }
         ];
-
-        this.state.rows = [];
+        this.state.allObjects = {};
     }
 
-    addNew = () => {
-        console.log(this.state.objectType);
+    doneMounting() {
+        const that = this;
+        that.setState({ loading: true });
+        fetch(this.server_host + "/api/objects", { credentials: "include" })
+            .then(response => {
+                return response.json();
+            })
+            .then(allObjects => {
+                that.setState({ loading: false, allObjects: allObjects });
+            })
+            .catch(err => {
+                that.setState({ loading: false });
+                alert("Failed to get data");
+            });
+    }
+
+    createObj = () => {
+        if (!this.state.objType) return;
+        const that = this;
+        that.setState({ loading: true });
+        fetch(this.server_host + "/api/object", {
+            credentials: "include",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: this.state.objType })
+        })
+            .then(response => {
+                return response.json();
+            })
+            .then(newObj => {
+                let allObjects = this.state.allObjects;
+                allObjects[newObj.id] = newObj;
+                that.setState({ loading: false, allObjects: allObjects });
+            })
+            .catch(err => {
+                that.setState({ loading: false });
+                alert("Failed to create object");
+            });
+    };
+
+    deleteObj = id => {
+        if (!id) return;
+        const that = this;
+        that.setState({ loading: true });
+        fetch(this.server_host + "/api/object/" + id, {
+            credentials: "include",
+            method: "DELETE"
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    let allObjects = this.state.allObjects;
+                    delete allObjects[id];
+                    that.setState({ loading: false, allObjects: allObjects });
+                } else {
+                    that.setState({ loading: false });
+                    alert("Failed to delete object");
+                }
+            })
+            .catch(err => {
+                that.setState({ loading: false });
+                alert("Failed to delete object");
+            });
     };
 
     getHeaders = () => {
-        let headers = [{ key: "delete", header: "Delete" }];
-        switch (this.state.objectType) {
-            case "season":
+        let headers = [
+            { key: "delete", header: "Delete" },
+            { key: "id", header: "ID" }
+        ];
+        switch (this.state.objType) {
+            case "Season":
                 headers.push({ key: "year", header: "Year" });
                 break;
-            case "hook":
+            case "Hook":
                 headers.push({ key: "class", header: "Class" });
                 headers.push({ key: "position", header: "Position" });
                 headers.push({ key: "name", header: "Name" });
                 headers.push({ key: "tractor", header: "Tractor" });
                 headers.push({ key: "distance", header: "Distance" });
                 break;
-            case "tractor":
+            case "Tractor":
                 headers.push({ key: "owner", header: "Owner" });
                 headers.push({ key: "brand", header: "Brand" });
                 headers.push({ key: "model", header: "Model" });
                 break;
-            case "puller":
+            case "Puller":
                 headers.push({ key: "first_name", header: "First" });
                 headers.push({ key: "last_name", header: "Last" });
-                headers.push({ key: "position", header: "Position" });
                 headers.push({ key: "member", header: "Member" });
                 break;
-            case "class":
+            case "Class":
                 headers.push({ key: "pull", header: "Pull" });
                 headers.push({ key: "category", header: "Category" });
                 headers.push({ key: "weight", header: "Weight" });
                 headers.push({ key: "speed", header: "Speed" });
                 break;
-            case "pull":
+            case "Pull":
                 headers.push({ key: "season", header: "Season" });
                 headers.push({ key: "location", header: "Location" });
                 headers.push({ key: "date", header: "Date" });
@@ -82,12 +144,47 @@ class Edit extends BasePage {
         return headers;
     };
 
+    getRows = () => {
+        let rows = [];
+        for (let id in this.state.allObjects) {
+            const obj = this.state.allObjects[id];
+            if (obj.type !== this.state.objType) continue;
+            rows.push(obj);
+        }
+        return rows;
+    };
+
+    getCell = cell => {
+        const split = cell.id.split(":");
+        const id = split[0];
+        const header = split[1];
+        switch (header) {
+            case "delete":
+                return (
+                    <Button
+                        size="small"
+                        kind="danger"
+                        renderIcon={Delete20}
+                        onClick={() => {
+                            this.deleteObj(id);
+                        }}
+                    >
+                        Delete
+                    </Button>
+                );
+
+            default:
+                return cell.value;
+        }
+    };
+
     genEditTable = () => {
-        if (!this.state.objectType) return null;
+        if (!this.state.objType) return null;
         const headers = this.getHeaders();
+        const rows = this.getRows();
         return (
             <DataTable
-                rows={this.state.rows}
+                rows={rows}
                 headers={headers}
                 isSortable
                 render={({ rows, headers, getHeaderProps, onInputChange }) => (
@@ -114,7 +211,7 @@ class Edit extends BasePage {
                                     <TableRow key={row.id}>
                                         {row.cells.map(cell => (
                                             <TableCell key={cell.id}>
-                                                {cell.value}
+                                                {this.getCell(cell)}
                                             </TableCell>
                                         ))}
                                     </TableRow>
@@ -149,22 +246,22 @@ class Edit extends BasePage {
                             label="Object Type"
                             titleText="Object Type"
                             light={false}
-                            items={this.state.objectTypeOptions}
+                            items={this.state.objTypeOptions}
                             itemToString={this.itemToString}
                             selectedItem={this.getSelected(
-                                "objectType",
-                                this.state.objectTypeOptions
+                                "objType",
+                                this.state.objTypeOptions
                             )}
                             initialSelectedItem={this.getSelected(
-                                "objectType",
-                                this.state.objectTypeOptions
+                                "objType",
+                                this.state.objTypeOptions
                             )}
                             onChange={e => {
                                 if (!e.selectedItem) {
                                     e.selectedItem = { id: "" };
                                 }
                                 this.setState({
-                                    objectType: e.selectedItem.id
+                                    objType: e.selectedItem.id
                                 });
                             }}
                         />
@@ -178,7 +275,7 @@ class Edit extends BasePage {
                             kind="primary"
                             renderIcon={Add20}
                             onClick={() => {
-                                this.addNew();
+                                this.createObj();
                             }}
                         >
                             Create New

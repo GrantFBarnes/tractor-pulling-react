@@ -34,17 +34,17 @@ router.get("/api/heartbeat", (request, response) => {
 
 // Get object by ID
 router.get("/api/object/:id", (request, response) => {
-    returnResponse(response, objects.getObject(request.params.id, user));
+    returnResponse(response, objects.getObject(request.params.id));
 });
 
 // Get objects by type
 router.get("/api/objects/:id", (request, response) => {
-    returnResponse(response, objects.getObjectsByType(request.params.id, user));
+    returnResponse(response, objects.getObjectsByType(request.params.id));
 });
 
 // Get all objects
 router.get("/api/objects", (request, response) => {
-    returnResponse(response, objects.getAllObjects(request.params.id, user));
+    returnResponse(response, objects.getAllObjects(request.params.id));
 });
 
 // Check if user is authenticated
@@ -72,7 +72,7 @@ router.delete("/api/object/:id", (request, response) => {
         rejectUnauthorized(response);
         return;
     }
-    returnResponse(response, objects.deleteObject(request.params.id, user));
+    returnResponse(response, objects.deleteObj(request.params.id));
 });
 
 // Update existing object
@@ -81,7 +81,7 @@ router.put("/api/object", (request, response) => {
         rejectUnauthorized(response);
         return;
     }
-    returnResponse(response, objects.updateObject(request.body, user));
+    returnResponse(response, objects.updateObj(request.body));
 });
 
 // Create new object
@@ -90,7 +90,7 @@ router.post("/api/object", (request, response) => {
         rejectUnauthorized(response);
         return;
     }
-    returnResponse(response, objects.createObject(request.body, user));
+    returnResponse(response, objects.createObj(request.body));
 });
 
 ////////////////////////////////////////////////////////////////////////////////

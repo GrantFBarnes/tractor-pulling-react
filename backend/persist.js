@@ -3,18 +3,18 @@ const objects = require("./objects.js");
 
 const dataDir = __dirname.substring(0, __dirname.length - 7) + "data";
 
-function deleteObject(obj) {
+function deleteObj(obj) {
     if (!obj.type) return;
     if (!obj.id) return;
     fs.unlinkSync(dataDir + "/" + obj.type + "/" + obj.id + ".json");
 }
 
-function saveObject(obj) {
+function saveObj(obj) {
     if (!obj.type) return;
     if (!obj.id) return;
     fs.writeFileSync(
         dataDir + "/" + obj.type + "/" + obj.id + ".json",
-        JSON.stringify(obj)
+        JSON.stringify(obj.toJSON())
     );
 }
 
@@ -27,11 +27,11 @@ function initData() {
                 dataDir + "/" + className + "/" + fileName,
                 "utf-8"
             );
-            objects.createObject(JSON.parse(file));
+            objects.createObj(JSON.parse(file));
         }
     }
 }
 
-module.exports.deleteObject = deleteObject;
-module.exports.saveObject = saveObject;
+module.exports.deleteObj = deleteObj;
+module.exports.saveObj = saveObj;
 module.exports.initData = initData;

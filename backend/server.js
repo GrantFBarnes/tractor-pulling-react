@@ -5,6 +5,7 @@ const http = require("http");
 const parser = require("body-parser");
 const session = require("express-session");
 
+const persist = require("./persist.js");
 const util = require("./util.js");
 
 const app = express();
@@ -56,6 +57,7 @@ function main() {
         server.listen(8080);
         console.log("Running local environment on http://localhost:8080");
     }
+    persist.initData();
 }
 
 main();
