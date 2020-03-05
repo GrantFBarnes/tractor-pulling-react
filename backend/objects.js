@@ -143,7 +143,7 @@ class Class extends Base {
         this.pull = json.pull ? json.pull : ""; // Pull id
         this.category = json.category ? json.category : ""; // farm, antique
         this.weight = json.weight ? json.weight : 0;
-        this.speed = json.speed ? json.speed : 0;
+        this.speed = json.speed ? json.speed : 3;
         this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // Hook ids
     }
 
@@ -169,6 +169,11 @@ class Class extends Base {
         }
         return false;
     }
+
+    validate() {
+        this.weight = parseInt(this.weight);
+        this.speed = parseInt(this.speed);
+    }
 }
 
 class Hook extends Base {
@@ -177,7 +182,7 @@ class Hook extends Base {
         this.class = json.class ? json.class : ""; // Class id
         this.puller = json.puller ? json.puller : ""; // Puller id
         this.tractor = json.tractor ? json.tractor : ""; // Tractor id
-        this.distance = json.distance ? json.distance : 0;
+        this.distance = json.distance ? json.distance : 0.0;
         this.position = json.position ? json.position : 0;
     }
 
@@ -199,17 +204,18 @@ class Hook extends Base {
     }
 
     validate() {
+        this.distance = parseFloat(this.distance);
+
         const parent = allObjects[this.class];
         if (parent) {
             let position = 1;
             for (let i of parent.hooks) {
                 if (i === this.id) continue;
                 const hook = allObjects[i];
+                if (!hook) continue;
                 if (hook.distance > this.distance) position++;
             }
             this.position = position;
-        } else {
-            this.position = 0;
         }
     }
 }

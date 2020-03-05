@@ -17,201 +17,55 @@ const {
 class Results extends BasePage {
     constructor() {
         super();
+        this.state.allObjects = {};
+
         this.state.season = "";
-        this.state.seasonOptions = [
-            { id: "2020", display: "2020" },
-            { id: "2019", display: "2019" },
-            { id: "2018", display: "2018" }
-        ];
         this.state.pull = "";
-        this.state.pullOptions = [
-            { id: "argyle", display: "Argyle, WI" },
-            { id: "blanchardville", display: "Blanchardville, WI" },
-            { id: "brooklyn", display: "Brooklyn, WI" },
-            { id: "durand", display: "Durand, IL" }
-        ];
         this.state.class = "";
-        this.state.classOptions = [
-            { id: "4000f", display: "4000 Farm" },
-            { id: "4000a", display: "4000 Antique" },
-            { id: "4500f", display: "4500 Farm" },
-            { id: "4500a", display: "4500 Antique" },
-            { id: "5000f", display: "5000 Farm" },
-            { id: "5000a", display: "5000 Antique" },
-            { id: "5500f", display: "5500 Farm" },
-            { id: "5500a", display: "5500 Antique" },
-            { id: "6000f", display: "6000 Farm" },
-            { id: "6000a", display: "6000 Antique" }
-        ];
-
-        this.state.headers = [
-            { key: "position", header: "Position" },
-            { key: "name", header: "Name" },
-            { key: "tractor", header: "Tractor" },
-            { key: "distance", header: "Distance" }
-        ];
-        this.state.rows = [];
-    }
-
-    updateComponent() {
-        let newState = {
-            rows: [
-                {
-                    id: "randomid1",
-                    position: 1,
-                    name: "Grant Barnes",
-                    tractor: "Case 1030",
-                    distance: 218.4
-                },
-                {
-                    id: "randomid2",
-                    position: 2,
-                    name: "Frank Barnes",
-                    tractor: "Farmall 450",
-                    distance: 216.7
-                },
-                {
-                    id: "randomid3",
-                    position: 3,
-                    name: "Brandon Barnes",
-                    tractor: "Allis Chalmers WD45",
-                    distance: 211.1
-                },
-                {
-                    id: "randomid4",
-                    position: 4,
-                    name: "Grant Barnes",
-                    tractor: "Case 1030",
-                    distance: 196.4
-                },
-                {
-                    id: "randomid5",
-                    position: 5,
-                    name: "Frank Barnes",
-                    tractor: "Farmall 450",
-                    distance: 196.2
-                },
-                {
-                    id: "randomid6",
-                    position: 6,
-                    name: "Brandon Barnes",
-                    tractor: "Allis Chalmers WD45",
-                    distance: 194.5
-                },
-                {
-                    id: "randomid7",
-                    position: 7,
-                    name: "Grant Barnes",
-                    tractor: "Case 1030",
-                    distance: 174.1
-                },
-                {
-                    id: "randomid8",
-                    position: 8,
-                    name: "Frank Barnes",
-                    tractor: "Farmall 450",
-                    distance: 168.1
-                },
-                {
-                    id: "randomid9",
-                    position: 9,
-                    name: "Brandon Barnes",
-                    tractor: "Allis Chalmers WD45",
-                    distance: 152.2
-                },
-                {
-                    id: "randomid10",
-                    position: 10,
-                    name: "Grant Barnes",
-                    tractor: "Case 1030",
-                    distance: 152.1
-                },
-                {
-                    id: "randomid11",
-                    position: 11,
-                    name: "Frank Barnes",
-                    tractor: "Farmall 450",
-                    distance: 149.3
-                },
-                {
-                    id: "randomid12",
-                    position: 12,
-                    name: "Brandon Barnes",
-                    tractor: "Allis Chalmers WD45",
-                    distance: 148.4
-                },
-                {
-                    id: "randomid13",
-                    position: 13,
-                    name: "Grant Barnes",
-                    tractor: "Case 1030",
-                    distance: 146.7
-                },
-                {
-                    id: "randomid14",
-                    position: 14,
-                    name: "Frank Barnes",
-                    tractor: "Farmall 450",
-                    distance: 145.0
-                },
-                {
-                    id: "randomid15",
-                    position: 15,
-                    name: "Brandon Barnes",
-                    tractor: "Allis Chalmers WD45",
-                    distance: 112.6
-                },
-                {
-                    id: "randomid16",
-                    position: 16,
-                    name: "Grant Barnes",
-                    tractor: "Case 1030",
-                    distance: 94.6
-                },
-                {
-                    id: "randomid17",
-                    position: 17,
-                    name: "Frank Barnes",
-                    tractor: "Farmall 450",
-                    distance: 64.1
-                },
-                {
-                    id: "randomid18",
-                    position: 18,
-                    name: "Brandon Barnes",
-                    tractor: "Allis Chalmers WD45",
-                    distance: 32.8
-                }
-            ]
-        };
-        this.setState(newState);
     }
 
     doneMounting() {
-        const search = this.props.location.search;
-        if (!search) return;
-
-        let newState = {};
-        const params = search.split("&");
-        for (let i in params) {
-            params[i] = params[i].replace("?", "");
-            let split = params[i].split("=");
-            if (split[0] === "season") {
-                newState.season = split[1];
-            } else if (split[0] === "pull") {
-                newState.pull = split[1];
-            } else if (split[0] === "class") {
-                newState.class = split[1];
+        let newState = { loading: true };
+        if (this.props.location.search) {
+            const params = this.props.location.search.split("&");
+            for (let i in params) {
+                params[i] = params[i].replace("?", "");
+                let split = params[i].split("=");
+                if (split[0] === "season") {
+                    newState.season = split[1];
+                } else if (split[0] === "pull") {
+                    newState.pull = split[1];
+                } else if (split[0] === "class") {
+                    newState.class = split[1];
+                }
             }
         }
         this.setState(newState);
+
+        const that = this;
+        fetch(this.server_host + "/api/objects", { credentials: "include" })
+            .then(response => {
+                return response.json();
+            })
+            .then(allObjects => {
+                that.setState({ loading: false, allObjects: allObjects });
+            })
+            .catch(err => {
+                that.setState({ loading: false });
+                alert("Failed to get data");
+            });
     }
 
-    genResultsTable = () => {
+    genResultsTable = hooks => {
         return (
             <DataTable
-                rows={this.state.rows}
-                headers={this.state.headers}
+                rows={hooks}
+                headers={[
+                    { key: "position", header: "Position" },
+                    { key: "name", header: "Name" },
+                    { key: "tractor", header: "Tractor" },
+                    { key: "distance", header: "Distance" }
+                ]}
                 isSortable
                 render={({ rows, headers, getHeaderProps, onInputChange }) => (
                     <TableContainer>
@@ -250,81 +104,140 @@ class Results extends BasePage {
         );
     };
 
+    getResults = () => {
+        let results = {
+            seasons: [],
+            pulls: [],
+            classes: [],
+            hooks: []
+        };
+        for (let id in this.state.allObjects) {
+            const obj = this.state.allObjects[id];
+            if (obj.type === "Season") {
+                results.seasons.push({ id: id, display: obj.year });
+            } else if (obj.type === "Pull") {
+                if (obj.season === this.state.season) {
+                    const location = this.state.allObjects[obj.location]
+                        ? this.state.allObjects[obj.location].town +
+                          ", " +
+                          this.state.allObjects[obj.location].state
+                        : "(No Location)";
+                    results.pulls.push({ id: id, display: location });
+                }
+            } else if (obj.type === "Class") {
+                if (obj.pull === this.state.pull) {
+                    results.classes.push({
+                        id: id,
+                        display: obj.weight + " " + obj.category
+                    });
+                }
+            } else if (obj.type === "Hook") {
+                if (obj.class === this.state.class) {
+                    results.hooks.push({
+                        id: id,
+                        position: obj.position,
+                        name: this.state.allObjects[obj.puller]
+                            ? this.state.allObjects[obj.puller].first_name +
+                              " " +
+                              this.state.allObjects[obj.puller].last_name
+                            : "(No Puller)",
+                        tractor: this.state.allObjects[obj.tractor]
+                            ? this.state.allObjects[obj.tractor].brand +
+                              " " +
+                              this.state.allObjects[obj.tractor].model
+                            : "(No Tractor)",
+                        distance: obj.distance
+                    });
+                }
+            }
+        }
+        return results;
+    };
+
     contentRender() {
+        const results = this.getResults();
         return (
             <div className="contentContainer">
                 <div className="contentRow">
                     <div className="thirdColumn paddingRight">
-                        <Dropdown
-                            id="seasons_dropdown"
-                            label="Season"
-                            titleText="Season"
-                            light={false}
-                            items={this.state.seasonOptions}
-                            itemToString={this.itemToString}
-                            selectedItem={this.getSelected(
-                                "season",
-                                this.state.seasonOptions
-                            )}
-                            initialSelectedItem={this.getSelected(
-                                "season",
-                                this.state.seasonOptions
-                            )}
-                            onChange={e => {
-                                if (!e.selectedItem) {
-                                    e.selectedItem = { id: "" };
-                                }
-                                this.setState({ season: e.selectedItem.id });
-                            }}
-                        />
+                        {results.seasons.length ? (
+                            <Dropdown
+                                id="seasons_dropdown"
+                                label="Season"
+                                titleText="Season"
+                                light={false}
+                                items={results.seasons}
+                                itemToString={this.itemToString}
+                                selectedItem={this.getSelected(
+                                    "season",
+                                    results.seasons
+                                )}
+                                initialSelectedItem={this.getSelected(
+                                    "season",
+                                    results.seasons
+                                )}
+                                onChange={e => {
+                                    if (!e.selectedItem) {
+                                        e.selectedItem = { id: "" };
+                                    }
+                                    this.setState({
+                                        season: e.selectedItem.id
+                                    });
+                                }}
+                            />
+                        ) : null}
                     </div>
                     <div className="thirdColumn paddingLeft paddingRight">
-                        <Dropdown
-                            id="pull_dropdown"
-                            label="Pull"
-                            titleText="Pull"
-                            light={false}
-                            items={this.state.pullOptions}
-                            itemToString={this.itemToString}
-                            selectedItem={this.getSelected(
-                                "pull",
-                                this.state.pullOptions
-                            )}
-                            initialSelectedItem={this.getSelected(
-                                "pull",
-                                this.state.pullOptions
-                            )}
-                            onChange={e => {
-                                if (!e.selectedItem) {
-                                    e.selectedItem = { id: "" };
-                                }
-                                this.setState({ pull: e.selectedItem.id });
-                            }}
-                        />
+                        {results.pulls.length ? (
+                            <Dropdown
+                                id="pull_dropdown"
+                                label="Pull"
+                                titleText="Pull"
+                                light={false}
+                                items={results.pulls}
+                                itemToString={this.itemToString}
+                                selectedItem={this.getSelected(
+                                    "pull",
+                                    results.pulls
+                                )}
+                                initialSelectedItem={this.getSelected(
+                                    "pull",
+                                    results.pulls
+                                )}
+                                onChange={e => {
+                                    if (!e.selectedItem) {
+                                        e.selectedItem = { id: "" };
+                                    }
+                                    this.setState({ pull: e.selectedItem.id });
+                                }}
+                            />
+                        ) : null}
                     </div>
                     <div className="thirdColumn paddingLeft">
-                        <Dropdown
-                            id="class_dropdown"
-                            label="Class"
-                            titleText="Class"
-                            light={false}
-                            items={this.state.classOptions}
-                            itemToString={this.itemToString}
-                            selectedItem={this.getSelected(
-                                "class",
-                                this.state.classOptions
-                            )}
-                            initialSelectedItem={this.getSelected(
-                                "class",
-                                this.state.classOptions
-                            )}
-                            onChange={e => {
-                                if (!e.selectedItem) {
-                                    e.selectedItem = { id: "" };
-                                }
-                                this.setState({ class: e.selectedItem.id });
-                            }}
-                        />
+                        {results.classes.length ? (
+                            <Dropdown
+                                id="class_dropdown"
+                                label="Class"
+                                titleText="Class"
+                                light={false}
+                                items={results.classes}
+                                itemToString={this.itemToString}
+                                selectedItem={this.getSelected(
+                                    "class",
+                                    results.classes
+                                )}
+                                initialSelectedItem={this.getSelected(
+                                    "class",
+                                    results.classes
+                                )}
+                                onChange={e => {
+                                    if (!e.selectedItem) {
+                                        e.selectedItem = { id: "" };
+                                    }
+                                    this.setState({ class: e.selectedItem.id });
+                                }}
+                            />
+                        ) : null}
                     </div>
                 </div>
                 <div className="contentRow">
@@ -336,7 +249,17 @@ class Results extends BasePage {
                                 : "tableContainerSideCollapsed")
                         }
                     >
-                        {this.genResultsTable()}
+                        {this.state.class ? (
+                            this.genResultsTable(results.hooks)
+                        ) : (
+                            <div>
+                                <br />
+                                <p className="center">
+                                    Please select a class from filters above to
+                                    see results
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -149,8 +149,8 @@ class Edit extends BasePage {
                 break;
             case "Hook":
                 headers.push({ key: "class", header: "Class" });
-                headers.push({ key: "puller", header: "Class" });
-                headers.push({ key: "tractor", header: "Class" });
+                headers.push({ key: "puller", header: "Puller" });
+                headers.push({ key: "tractor", header: "Tractor" });
                 headers.push({ key: "distance", header: "Distance" });
                 headers.push({ key: "position", header: "Position" });
                 break;
@@ -235,20 +235,46 @@ class Edit extends BasePage {
                 }
                 break;
 
+            case "puller":
             case "owner":
                 for (let id in this.state.allObjects) {
                     const obj = this.state.allObjects[id];
                     if (obj.type !== "Puller") continue;
                     options.push({
                         id: id,
-                        display: obj.first_name + " " + obj.first_name
+                        display: obj.first_name + " " + obj.last_name
+                    });
+                }
+                break;
+
+            case "class":
+                for (let id in this.state.allObjects) {
+                    const obj = this.state.allObjects[id];
+                    if (obj.type !== "Class") continue;
+                    options.push({
+                        id: id,
+                        display: obj.weight + " " + obj.category
+                    });
+                }
+                break;
+
+            case "tractor":
+                for (let id in this.state.allObjects) {
+                    const obj = this.state.allObjects[id];
+                    if (obj.type !== "Tractor") continue;
+                    options.push({
+                        id: id,
+                        display: obj.brand + " " + obj.model
                     });
                 }
                 break;
 
             case "category":
-                options.push({ id: "farm", display: "Farm Stock" });
-                options.push({ id: "antique", display: "Antique Modified" });
+                options.push({ id: "Farm Stock", display: "Farm Stock" });
+                options.push({
+                    id: "Antique Modified",
+                    display: "Antique Modified"
+                });
                 break;
 
             case "state":
@@ -277,8 +303,8 @@ class Edit extends BasePage {
                 break;
 
             case "meridiem":
-                options.push({ id: "am", display: "AM" });
-                options.push({ id: "pm", display: "PM" });
+                options.push({ id: "AM", display: "AM" });
+                options.push({ id: "PM", display: "PM" });
                 break;
 
             default:
@@ -314,6 +340,9 @@ class Edit extends BasePage {
             case "location":
             case "pull":
             case "owner":
+            case "class":
+            case "puller":
+            case "tractor":
             case "category":
             case "state":
             case "hour":
