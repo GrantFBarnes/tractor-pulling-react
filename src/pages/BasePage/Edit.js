@@ -2,6 +2,10 @@ import React from "react";
 import BasePage from "../BasePage";
 import { Button, Dropdown, DataTable } from "carbon-components-react";
 
+import TypicalDropdown from "../../components/TypicalField/TypicalDropdown";
+import TypicalTextInput from "../../components/TypicalField/TypicalTextInput";
+import TypicalToggle from "../../components/TypicalField/TypicalToggle";
+
 import Add20 from "@carbon/icons-react/lib/add/20";
 import Delete20 from "@carbon/icons-react/lib/delete/20";
 
@@ -23,9 +27,10 @@ class Edit extends BasePage {
         this.state.objType = "";
         this.state.objTypeOptions = [
             { id: "Season", display: "Seasons" },
+            { id: "Location", display: "Locations" },
             { id: "Pull", display: "Pulls" },
             { id: "Hook", display: "Hooks" },
-            { id: "Tractor", display: "Tractor" },
+            { id: "Tractor", display: "Tractors" },
             { id: "Puller", display: "Pullers" },
             { id: "Class", display: "Classes" }
         ];
@@ -47,6 +52,39 @@ class Edit extends BasePage {
                 alert("Failed to get data");
             });
     }
+
+    updateObj = e => {
+        let newVal = e.target.value;
+        if (newVal === "true" || newVal === "on") {
+            newVal = false;
+        } else if (newVal === "false" || newVal === "off") {
+            newVal = true;
+        }
+
+        const split = e.target.id.split("*");
+        const newJSON = { id: split[0], [split[1]]: newVal };
+
+        const that = this;
+        that.setState({ loading: true });
+        fetch(this.server_host + "/api/object", {
+            credentials: "include",
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newJSON)
+        })
+            .then(response => {
+                return response.json();
+            })
+            .then(obj => {
+                let allObjects = this.state.allObjects;
+                allObjects[obj.id] = obj;
+                that.setState({ loading: false, allObjects: allObjects });
+            })
+            .catch(err => {
+                that.setState({ loading: false });
+                alert("Failed to update object");
+            });
+    };
 
     createObj = () => {
         if (!this.state.objType) return;
@@ -105,12 +143,16 @@ class Edit extends BasePage {
             case "Season":
                 headers.push({ key: "year", header: "Year" });
                 break;
+            case "Location":
+                headers.push({ key: "town", header: "Town" });
+                headers.push({ key: "state", header: "State" });
+                break;
             case "Hook":
                 headers.push({ key: "class", header: "Class" });
-                headers.push({ key: "position", header: "Position" });
-                headers.push({ key: "name", header: "Name" });
-                headers.push({ key: "tractor", header: "Tractor" });
+                headers.push({ key: "puller", header: "Class" });
+                headers.push({ key: "tractor", header: "Class" });
                 headers.push({ key: "distance", header: "Distance" });
+                headers.push({ key: "position", header: "Position" });
                 break;
             case "Tractor":
                 headers.push({ key: "owner", header: "Owner" });
@@ -154,11 +196,106 @@ class Edit extends BasePage {
         return rows;
     };
 
+    getItems = field => {
+        let options = [];
+        switch (field) {
+            case "season":
+                for (let id in this.state.allObjects) {
+                    const obj = this.state.allObjects[id];
+                    if (obj.type !== "Season") continue;
+                    options.push({ id: id, display: obj.year });
+                }
+                break;
+
+            case "location":
+                for (let id in this.state.allObjects) {
+                    const obj = this.state.allObjects[id];
+                    if (obj.type !== "Location") continue;
+                    options.push({
+                        id: id,
+                        display: obj.town + ", " + obj.state
+                    });
+                }
+                break;
+
+            case "pull":
+                for (let id in this.state.allObjects) {
+                    const obj = this.state.allObjects[id];
+                    if (obj.type !== "Pull") continue;
+                    const location = this.state.allObjects[obj.location]
+                        ? this.state.allObjects[obj.location].town
+                        : "(No Town)";
+                    const season = this.state.allObjects[obj.season]
+                        ? this.state.allObjects[obj.season].year
+                        : "(No Year)";
+                    options.push({
+                        id: id,
+                        display: location + " - " + season
+                    });
+                }
+                break;
+
+            case "owner":
+                for (let id in this.state.allObjects) {
+                    const obj = this.state.allObjects[id];
+                    if (obj.type !== "Puller") continue;
+                    options.push({
+                        id: id,
+                        display: obj.first_name + " " + obj.first_name
+                    });
+                }
+                break;
+
+            case "category":
+                options.push({ id: "farm", display: "Farm Stock" });
+                options.push({ id: "antique", display: "Antique Modified" });
+                break;
+
+            case "state":
+                options.push({ id: "WI", display: "Wisconsin" });
+                options.push({ id: "IL", display: "Illinois" });
+                break;
+
+            case "hour":
+                options.push({ id: "1", display: "1" });
+                options.push({ id: "2", display: "2" });
+                options.push({ id: "3", display: "3" });
+                options.push({ id: "4", display: "4" });
+                options.push({ id: "5", display: "5" });
+                options.push({ id: "6", display: "6" });
+                options.push({ id: "7", display: "7" });
+                options.push({ id: "8", display: "8" });
+                options.push({ id: "9", display: "9" });
+                options.push({ id: "10", display: "10" });
+                options.push({ id: "11", display: "11" });
+                options.push({ id: "12", display: "12" });
+                break;
+
+            case "minute":
+                options.push({ id: "00", display: "00" });
+                options.push({ id: "30", display: "30" });
+                break;
+
+            case "meridiem":
+                options.push({ id: "am", display: "AM" });
+                options.push({ id: "pm", display: "PM" });
+                break;
+
+            default:
+                break;
+        }
+        return options;
+    };
+
     getCell = cell => {
         const split = cell.id.split(":");
         const id = split[0];
         const header = split[1];
+        const obj = this.state.allObjects[id];
         switch (header) {
+            case "id":
+                return cell.value;
+
             case "delete":
                 return (
                     <Button
@@ -173,8 +310,48 @@ class Edit extends BasePage {
                     </Button>
                 );
 
+            case "season":
+            case "location":
+            case "pull":
+            case "owner":
+            case "category":
+            case "state":
+            case "hour":
+            case "minute":
+            case "meridiem":
+                return (
+                    <TypicalDropdown
+                        obj={obj}
+                        field={header}
+                        items={this.getItems(header)}
+                        handleUpdate={e => {
+                            this.updateObj(e);
+                        }}
+                    />
+                );
+
+            case "blacktop":
+            case "member":
+                return (
+                    <TypicalToggle
+                        obj={obj}
+                        field={header}
+                        handleUpdate={e => {
+                            this.updateObj(e);
+                        }}
+                    />
+                );
+
             default:
-                return cell.value;
+                return (
+                    <TypicalTextInput
+                        obj={obj}
+                        field={header}
+                        handleUpdate={e => {
+                            this.updateObj(e);
+                        }}
+                    />
+                );
         }
     };
 

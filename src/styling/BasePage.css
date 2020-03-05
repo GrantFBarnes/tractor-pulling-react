@@ -96,3 +96,11 @@ body {
     max-width: 90vw;
     max-height: 85vh;
 }
+
+.bx--text-input-wrapper {
+    min-width: 12em;
+}
+
+.bx--dropdown__wrapper {
+    min-width: 12em;
+}

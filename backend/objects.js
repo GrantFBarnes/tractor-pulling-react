@@ -115,6 +115,7 @@ class Base {
                 "update",
                 new Set(Object.keys(changes))
             );
+            persist.saveObj(this);
         }
     }
 
@@ -161,7 +162,7 @@ class Class extends Base {
     changeMatters(objID, objType, method, fields) {
         switch (objType) {
             case "Hook":
-                if (!fields.size) {
+                if (!fields.size || fields.has("class")) {
                     return true;
                 }
                 break;
@@ -199,13 +200,49 @@ class Hook extends Base {
 
     validate() {
         const parent = allObjects[this.class];
-        let position = 1;
-        for (let i of parent.hooks) {
-            if (i === this.id) continue;
-            const hook = allObjects[i];
-            if (hook.distance > this.distance) position++;
+        if (parent) {
+            let position = 1;
+            for (let i of parent.hooks) {
+                if (i === this.id) continue;
+                const hook = allObjects[i];
+                if (hook.distance > this.distance) position++;
+            }
+            this.position = position;
+        } else {
+            this.position = 0;
         }
-        this.position = position;
+    }
+}
+
+class Location extends Base {
+    constructor(json) {
+        super(json);
+        this.town = json.town ? json.town : ""; // Class id
+        this.state = json.state ? json.state : ""; // Puller id
+        this.pulls = json.pulls ? new Set(json.pulls) : new Set(); // Pull ids
+    }
+
+    updateReferences(objID, objType, method, fields) {
+        let obj = {};
+        switch (objType) {
+            case "Pull":
+                this.updateRef(method, "pulls", objID, "location");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    changeMatters(objID, objType, method, fields) {
+        switch (objType) {
+            case "Pull":
+                if (!fields.size || fields.has("location")) {
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 }
 
@@ -213,7 +250,7 @@ class Pull extends Base {
     constructor(json) {
         super(json);
         this.season = json.season ? json.season : ""; // Season id
-        this.location = json.location ? json.location : "";
+        this.location = json.location ? json.location : ""; // Location id
         this.date = json.date ? json.date : "";
         this.hour = json.hour ? json.hour : "";
         this.minute = json.minute ? json.minute : "";
@@ -238,7 +275,7 @@ class Pull extends Base {
     changeMatters(objID, objType, method, fields) {
         switch (objType) {
             case "Class":
-                if (!fields.size) {
+                if (!fields.size || fields.has("pull")) {
                     return true;
                 }
                 break;
@@ -278,7 +315,7 @@ class Season extends Base {
     changeMatters(objID, objType, method, fields) {
         switch (objType) {
             case "Pull":
-                if (!fields.size) {
+                if (!fields.size || fields.has("season")) {
                     return true;
                 }
                 break;
@@ -335,17 +372,18 @@ function createObj(json) {
     let obj = {};
     switch (json.type) {
         case "Class":
-            if (!json.pull) return "pull not provided";
             obj = new Class(json);
             break;
 
         case "Hook":
-            if (!json.class) return "class not provided";
             obj = new Hook(json);
             break;
 
+        case "Location":
+            obj = new Location(json);
+            break;
+
         case "Pull":
-            if (!json.season) return "season not provided";
             obj = new Pull(json);
             break;
 
@@ -380,7 +418,6 @@ function updateObj(json) {
 
     const result = obj.update(json);
     if (result !== "success") return { statusCode: 400, data: result };
-    persist.saveObj(obj);
     return { statusCode: 200, data: obj.toJSON() };
 }
 
