@@ -83,7 +83,6 @@ class BasePage extends Component {
     };
 
     doneMounting() {}
-    updateComponent() {}
 
     updatePageWidth() {
         this.setState({ sideExpanded: window.innerWidth > 1056 });
@@ -109,19 +108,12 @@ class BasePage extends Component {
                 that.setState({ loading: false, canEdit: false });
             });
         this.doneMounting();
-        this.updateComponent();
         this.updatePageWidth();
         window.addEventListener("resize", this.updatePageWidth.bind(this));
     }
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.updatePageWidth.bind(this));
-    }
-
-    componentDidUpdate(oldProps) {
-        if (oldProps !== this.props) {
-            this.updateComponent();
-        }
     }
 
     render() {
