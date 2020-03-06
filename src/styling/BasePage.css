@@ -92,15 +92,11 @@ body {
     vertical-align: top;
 }
 
+.typical_input {
+    min-width: 12em;
+}
+
 .bx--modal-container {
     max-width: 90vw;
     max-height: 85vh;
-}
-
-.bx--text-input-wrapper {
-    min-width: 12em;
-}
-
-.bx--dropdown__wrapper {
-    min-width: 12em;
 }

@@ -11,6 +11,7 @@ class TypicalTextInput extends TypicalField {
                 value={this.state.value}
                 id={this.props.obj.id + "*" + this.props.field}
                 light={false}
+                className="typical_input"
                 onChange={e => {
                     const target = e.target;
                     this.setState(prevState => ({ value: target.value }));

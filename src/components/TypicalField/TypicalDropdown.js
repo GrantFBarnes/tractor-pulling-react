@@ -30,6 +30,7 @@ class TypicalDropdown extends TypicalField {
                 label={this.props.title ? this.props.title : ""}
                 id={id}
                 light={false}
+                className="typical_input"
                 items={this.getDropdownItems()}
                 itemToString={this.itemToString}
                 selectedItem={this.selectedItem()}

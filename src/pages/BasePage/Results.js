@@ -109,8 +109,8 @@ class Results extends BasePage {
             <DataTable
                 rows={hooks}
                 headers={[
-                    { key: "position", header: "Position" },
-                    { key: "name", header: "Name" },
+                    { key: "position", header: "Pos" },
+                    { key: "puller", header: "Puller" },
                     { key: "tractor", header: "Tractor" },
                     { key: "distance", header: "Distance" }
                 ]}
@@ -221,7 +221,7 @@ class Results extends BasePage {
                     objs[i] = {
                         id: obj.id,
                         position: obj.position,
-                        name: this.state.allObjects[obj.puller]
+                        puller: this.state.allObjects[obj.puller]
                             ? this.state.allObjects[obj.puller].first_name +
                               " " +
                               this.state.allObjects[obj.puller].last_name
