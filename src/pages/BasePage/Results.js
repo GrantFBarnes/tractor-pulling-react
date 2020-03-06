@@ -69,13 +69,17 @@ class Results extends BasePage {
                 const obj = allObjects[id];
                 if (obj.type !== "Class") continue;
                 if (obj.pull !== latestPull.id) continue;
-                if (!latestClass.weight || obj.weight < latestClass.weight) {
+                if (!latestClass.weight) {
+                    latestClass = obj;
+                    continue;
+                }
+                if (obj.weight < latestClass.weight) {
                     latestClass = obj;
                 }
-                if (
-                    !latestClass.category ||
-                    obj.category < latestClass.category
-                ) {
+                if (obj.category > latestClass.category) {
+                    latestClass = obj;
+                }
+                if (obj.speed < latestClass.speed) {
                     latestClass = obj;
                 }
             }
@@ -165,8 +169,10 @@ class Results extends BasePage {
     classSort = (a, b) => {
         if (a.weight < b.weight) return -1;
         if (a.weight > b.weight) return 1;
-        if (a.category < b.category) return -1;
-        if (a.category > b.category) return 1;
+        if (a.category < b.category) return 1;
+        if (a.category > b.category) return -1;
+        if (a.speed < b.speed) return -1;
+        if (a.speed > b.speed) return 1;
         return 0;
     };
 
@@ -203,10 +209,9 @@ class Results extends BasePage {
             case "classes":
                 for (let i in objs) {
                     const obj = objs[i];
-                    objs[i] = {
-                        id: obj.id,
-                        display: obj.weight + " " + obj.category
-                    };
+                    let display = obj.weight + " " + obj.category;
+                    if (obj.speed > 4) display += " (" + obj.speed + ")";
+                    objs[i] = { id: obj.id, display: display };
                 }
                 break;
 

@@ -258,11 +258,6 @@ class Pull extends Base {
         this.season = json.season ? json.season : ""; // Season id
         this.location = json.location ? json.location : ""; // Location id
         this.date = json.date ? json.date : "";
-        this.hour = json.hour ? json.hour : "";
-        this.minute = json.minute ? json.minute : "";
-        this.meridiem = json.meridiem ? json.meridiem : "";
-        this.notes = json.notes ? json.notes : "";
-        this.blacktop = json.blacktop ? json.blacktop : false;
         this.classes = json.classes ? new Set(json.classes) : new Set(); // Class ids
     }
 
@@ -295,7 +290,6 @@ class Puller extends Base {
         super(json);
         this.first_name = json.first_name ? json.first_name : "";
         this.last_name = json.last_name ? json.last_name : "";
-        this.member = json.member ? json.member : false;
     }
 }
 
@@ -333,7 +327,6 @@ class Season extends Base {
 class Tractor extends Base {
     constructor(json) {
         super(json);
-        this.owner = json.owner ? json.owner : ""; // Puller id
         this.brand = json.brand ? json.brand : "";
         this.model = json.model ? json.model : "";
     }
