@@ -51,7 +51,6 @@ body {
 }
 
 .tableContainer {
-    position: absolute;
     overflow: auto;
     height: calc(100vh - 175px);
     display: inline-block;
@@ -59,7 +58,9 @@ body {
 
 .contentContainer {
     padding: 20px;
-    height: calc(100% - 40px - 3.5em);
+    padding-top: 0px;
+    height: calc(100vh - 40px);
+    overflow-y: scroll;
 }
 
 .contentRow {

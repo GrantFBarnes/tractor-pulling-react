@@ -4,7 +4,6 @@ import { Button, Dropdown, DataTable } from "carbon-components-react";
 
 import TypicalDropdown from "../../components/TypicalField/TypicalDropdown";
 import TypicalTextInput from "../../components/TypicalField/TypicalTextInput";
-import TypicalToggle from "../../components/TypicalField/TypicalToggle";
 
 import Add20 from "@carbon/icons-react/lib/add/20";
 import Delete20 from "@carbon/icons-react/lib/delete/20";
@@ -34,23 +33,6 @@ class Edit extends BasePage {
             { id: "Class", display: "Classes" },
             { id: "Hook", display: "Hooks" }
         ];
-        this.state.allObjects = {};
-    }
-
-    doneMounting() {
-        const that = this;
-        that.setState({ loading: true });
-        fetch(this.server_host + "/api/objects", { credentials: "include" })
-            .then(response => {
-                return response.json();
-            })
-            .then(allObjects => {
-                that.setState({ loading: false, allObjects: allObjects });
-            })
-            .catch(err => {
-                that.setState({ loading: false });
-                alert("Failed to get data");
-            });
     }
 
     updateObj = e => {
@@ -182,7 +164,25 @@ class Edit extends BasePage {
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
             if (obj.type !== this.state.objType) continue;
-            rows.push(obj);
+            switch (this.state.objType) {
+                case "Pull":
+                    if (obj.season === this.state.season) {
+                        rows.push(obj);
+                    }
+                    break;
+                case "Class":
+                    if (obj.pull === this.state.pull) {
+                        rows.push(obj);
+                    }
+                    break;
+                case "Hook":
+                    if (obj.class === this.state.class) {
+                        rows.push(obj);
+                    }
+                    break;
+                default:
+                    rows.push(obj);
+            }
         }
         return rows;
     };
@@ -420,6 +420,56 @@ class Edit extends BasePage {
         );
     };
 
+    genFilters = filtered => {
+        switch (this.state.objType) {
+            case "Pull":
+                return (
+                    <div className="contentRow">
+                        {filtered.seasons.length
+                            ? this.genSeasonDropdown(filtered)
+                            : null}
+                    </div>
+                );
+            case "Class":
+                return (
+                    <div className="contentRow">
+                        <div className="halfColumn paddingRight">
+                            {filtered.seasons.length
+                                ? this.genSeasonDropdown(filtered)
+                                : null}
+                        </div>
+                        <div className="halfColumn paddingLeft">
+                            {filtered.pulls.length
+                                ? this.genPullDropdown(filtered)
+                                : null}
+                        </div>
+                    </div>
+                );
+            case "Hook":
+                return (
+                    <div className="contentRow">
+                        <div className="thirdColumn paddingRight">
+                            {filtered.seasons.length
+                                ? this.genSeasonDropdown(filtered)
+                                : null}
+                        </div>
+                        <div className="thirdColumn paddingLeft paddingRight">
+                            {filtered.pulls.length
+                                ? this.genPullDropdown(filtered)
+                                : null}
+                        </div>
+                        <div className="thirdColumn paddingLeft">
+                            {filtered.classes.length
+                                ? this.genClassDropdown(filtered)
+                                : null}
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
     contentRender() {
         if (!this.state.canEdit) {
             return (
@@ -433,6 +483,7 @@ class Edit extends BasePage {
                 </div>
             );
         }
+        const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
                 <div className="contentRow">
@@ -456,9 +507,7 @@ class Edit extends BasePage {
                                 if (!e.selectedItem) {
                                     e.selectedItem = { id: "" };
                                 }
-                                this.setState({
-                                    objType: e.selectedItem.id
-                                });
+                                this.setState({ objType: e.selectedItem.id });
                             }}
                         />
                     </div>
@@ -478,6 +527,7 @@ class Edit extends BasePage {
                         </Button>
                     </div>
                 </div>
+                {this.genFilters(filtered)}
                 <div className="contentRow">
                     <div
                         className={

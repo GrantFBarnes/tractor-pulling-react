@@ -1,6 +1,6 @@
 import React from "react";
 import BasePage from "../BasePage";
-import { Dropdown, DataTable } from "carbon-components-react";
+import { DataTable } from "carbon-components-react";
 
 const {
     Table,
@@ -15,95 +15,6 @@ const {
 } = DataTable;
 
 class Results extends BasePage {
-    constructor() {
-        super();
-        this.state.allObjects = {};
-
-        this.state.season = "";
-        this.state.pull = "";
-        this.state.class = "";
-    }
-
-    setUp = allObjects => {
-        let newState = { loading: false, allObjects: allObjects };
-        if (this.props.location.search) {
-            const params = this.props.location.search.split("&");
-            for (let i in params) {
-                params[i] = params[i].replace("?", "");
-                let split = params[i].split("=");
-                if (split[0] === "season") {
-                    newState.season = split[1];
-                } else if (split[0] === "pull") {
-                    newState.pull = split[1];
-                } else if (split[0] === "class") {
-                    newState.class = split[1];
-                }
-            }
-        } else {
-            let latestSeason = {};
-            for (let id in allObjects) {
-                const obj = allObjects[id];
-                if (obj.type !== "Season") continue;
-                if (!latestSeason.year || obj.year > latestSeason.year) {
-                    latestSeason = obj;
-                }
-            }
-            newState.season = latestSeason.id;
-
-            let latestPull = {};
-            for (let id in allObjects) {
-                const obj = allObjects[id];
-                if (obj.type !== "Pull") continue;
-                if (obj.season !== latestSeason.id) continue;
-                if (
-                    !latestPull.date ||
-                    new Date(obj.date) > new Date(latestPull.date)
-                ) {
-                    latestPull = obj;
-                }
-            }
-            newState.pull = latestPull.id;
-
-            let latestClass = {};
-            for (let id in allObjects) {
-                const obj = allObjects[id];
-                if (obj.type !== "Class") continue;
-                if (obj.pull !== latestPull.id) continue;
-                if (!latestClass.weight) {
-                    latestClass = obj;
-                    continue;
-                }
-                if (obj.weight < latestClass.weight) {
-                    latestClass = obj;
-                }
-                if (obj.category > latestClass.category) {
-                    latestClass = obj;
-                }
-                if (obj.speed < latestClass.speed) {
-                    latestClass = obj;
-                }
-            }
-            newState.class = latestClass.id;
-        }
-        this.setState(newState);
-    };
-
-    doneMounting() {
-        const that = this;
-        this.setState({ loading: true });
-        fetch(this.server_host + "/api/objects", { credentials: "include" })
-            .then(response => {
-                return response.json();
-            })
-            .then(allObjects => {
-                this.setUp(allObjects);
-            })
-            .catch(err => {
-                that.setState({ loading: false });
-                alert("Failed to get data");
-            });
-    }
-
     genResultsTable = hooks => {
         return (
             <DataTable
@@ -182,201 +93,61 @@ class Results extends BasePage {
         return 0;
     };
 
-    getDisplay = (objs, type) => {
-        switch (type) {
-            case "seasons":
-                for (let i in objs) {
-                    const obj = objs[i];
-                    objs[i] = { id: obj.id, display: obj.year };
-                }
-                break;
-
-            case "pulls":
-                for (let i in objs) {
-                    const obj = objs[i];
-                    const location = this.state.allObjects[obj.location]
-                        ? this.state.allObjects[obj.location].town +
-                          ", " +
-                          this.state.allObjects[obj.location].state
-                        : "(No Location)";
-                    objs[i] = {
-                        id: obj.id,
-                        display: obj.date + " - " + location
-                    };
-                }
-                break;
-
-            case "classes":
-                for (let i in objs) {
-                    const obj = objs[i];
-                    let display = obj.weight + " " + obj.category;
-                    if (obj.speed > 4) display += " (" + obj.speed + ")";
-                    objs[i] = { id: obj.id, display: display };
-                }
-                break;
-
-            case "hooks":
-                for (let i in objs) {
-                    const obj = objs[i];
-                    objs[i] = {
-                        id: obj.id,
-                        position: obj.position,
-                        puller: this.state.allObjects[obj.puller]
-                            ? this.state.allObjects[obj.puller].first_name +
-                              " " +
-                              this.state.allObjects[obj.puller].last_name
-                            : "(No Puller)",
-                        tractor: this.state.allObjects[obj.tractor]
-                            ? this.state.allObjects[obj.tractor].brand +
-                              " " +
-                              this.state.allObjects[obj.tractor].model
-                            : "(No Tractor)",
-                        distance: obj.distance
-                    };
-                }
-                break;
-
-            default:
-                break;
+    genSmallWinFilters = filtered => {
+        let dropdowns = [];
+        if (filtered.seasons.length) {
+            dropdowns.push(
+                <div key="seasonRow" className="contentRow">
+                    {this.genSeasonDropdown(filtered)}
+                </div>
+            );
         }
-        return objs;
+        if (filtered.pulls.length) {
+            dropdowns.push(
+                <div key="pullRow" className="contentRow">
+                    {this.genPullDropdown(filtered)}
+                </div>
+            );
+        }
+        if (filtered.classes.length) {
+            dropdowns.push(
+                <div key="classRow" className="contentRow">
+                    {this.genClassDropdown(filtered)}
+                </div>
+            );
+        }
+        return dropdowns;
     };
 
-    getResults = () => {
-        let results = {
-            seasons: [],
-            pulls: [],
-            classes: [],
-            hooks: []
-        };
-        for (let id in this.state.allObjects) {
-            const obj = this.state.allObjects[id];
-            if (obj.type === "Season") {
-                results.seasons.push(obj);
-            } else if (obj.type === "Pull") {
-                if (obj.season === this.state.season) {
-                    results.pulls.push(obj);
-                }
-            } else if (obj.type === "Class") {
-                if (obj.pull === this.state.pull) {
-                    results.classes.push(obj);
-                }
-            } else if (obj.type === "Hook") {
-                if (obj.class === this.state.class) {
-                    results.hooks.push(obj);
-                }
-            }
-        }
-
-        results.seasons.sort(this.seasonSort);
-        results.pulls.sort(this.pullSort);
-        results.classes.sort(this.classSort);
-        results.hooks.sort(this.hookSort);
-
-        for (let i in results) {
-            results[i] = this.getDisplay(results[i], i);
-        }
-
-        if (!results.seasons.length) {
-            results.pulls = [];
-            results.classes = [];
-            results.hooks = [];
-        } else if (!results.pulls.length) {
-            results.classes = [];
-            results.hooks = [];
-        } else if (!results.classes.length) {
-            results.hooks = [];
-        }
-
-        return results;
+    genLargeWinFilters = filtered => {
+        return (
+            <div className="contentRow">
+                <div className="thirdColumn paddingRight">
+                    {filtered.seasons.length
+                        ? this.genSeasonDropdown(filtered)
+                        : null}
+                </div>
+                <div className="thirdColumn paddingLeft paddingRight">
+                    {filtered.pulls.length
+                        ? this.genPullDropdown(filtered)
+                        : null}
+                </div>
+                <div className="thirdColumn paddingLeft">
+                    {filtered.classes.length
+                        ? this.genClassDropdown(filtered)
+                        : null}
+                </div>
+            </div>
+        );
     };
 
     contentRender() {
-        const results = this.getResults();
+        const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
-                <div className="contentRow">
-                    <div className="thirdColumn paddingRight">
-                        {results.seasons.length ? (
-                            <Dropdown
-                                id="seasons_dropdown"
-                                label="Season"
-                                titleText="Season"
-                                light={false}
-                                items={results.seasons}
-                                itemToString={this.itemToString}
-                                selectedItem={this.getSelected(
-                                    "season",
-                                    results.seasons
-                                )}
-                                initialSelectedItem={this.getSelected(
-                                    "season",
-                                    results.seasons
-                                )}
-                                onChange={e => {
-                                    if (!e.selectedItem) {
-                                        e.selectedItem = { id: "" };
-                                    }
-                                    this.setState({
-                                        season: e.selectedItem.id
-                                    });
-                                }}
-                            />
-                        ) : null}
-                    </div>
-                    <div className="thirdColumn paddingLeft paddingRight">
-                        {results.pulls.length ? (
-                            <Dropdown
-                                id="pull_dropdown"
-                                label="Pull"
-                                titleText="Pull"
-                                light={false}
-                                items={results.pulls}
-                                itemToString={this.itemToString}
-                                selectedItem={this.getSelected(
-                                    "pull",
-                                    results.pulls
-                                )}
-                                initialSelectedItem={this.getSelected(
-                                    "pull",
-                                    results.pulls
-                                )}
-                                onChange={e => {
-                                    if (!e.selectedItem) {
-                                        e.selectedItem = { id: "" };
-                                    }
-                                    this.setState({ pull: e.selectedItem.id });
-                                }}
-                            />
-                        ) : null}
-                    </div>
-                    <div className="thirdColumn paddingLeft">
-                        {results.classes.length ? (
-                            <Dropdown
-                                id="class_dropdown"
-                                label="Class"
-                                titleText="Class"
-                                light={false}
-                                items={results.classes}
-                                itemToString={this.itemToString}
-                                selectedItem={this.getSelected(
-                                    "class",
-                                    results.classes
-                                )}
-                                initialSelectedItem={this.getSelected(
-                                    "class",
-                                    results.classes
-                                )}
-                                onChange={e => {
-                                    if (!e.selectedItem) {
-                                        e.selectedItem = { id: "" };
-                                    }
-                                    this.setState({ class: e.selectedItem.id });
-                                }}
-                            />
-                        ) : null}
-                    </div>
-                </div>
+                {this.state.smallWindow
+                    ? this.genSmallWinFilters(filtered)
+                    : this.genLargeWinFilters(filtered)}
                 <div className="contentRow">
                     <div
                         className={
@@ -386,8 +157,8 @@ class Results extends BasePage {
                                 : "tableContainerSideCollapsed")
                         }
                     >
-                        {results.hooks.length ? (
-                            this.genResultsTable(results.hooks)
+                        {filtered.hooks.length ? (
+                            this.genResultsTable(filtered.hooks)
                         ) : (
                             <div>
                                 <br />
