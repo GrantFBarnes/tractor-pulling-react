@@ -76,7 +76,12 @@ class Edit extends BasePage {
             credentials: "include",
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type: this.state.objType })
+            body: JSON.stringify({
+                type: this.state.objType,
+                season: this.state.season,
+                pull: this.state.pull,
+                class: this.state.class
+            })
         })
             .then(response => {
                 return response.json();
@@ -237,6 +242,7 @@ class Edit extends BasePage {
                 for (let id in this.state.allObjects) {
                     const obj = this.state.allObjects[id];
                     if (obj.type !== "Pull") continue;
+                    if (obj.season !== this.state.season) continue;
                     const location = this.state.allObjects[obj.location]
                         ? this.state.allObjects[obj.location].town
                         : "(No Town)";
@@ -272,6 +278,7 @@ class Edit extends BasePage {
                 for (let id in this.state.allObjects) {
                     const obj = this.state.allObjects[id];
                     if (obj.type !== "Class") continue;
+                    if (obj.pull !== this.state.pull) continue;
                     classes.push(obj);
                 }
                 classes.sort(this.classSort);

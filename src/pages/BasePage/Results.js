@@ -95,21 +95,21 @@ class Results extends BasePage {
 
     genSmallWinFilters = filtered => {
         let dropdowns = [];
-        if (filtered.seasons.length) {
+        if (filtered.seasons.length > 1) {
             dropdowns.push(
                 <div key="seasonRow" className="contentRow">
                     {this.genSeasonDropdown(filtered)}
                 </div>
             );
         }
-        if (filtered.pulls.length) {
+        if (filtered.pulls.length > 1) {
             dropdowns.push(
                 <div key="pullRow" className="contentRow">
                     {this.genPullDropdown(filtered)}
                 </div>
             );
         }
-        if (filtered.classes.length) {
+        if (filtered.classes.length > 1) {
             dropdowns.push(
                 <div key="classRow" className="contentRow">
                     {this.genClassDropdown(filtered)}
@@ -123,17 +123,17 @@ class Results extends BasePage {
         return (
             <div className="contentRow">
                 <div className="thirdColumn paddingRight">
-                    {filtered.seasons.length
+                    {filtered.seasons.length > 1
                         ? this.genSeasonDropdown(filtered)
                         : null}
                 </div>
                 <div className="thirdColumn paddingLeft paddingRight">
-                    {filtered.pulls.length
+                    {filtered.pulls.length > 1
                         ? this.genPullDropdown(filtered)
                         : null}
                 </div>
                 <div className="thirdColumn paddingLeft">
-                    {filtered.classes.length
+                    {filtered.classes.length > 1
                         ? this.genClassDropdown(filtered)
                         : null}
                 </div>

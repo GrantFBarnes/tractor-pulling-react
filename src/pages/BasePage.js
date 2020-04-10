@@ -106,7 +106,11 @@ class BasePage extends Component {
                     if (!e.selectedItem) {
                         e.selectedItem = { id: "" };
                     }
-                    this.setState({ season: e.selectedItem.id });
+                    this.setState({
+                        season: e.selectedItem.id,
+                        pull: "",
+                        class: ""
+                    });
                 }}
             />
         );
@@ -127,7 +131,7 @@ class BasePage extends Component {
                     if (!e.selectedItem) {
                         e.selectedItem = { id: "" };
                     }
-                    this.setState({ pull: e.selectedItem.id });
+                    this.setState({ pull: e.selectedItem.id, class: "" });
                 }}
             />
         );
@@ -224,20 +228,26 @@ class BasePage extends Component {
             classes: [],
             hooks: []
         };
+        let seasonFound = false;
+        let pullFound = false;
+        let classFound = false;
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
             switch (obj.type) {
                 case "Season":
                     filtered.seasons.push(obj);
+                    if (id === this.state.season) seasonFound = true;
                     break;
                 case "Pull":
                     if (obj.season === this.state.season) {
                         filtered.pulls.push(obj);
+                        if (id === this.state.pull) pullFound = true;
                     }
                     break;
                 case "Class":
                     if (obj.pull === this.state.pull) {
                         filtered.classes.push(obj);
+                        if (id === this.state.class) classFound = true;
                     }
                     break;
                 case "Hook":
@@ -259,9 +269,9 @@ class BasePage extends Component {
             filtered[i] = this.getDisplay(filtered[i], i);
         }
 
-        if (!filtered.seasons.length) filtered.pulls = [];
-        if (!filtered.pulls.length) filtered.classes = [];
-        if (!filtered.classes.length) filtered.hooks = [];
+        if (!filtered.seasons.length || !seasonFound) filtered.pulls = [];
+        if (!filtered.pulls.length || !pullFound) filtered.classes = [];
+        if (!filtered.classes.length || !classFound) filtered.hooks = [];
 
         filtered.seasons.push({ id: "", display: "(Blank)" });
         filtered.pulls.push({ id: "", display: "(Blank)" });
