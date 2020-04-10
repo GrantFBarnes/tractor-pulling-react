@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Loading, Dropdown } from "carbon-components-react";
+import { Loading, Dropdown, DataTable } from "carbon-components-react";
 import {
     Header,
     HeaderName,
@@ -14,11 +14,24 @@ import {
 import Edit20 from "@carbon/icons-react/lib/edit/20";
 import Home20 from "@carbon/icons-react/lib/home/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
+import Rival32 from "@carbon/icons-react/lib/partnership/32";
 import Video20 from "@carbon/icons-react/lib/video/20";
 
 import "../styling/BasePage.css";
 
 import TokenModal from "../components/TokenModal";
+
+const {
+    Table,
+    TableHead,
+    TableRow,
+    TableBody,
+    TableCell,
+    TableHeader,
+    TableToolbar,
+    TableToolbarSearch,
+    TableContainer
+} = DataTable;
 
 class BasePage extends Component {
     constructor() {
@@ -161,6 +174,49 @@ class BasePage extends Component {
         );
     };
 
+    genDataTable = (rows, headers) => {
+        return (
+            <DataTable
+                rows={rows}
+                headers={headers}
+                isSortable
+                render={({ rows, headers, getHeaderProps, onInputChange }) => (
+                    <TableContainer>
+                        <TableToolbar>
+                            <TableToolbarSearch onChange={onInputChange} />
+                        </TableToolbar>
+                        <Table>
+                            <TableHead>
+                                <tr>
+                                    {headers.map(header => (
+                                        <TableHeader
+                                            {...getHeaderProps({
+                                                header
+                                            })}
+                                        >
+                                            {header.header}
+                                        </TableHeader>
+                                    ))}
+                                </tr>
+                            </TableHead>
+                            <TableBody>
+                                {rows.map(row => (
+                                    <TableRow key={row.id}>
+                                        {row.cells.map(cell => (
+                                            <TableCell key={cell.id}>
+                                                {cell.value}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
+            />
+        );
+    };
+
     getDisplay = (objs, type) => {
         switch (type) {
             case "seasons":
@@ -219,6 +275,36 @@ class BasePage extends Component {
                 break;
         }
         return objs;
+    };
+
+    seasonSort = (a, b) => {
+        if (a.year < b.year) return 1;
+        if (a.year > b.year) return -1;
+        return 0;
+    };
+
+    pullSort = (a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        if (dateA < dateB) return 1;
+        if (dateA > dateB) return -1;
+        return 0;
+    };
+
+    classSort = (a, b) => {
+        if (a.weight < b.weight) return -1;
+        if (a.weight > b.weight) return 1;
+        if (a.category < b.category) return 1;
+        if (a.category > b.category) return -1;
+        if (a.speed < b.speed) return -1;
+        if (a.speed > b.speed) return 1;
+        return 0;
+    };
+
+    hookSort = (a, b) => {
+        if (a.position < b.position) return -1;
+        if (a.position > b.position) return 1;
+        return 0;
     };
 
     getFiltered = () => {
@@ -429,6 +515,9 @@ class BasePage extends Component {
                             </SideNavLink>
                             <SideNavLink renderIcon={ListNum32} href="/results">
                                 Results
+                            </SideNavLink>
+                            <SideNavLink renderIcon={Rival32} href="/rivals">
+                                Rivals
                             </SideNavLink>
                             {this.state.canEdit ? (
                                 <SideNavLink renderIcon={Edit20} href="/edit">

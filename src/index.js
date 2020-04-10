@@ -6,6 +6,7 @@ import Edit from "./pages/BasePage/Edit";
 import Home from "./pages/BasePage/Home";
 import Results from "./pages/BasePage/Results";
 import Reroute from "./pages/BasePage/Reroute";
+import Rivals from "./pages/BasePage/Rivals";
 
 import * as serviceWorker from "./serviceWorker";
 
@@ -17,6 +18,7 @@ const routing = (
             <Route exact path="/home" component={Home} />
             <Route exact path="/results" component={Results} />
             <Route exact path="/edit" component={Edit} />
+            <Route exact path="/rivals" component={Rivals} />
             <Route exact path="*" component={Reroute} />
         </Switch>
     </BrowserRouter>
