@@ -2,6 +2,42 @@ import React from "react";
 import BasePage from "../BasePage";
 
 class Results extends BasePage {
+    genSmallWinFilters = filtered => {
+        let dropdowns = [];
+        if (filtered.seasons.length > 1) {
+            dropdowns.push(
+                <div key="seasonRow" className="contentRow">
+                    {this.genSeasonDropdown(filtered)}
+                </div>
+            );
+        }
+        if (filtered.pulls.length > 1) {
+            dropdowns.push(
+                <div key="pullRow" className="contentRow">
+                    {this.genPullDropdown(filtered)}
+                </div>
+            );
+        }
+        return dropdowns;
+    };
+
+    genLargeWinFilters = filtered => {
+        return (
+            <div className="contentRow">
+                <div className="halfColumn paddingRight">
+                    {filtered.seasons.length > 1
+                        ? this.genSeasonDropdown(filtered)
+                        : null}
+                </div>
+                <div className="halfColumn paddingLeft">
+                    {filtered.pulls.length > 1
+                        ? this.genPullDropdown(filtered)
+                        : null}
+                </div>
+            </div>
+        );
+    };
+
     rivalSort = (a, b) => {
         if (a.total < b.total) return 1;
         if (a.total > b.total) return -1;
@@ -21,6 +57,21 @@ class Results extends BasePage {
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
             if (obj.type !== "Class") continue;
+
+            const pull = this.state.allObjects[obj.pull];
+            if (!pull) continue;
+
+            if (this.state.pull) {
+                if (obj.pull !== this.state.pull) {
+                    continue;
+                }
+            }
+
+            if (this.state.season) {
+                if (pull.season !== this.state.season) {
+                    continue;
+                }
+            }
 
             let classPullers = [];
             let positions = {};
@@ -85,8 +136,12 @@ class Results extends BasePage {
     };
 
     contentRender() {
+        const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
+                {this.state.smallWindow
+                    ? this.genSmallWinFilters(filtered)
+                    : this.genLargeWinFilters(filtered)}
                 <div className="contentRow">
                     <div
                         className={
