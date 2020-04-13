@@ -27,7 +27,7 @@ function initData() {
                 dataDir + "/" + className + "/" + fileName,
                 "utf-8"
             );
-            objects.createObj(JSON.parse(file));
+            objects.addNewObject(JSON.parse(file));
         }
     }
 }

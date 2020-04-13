@@ -137,95 +137,12 @@ class Base {
     }
 }
 
-class Class extends Base {
-    constructor(json) {
-        super(json);
-        this.pull = json.pull ? json.pull : ""; // Pull id
-        this.category = json.category ? json.category : ""; // farm, antique
-        this.weight = json.weight ? json.weight : 0;
-        this.speed = json.speed ? json.speed : 3;
-        this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // Hook ids
-    }
-
-    updateReferences(objID, objType, method, fields) {
-        let obj = {};
-        switch (objType) {
-            case "Hook":
-                this.updateRef(method, "hooks", objID, "class");
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    changeMatters(objID, objType, method, fields) {
-        switch (objType) {
-            case "Hook":
-                if (!fields.size || fields.has("class")) {
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    validate() {
-        this.weight = parseInt(this.weight);
-        this.speed = parseInt(this.speed);
-    }
-}
-
-class Hook extends Base {
-    constructor(json) {
-        super(json);
-        this.class = json.class ? json.class : ""; // Class id
-        this.puller = json.puller ? json.puller : ""; // Puller id
-        this.tractor = json.tractor ? json.tractor : ""; // Tractor id
-        this.distance = json.distance ? json.distance : 0.0;
-        this.position = json.position ? json.position : 0;
-    }
-
-    changeMatters(objID, objType, method, fields) {
-        switch (objType) {
-            case "Hook":
-                if (!fields.size || fields.has("distance")) {
-                    return true;
-                }
-                break;
-
-            case "Class":
-                if (!fields.size || fields.has("hooks")) {
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    validate() {
-        this.distance = parseFloat(this.distance);
-
-        const parent = allObjects[this.class];
-        if (parent) {
-            let position = 1;
-            for (let i of parent.hooks) {
-                if (i === this.id) continue;
-                const hook = allObjects[i];
-                if (!hook) continue;
-                if (hook.distance > this.distance) position++;
-            }
-            this.position = position;
-        }
-    }
-}
-
 class Location extends Base {
     constructor(json) {
         super(json);
-        this.town = json.town ? json.town : ""; // Class id
-        this.state = json.state ? json.state : ""; // Puller id
-        this.pulls = json.pulls ? new Set(json.pulls) : new Set(); // Pull ids
+        this.town = json.town ? json.town : "";
+        this.state = json.state ? json.state : "";
+        this.pulls = json.pulls ? new Set(json.pulls) : new Set(); // reference children Pull ids
     }
 
     updateReferences(objID, objType, method, fields) {
@@ -247,38 +164,8 @@ class Location extends Base {
                     return true;
                 }
                 break;
-        }
-        return false;
-    }
-}
-
-class Pull extends Base {
-    constructor(json) {
-        super(json);
-        this.season = json.season ? json.season : ""; // Season id
-        this.location = json.location ? json.location : ""; // Location id
-        this.date = json.date ? json.date : "";
-        this.classes = json.classes ? new Set(json.classes) : new Set(); // Class ids
-    }
-
-    updateReferences(objID, objType, method, fields) {
-        let obj = {};
-        switch (objType) {
-            case "Class":
-                this.updateRef(method, "classes", objID, "pull");
-                break;
 
             default:
-                break;
-        }
-    }
-
-    changeMatters(objID, objType, method, fields) {
-        switch (objType) {
-            case "Class":
-                if (!fields.size || fields.has("pull")) {
-                    return true;
-                }
                 break;
         }
         return false;
@@ -290,6 +177,68 @@ class Puller extends Base {
         super(json);
         this.first_name = json.first_name ? json.first_name : "";
         this.last_name = json.last_name ? json.last_name : "";
+        this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // reference children Hook ids
+    }
+
+    updateReferences(objID, objType, method, fields) {
+        let obj = {};
+        switch (objType) {
+            case "Hook":
+                this.updateRef(method, "hooks", objID, "puller");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    changeMatters(objID, objType, method, fields) {
+        switch (objType) {
+            case "Hook":
+                if (!fields.size || fields.has("puller")) {
+                    return true;
+                }
+                break;
+
+            default:
+                break;
+        }
+        return false;
+    }
+}
+
+class Tractor extends Base {
+    constructor(json) {
+        super(json);
+        this.brand = json.brand ? json.brand : "";
+        this.model = json.model ? json.model : "";
+        this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // reference children Hook ids
+    }
+
+    updateReferences(objID, objType, method, fields) {
+        let obj = {};
+        switch (objType) {
+            case "Hook":
+                this.updateRef(method, "hooks", objID, "tractor");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    changeMatters(objID, objType, method, fields) {
+        switch (objType) {
+            case "Hook":
+                if (!fields.size || fields.has("tractor")) {
+                    return true;
+                }
+                break;
+
+            default:
+                break;
+        }
+        return false;
     }
 }
 
@@ -297,7 +246,8 @@ class Season extends Base {
     constructor(json) {
         super(json);
         this.year = json.year ? json.year : "";
-        this.pulls = json.pulls ? new Set(json.pulls) : new Set(); // Pull ids
+
+        this.pulls = json.pulls ? new Set(json.pulls) : new Set(); // children Pull ids
     }
 
     updateReferences(objID, objType, method, fields) {
@@ -315,20 +265,197 @@ class Season extends Base {
     changeMatters(objID, objType, method, fields) {
         switch (objType) {
             case "Pull":
-                if (!fields.size || fields.has("season")) {
+                if (!fields.size) {
                     return true;
                 }
+                break;
+
+            default:
                 break;
         }
         return false;
     }
 }
 
-class Tractor extends Base {
+class Pull extends Base {
     constructor(json) {
         super(json);
-        this.brand = json.brand ? json.brand : "";
-        this.model = json.model ? json.model : "";
+        this.season = json.season ? json.season : ""; // parent Season id
+
+        this.location = json.location ? json.location : ""; // reference Location id
+        this.date = json.date ? json.date : "";
+
+        this.classes = json.classes ? new Set(json.classes) : new Set(); // children Class ids
+    }
+
+    updateReferences(objID, objType, method, fields) {
+        if (objID === this.location) {
+            if (method === "delete") {
+                this.location = "";
+            }
+        }
+
+        let obj = {};
+        switch (objType) {
+            case "Class":
+                this.updateRef(method, "classes", objID, "pull");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    changeMatters(objID, objType, method, fields) {
+        if (objID === this.season) {
+            if (method === "delete") {
+                deleteObj(this.id);
+                return false;
+            }
+        }
+
+        if (objID === this.location) {
+            if (method === "delete") {
+                return true;
+            }
+        }
+
+        switch (objType) {
+            case "Class":
+                if (!fields.size) {
+                    return true;
+                }
+                break;
+
+            default:
+                break;
+        }
+        return false;
+    }
+}
+
+class Class extends Base {
+    constructor(json) {
+        super(json);
+        this.pull = json.pull ? json.pull : ""; // parent Pull id
+
+        this.category = json.category ? json.category : ""; // farm, antique
+        this.weight = json.weight ? json.weight : 0;
+        this.speed = json.speed ? json.speed : 3;
+
+        this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // children Hook ids
+    }
+
+    updateReferences(objID, objType, method, fields) {
+        let obj = {};
+        switch (objType) {
+            case "Hook":
+                this.updateRef(method, "hooks", objID, "class");
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    changeMatters(objID, objType, method, fields) {
+        if (objID === this.pull) {
+            if (method === "delete") {
+                deleteObj(this.id);
+                return false;
+            }
+        }
+        switch (objType) {
+            case "Hook":
+                if (!fields.size) {
+                    return true;
+                }
+                break;
+
+            default:
+                break;
+        }
+        return false;
+    }
+
+    validate() {
+        this.weight = parseInt(this.weight);
+        this.speed = parseInt(this.speed);
+
+        if (this.category === "farm") {
+            this.speed = 3;
+        } else if (this.category === "antique") {
+            if (this.speed === 3) {
+                this.speed = 4;
+            }
+        }
+    }
+}
+
+class Hook extends Base {
+    constructor(json) {
+        super(json);
+        this.class = json.class ? json.class : ""; // parent Class id
+
+        this.puller = json.puller ? json.puller : ""; // reference Puller id
+        this.tractor = json.tractor ? json.tractor : ""; // reference Tractor id
+        this.distance = json.distance ? json.distance : 0.0;
+        this.position = json.position ? json.position : 0;
+    }
+
+    updateReferences(objID, objType, method, fields) {
+        if (objID === this.puller) {
+            if (method === "delete") {
+                this.puller = "";
+            }
+        } else if (objID === this.tractor) {
+            if (method === "delete") {
+                this.tractor = "";
+            }
+        }
+    }
+
+    changeMatters(objID, objType, method, fields) {
+        if (objID === this.class) {
+            if (method === "delete") {
+                deleteObj(this.id);
+                return false;
+            }
+        }
+
+        if (objID === this.puller || objID === this.tractor) {
+            if (method === "delete") {
+                return true;
+            }
+        }
+
+        switch (objType) {
+            case "Hook":
+                if (!fields.size || fields.has("distance")) {
+                    return true;
+                }
+                break;
+
+            default:
+                break;
+        }
+        return false;
+    }
+
+    validate() {
+        this.distance = parseFloat(this.distance);
+
+        const parent = allObjects[this.class];
+        if (parent) {
+            let position = 1;
+            for (let i of parent.hooks) {
+                if (i === this.id) continue;
+                const hook = allObjects[i];
+                if (!hook) continue;
+                if (hook.distance > this.distance) position++;
+            }
+            this.position = position;
+        }
     }
 }
 
@@ -364,10 +491,7 @@ function objectEmit(objID, objType, method, fields) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-function createObj(json) {
-    if (!json.id) json.id = getUUID();
-
+function addNewObject(json) {
     let obj = {};
     switch (json.type) {
         case "Class":
@@ -399,12 +523,22 @@ function createObj(json) {
             break;
 
         default:
-            return { statusCode: 400, data: "object type not found" };
+            return "type not valid";
     }
 
     if (!allClasses[json.type]) allClasses[json.type] = new Set();
     allClasses[json.type].add(obj.id);
     allObjects[obj.id] = obj;
+    return "success";
+}
+
+function createObj(json) {
+    if (!json.id) json.id = getUUID();
+
+    const result = addNewObject(json);
+    if (result !== "success") return { statusCode: 404, data: result };
+
+    const obj = allObjects[json.id];
     persist.saveObj(obj);
     objectEmit(json.id, json.type, "create");
     return { statusCode: 200, data: obj };
@@ -430,7 +564,7 @@ function deleteObj(id) {
     if (!allClasses[obj.type].size) delete allClasses[obj.type];
     delete allObjects[id];
     persist.deleteObj(obj);
-    objectEmit(this.id, this.type, "delete");
+    objectEmit(obj.id, obj.type, "delete");
     return { statusCode: 200, data: "success" };
 }
 
@@ -438,6 +572,7 @@ module.exports.getObject = getObject;
 module.exports.getObjectsByType = getObjectsByType;
 module.exports.getAllObjects = getAllObjects;
 
+module.exports.addNewObject = addNewObject;
 module.exports.createObj = createObj;
 module.exports.updateObj = updateObj;
 module.exports.deleteObj = deleteObj;
