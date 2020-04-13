@@ -41,8 +41,10 @@ class Results extends BasePage {
     rivalSort = (a, b) => {
         if (a.total < b.total) return 1;
         if (a.total > b.total) return -1;
-        if (a.net < b.net) return 1;
-        if (a.net > b.net) return -1;
+        if (a.winsA < b.winsA) return 1;
+        if (a.winsA > b.winsA) return -1;
+        if (a.winsB < b.winsB) return 1;
+        if (a.winsB > b.winsB) return -1;
 
         if (a.pullerA < b.pullerA) return -1;
         if (a.pullerA > b.pullerA) return 1;
@@ -50,6 +52,19 @@ class Results extends BasePage {
         if (a.pullerB > b.pullerB) return 1;
 
         return 0;
+    };
+
+    getPullerDisplay = (puller, wins) => {
+        return (
+            puller.first_name +
+            " " +
+            puller.last_name +
+            " - (" +
+            wins +
+            " Win" +
+            (wins !== 1 ? "s" : "") +
+            ")"
+        );
     };
 
     getRivals = () => {
@@ -93,20 +108,22 @@ class Results extends BasePage {
                     } else {
                         key = pullerA + " " + pullerB;
                     }
-                    if (!pullers[key]) pullers[key] = { net: 0, total: 0 };
+                    if (!pullers[key]) {
+                        pullers[key] = { winsA: 0, winsB: 0, total: 0 };
+                    }
 
                     pullers[key].total++;
                     if (pullerA > pullerB) {
                         if (positions[pullerA] > positions[pullerB]) {
-                            pullers[key].net++;
+                            pullers[key].winsA++;
                         } else {
-                            pullers[key].net--;
+                            pullers[key].winsB++;
                         }
                     } else {
                         if (positions[pullerB] > positions[pullerA]) {
-                            pullers[key].net++;
+                            pullers[key].winsA++;
                         } else {
-                            pullers[key].net--;
+                            pullers[key].winsB++;
                         }
                     }
                 }
@@ -118,17 +135,20 @@ class Results extends BasePage {
             const split = p.split(" ");
             let pullerA = this.state.allObjects[split[0]];
             let pullerB = this.state.allObjects[split[1]];
-            if (pullers[p].net < 0) {
+            if (pullers[p].winsA < pullers[p].winsB) {
                 pullerA = this.state.allObjects[split[1]];
                 pullerB = this.state.allObjects[split[0]];
-                pullers[p].net = pullers[p].net * -1;
+                const temp = pullers[p].winsA;
+                pullers[p].winsA = pullers[p].winsB;
+                pullers[p].winsB = temp;
             }
             rivals.push({
                 id: p,
-                pullerA: pullerA.first_name + " " + pullerA.last_name,
-                pullerB: pullerB.first_name + " " + pullerB.last_name,
-                net: pullers[p].net,
-                total: pullers[p].total
+                total: pullers[p].total,
+                winsA: pullers[p].winsA,
+                winsB: pullers[p].winsB,
+                pullerA: this.getPullerDisplay(pullerA, pullers[p].winsA),
+                pullerB: this.getPullerDisplay(pullerB, pullers[p].winsB)
             });
         }
         rivals.sort(this.rivalSort);
@@ -152,10 +172,9 @@ class Results extends BasePage {
                         }
                     >
                         {this.genDataTable(this.getRivals(), [
-                            { key: "pullerA", header: "Puller A" },
-                            { key: "pullerB", header: "Puller B" },
-                            { key: "net", header: "Net A Has Beaten B" },
-                            { key: "total", header: "Total Faceoffs" }
+                            { key: "total", header: "Faceoffs" },
+                            { key: "pullerA", header: "Puller" },
+                            { key: "pullerB", header: "Puller" }
                         ])}
                     </div>
                 </div>
