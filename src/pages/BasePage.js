@@ -14,6 +14,7 @@ import {
 import Edit20 from "@carbon/icons-react/lib/edit/20";
 import Home20 from "@carbon/icons-react/lib/home/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
+import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rival32 from "@carbon/icons-react/lib/partnership/32";
 import Video20 from "@carbon/icons-react/lib/video/20";
 
@@ -515,6 +516,12 @@ class BasePage extends Component {
                             </SideNavLink>
                             <SideNavLink renderIcon={ListNum32} href="/results">
                                 Results
+                            </SideNavLink>
+                            <SideNavLink
+                                renderIcon={Percent32}
+                                href="/percentile"
+                            >
+                                Percentile
                             </SideNavLink>
                             <SideNavLink renderIcon={Rival32} href="/rivals">
                                 Rivals

@@ -1,7 +1,7 @@
 import React from "react";
 import BasePage from "../BasePage";
 
-class Results extends BasePage {
+class Rivals extends BasePage {
     genSmallWinFilters = filtered => {
         let dropdowns = [];
         if (filtered.seasons.length > 1) {
@@ -183,4 +183,4 @@ class Results extends BasePage {
     }
 }
 
-export default Results;
+export default Rivals;
