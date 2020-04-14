@@ -16,6 +16,7 @@ import Home20 from "@carbon/icons-react/lib/home/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
 import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rival32 from "@carbon/icons-react/lib/partnership/32";
+import Ruler32 from "@carbon/icons-react/lib/ruler/32";
 import Video20 from "@carbon/icons-react/lib/video/20";
 
 import "../styling/BasePage.css";
@@ -175,6 +176,13 @@ class BasePage extends Component {
         );
     };
 
+    getTableContainerClass = () => {
+        if (this.state.sideExpanded) {
+            return "tableContainer tableContainerSideExpanded";
+        }
+        return "tableContainer tableContainerSideCollapsed";
+    };
+
     genDataTable = (rows, headers) => {
         return (
             <DataTable
@@ -306,6 +314,61 @@ class BasePage extends Component {
         if (a.position < b.position) return -1;
         if (a.position > b.position) return 1;
         return 0;
+    };
+
+    genSmWinFilters = (filtered, filters) => {
+        let dropdowns = [];
+        if (filtered.seasons.length > 1 && filters.includes("season")) {
+            dropdowns.push(
+                <div key="seasonRow" className="contentRow">
+                    {this.genSeasonDropdown(filtered)}
+                </div>
+            );
+        }
+        if (filtered.pulls.length > 1 && filters.includes("pull")) {
+            dropdowns.push(
+                <div key="pullRow" className="contentRow">
+                    {this.genPullDropdown(filtered)}
+                </div>
+            );
+        }
+        if (filtered.classes.length > 1 && filters.includes("class")) {
+            dropdowns.push(
+                <div key="classRow" className="contentRow">
+                    {this.genClassDropdown(filtered)}
+                </div>
+            );
+        }
+        return dropdowns;
+    };
+
+    genLgWinFilters = (filtered, filters) => {
+        return (
+            <div className="contentRow">
+                <div className="thirdColumn paddingRight">
+                    {filtered.seasons.length > 1 && filters.includes("season")
+                        ? this.genSeasonDropdown(filtered)
+                        : null}
+                </div>
+                <div className="thirdColumn paddingLeft paddingRight">
+                    {filtered.pulls.length > 1 && filters.includes("pull")
+                        ? this.genPullDropdown(filtered)
+                        : null}
+                </div>
+                <div className="thirdColumn paddingLeft">
+                    {filtered.classes.length > 1 && filters.includes("class")
+                        ? this.genClassDropdown(filtered)
+                        : null}
+                </div>
+            </div>
+        );
+    };
+
+    genFilters = (filtered, filters) => {
+        if (this.state.smallWindow) {
+            return this.genSmWinFilters(filtered, filters);
+        }
+        return this.genLgWinFilters(filtered, filters);
     };
 
     getFiltered = () => {
@@ -515,6 +578,9 @@ class BasePage extends Component {
                             </SideNavLink>
                             <SideNavLink renderIcon={ListNum32} href="/results">
                                 Results
+                            </SideNavLink>
+                            <SideNavLink renderIcon={Ruler32} href="/distances">
+                                Distances
                             </SideNavLink>
                             <SideNavLink
                                 renderIcon={Percent32}

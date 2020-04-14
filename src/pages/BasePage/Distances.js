@@ -1,12 +1,12 @@
 import React from "react";
 import BasePage from "../BasePage";
 
-class Percentile extends BasePage {
-    percentileSort = (a, b) => {
-        if (a.percentile < b.percentile) return 1;
-        if (a.percentile > b.percentile) return -1;
-        if (a.hooks < b.hooks) return 1;
-        if (a.hooks > b.hooks) return -1;
+class Distances extends BasePage {
+    distanceSort = (a, b) => {
+        if (a.average < b.average) return 1;
+        if (a.average > b.average) return -1;
+        if (a.total < b.total) return 1;
+        if (a.total > b.total) return -1;
 
         if (a.puller < b.puller) return -1;
         if (a.puller > b.puller) return 1;
@@ -14,7 +14,7 @@ class Percentile extends BasePage {
         return 0;
     };
 
-    getPercentiles = () => {
+    getDistances = () => {
         let pullers = {};
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
@@ -35,8 +35,6 @@ class Percentile extends BasePage {
                 }
             }
 
-            const hookCount = obj.hooks.length;
-            if (hookCount <= 1) continue;
             for (let h in obj.hooks) {
                 const hook = this.state.allObjects[obj.hooks[h]];
                 if (!hook) continue;
@@ -46,25 +44,26 @@ class Percentile extends BasePage {
                 }
                 pullers[hook.puller].hooks++;
                 pullers[hook.puller].sum =
-                    pullers[hook.puller].sum +
-                    (hookCount - hook.position) / (hookCount - 1);
+                    pullers[hook.puller].sum + hook.distance;
             }
         }
 
-        let percentiles = [];
+        let distances = [];
         for (let p in pullers) {
             const puller = this.state.allObjects[p];
-            const percentile = pullers[p].sum / pullers[p].hooks;
-            percentiles.push({
+            const average = pullers[p].sum / pullers[p].hooks;
+            distances.push({
                 id: p,
                 puller: puller.first_name + " " + puller.last_name,
-                percentile: percentile,
-                percent: parseInt(percentile * 100) + "%",
+                average: average,
+                averageDisplay: parseInt(average) + " ft",
+                total: pullers[p].sum,
+                totalDisplay: parseInt(pullers[p].sum) + " ft",
                 hooks: pullers[p].hooks
             });
         }
-        percentiles.sort(this.percentileSort);
-        return percentiles;
+        distances.sort(this.distanceSort);
+        return distances;
     };
 
     contentRender() {
@@ -74,9 +73,10 @@ class Percentile extends BasePage {
                 {this.genFilters(filtered, ["season", "pull"])}
                 <div className="contentRow">
                     <div className={this.getTableContainerClass()}>
-                        {this.genDataTable(this.getPercentiles(), [
+                        {this.genDataTable(this.getDistances(), [
                             { key: "puller", header: "Puller" },
-                            { key: "percent", header: "Percentile" },
+                            { key: "averageDisplay", header: "Average" },
+                            { key: "totalDisplay", header: "Total" },
                             { key: "hooks", header: "Total Hooks" }
                         ])}
                     </div>
@@ -86,4 +86,4 @@ class Percentile extends BasePage {
     }
 }
 
-export default Percentile;
+export default Distances;

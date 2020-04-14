@@ -608,14 +608,7 @@ class Edit extends BasePage {
                 </div>
                 {this.genFilters(filtered)}
                 <div className="contentRow">
-                    <div
-                        className={
-                            "tableContainer " +
-                            (this.state.sideExpanded
-                                ? "tableContainerSideExpanded"
-                                : "tableContainerSideCollapsed")
-                        }
-                    >
+                    <div className={this.getTableContainerClass()}>
                         {this.genEditTable()}
                     </div>
                 </div>

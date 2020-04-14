@@ -2,42 +2,6 @@ import React from "react";
 import BasePage from "../BasePage";
 
 class Rivals extends BasePage {
-    genSmallWinFilters = filtered => {
-        let dropdowns = [];
-        if (filtered.seasons.length > 1) {
-            dropdowns.push(
-                <div key="seasonRow" className="contentRow">
-                    {this.genSeasonDropdown(filtered)}
-                </div>
-            );
-        }
-        if (filtered.pulls.length > 1) {
-            dropdowns.push(
-                <div key="pullRow" className="contentRow">
-                    {this.genPullDropdown(filtered)}
-                </div>
-            );
-        }
-        return dropdowns;
-    };
-
-    genLargeWinFilters = filtered => {
-        return (
-            <div className="contentRow">
-                <div className="halfColumn paddingRight">
-                    {filtered.seasons.length > 1
-                        ? this.genSeasonDropdown(filtered)
-                        : null}
-                </div>
-                <div className="halfColumn paddingLeft">
-                    {filtered.pulls.length > 1
-                        ? this.genPullDropdown(filtered)
-                        : null}
-                </div>
-            </div>
-        );
-    };
-
     rivalSort = (a, b) => {
         if (a.total < b.total) return 1;
         if (a.total > b.total) return -1;
@@ -159,18 +123,9 @@ class Rivals extends BasePage {
         const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
-                {this.state.smallWindow
-                    ? this.genSmallWinFilters(filtered)
-                    : this.genLargeWinFilters(filtered)}
+                {this.genFilters(filtered, ["season", "pull"])}
                 <div className="contentRow">
-                    <div
-                        className={
-                            "tableContainer " +
-                            (this.state.sideExpanded
-                                ? "tableContainerSideExpanded"
-                                : "tableContainerSideCollapsed")
-                        }
-                    >
+                    <div className={this.getTableContainerClass()}>
                         {this.genDataTable(this.getRivals(), [
                             { key: "total", header: "Faceoffs" },
                             { key: "pullerA", header: "Puller" },

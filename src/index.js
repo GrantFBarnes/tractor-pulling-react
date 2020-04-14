@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.scss";
 
+import Distances from "./pages/BasePage/Distances";
 import Edit from "./pages/BasePage/Edit";
 import Home from "./pages/BasePage/Home";
 import Percentile from "./pages/BasePage/Percentile";
@@ -18,6 +19,7 @@ const routing = (
         <Switch>
             <Route exact path="/home" component={Home} />
             <Route exact path="/results" component={Results} />
+            <Route exact path="/distances" component={Distances} />
             <Route exact path="/percentile" component={Percentile} />
             <Route exact path="/rivals" component={Rivals} />
             <Route exact path="/edit" component={Edit} />
