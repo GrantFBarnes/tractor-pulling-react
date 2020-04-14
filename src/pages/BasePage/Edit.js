@@ -43,6 +43,9 @@ class Edit extends BasePage {
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
             if (obj.type === "Hook") {
+                if (!obj.puller) continue;
+                if (!obj.class) continue;
+                if (!obj.tractor) continue;
                 const pullerClass = obj.puller + " " + obj.class;
                 if (!pullerTractors[pullerClass]) {
                     pullerTractors[pullerClass] = new Set();

@@ -1,14 +1,8 @@
 import React from "react";
-import { Dropdown } from "carbon-components-react";
+import { ComboBox } from "carbon-components-react";
 import TypicalField from "../TypicalField";
 
 class TypicalDropdown extends TypicalField {
-    getDropdownItems = () => {
-        let items = this.props.items ? this.props.items : [];
-        items.push({ id: "", display: "(Blank)" });
-        return items;
-    };
-
     itemToString = item => {
         if (item) return item.display;
         return "";
@@ -26,12 +20,13 @@ class TypicalDropdown extends TypicalField {
     getContent() {
         const id = this.props.obj.id + "*" + this.props.field;
         return (
-            <Dropdown
+            <ComboBox
                 label={this.props.title ? this.props.title : ""}
                 id={id}
                 light={false}
+                placeholder=""
                 className="typical_input"
-                items={this.getDropdownItems()}
+                items={this.props.items ? this.props.items : []}
                 itemToString={this.itemToString}
                 selectedItem={this.selectedItem()}
                 initialSelectedItem={this.selectedItem()}
