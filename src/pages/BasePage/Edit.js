@@ -33,7 +33,44 @@ class Edit extends BasePage {
             { id: "Class", display: "Classes" },
             { id: "Hook", display: "Hooks" }
         ];
+        this.state.pullerTractors = {};
+        this.state.classPullers = {};
     }
+
+    setupDone() {
+        let pullerTractors = {};
+        let classPullers = {};
+        for (let id in this.state.allObjects) {
+            const obj = this.state.allObjects[id];
+            if (obj.type === "Hook") {
+                const pullerClass = obj.puller + " " + obj.class;
+                if (!pullerTractors[pullerClass]) {
+                    pullerTractors[pullerClass] = new Set();
+                }
+
+                pullerTractors[pullerClass].add(obj.tractor);
+            } else if (obj.type === "Class") {
+                const classType = this.getClassType(id);
+                if (!classPullers[classType]) {
+                    classPullers[classType] = new Set();
+                }
+                for (let i in obj.hooks) {
+                    const hook = this.state.allObjects[obj.hooks[i]];
+                    if (!hook.puller) continue;
+                    classPullers[classType].add(hook.puller);
+                }
+            }
+        }
+        this.setState({
+            pullerTractors: pullerTractors,
+            classPullers: classPullers
+        });
+    }
+
+    getClassType = id => {
+        const obj = this.state.allObjects[id];
+        return obj.weight + " " + obj.category + " " + obj.speed;
+    };
 
     updateObj = e => {
         let newVal = e.target.value;
@@ -124,38 +161,45 @@ class Edit extends BasePage {
     getHeaders = () => {
         let headers = [];
         switch (this.state.objType) {
-            case "Season":
-                headers.push({ key: "year", header: "Year" });
-                break;
             case "Location":
                 headers.push({ key: "town", header: "Town" });
                 headers.push({ key: "state", header: "State" });
                 break;
-            case "Hook":
-                headers.push({ key: "class", header: "Class" });
-                headers.push({ key: "puller", header: "Puller" });
-                headers.push({ key: "tractor", header: "Tractor" });
-                headers.push({ key: "distance", header: "Distance" });
-                break;
-            case "Tractor":
-                headers.push({ key: "brand", header: "Brand" });
-                headers.push({ key: "model", header: "Model" });
-                break;
+
             case "Puller":
                 headers.push({ key: "first_name", header: "First" });
                 headers.push({ key: "last_name", header: "Last" });
                 break;
+
+            case "Tractor":
+                headers.push({ key: "brand", header: "Brand" });
+                headers.push({ key: "model", header: "Model" });
+                break;
+
+            case "Season":
+                headers.push({ key: "year", header: "Year" });
+                break;
+
+            case "Pull":
+                headers.push({ key: "season", header: "Season" });
+                headers.push({ key: "location", header: "Location" });
+                headers.push({ key: "date", header: "Date" });
+                break;
+
             case "Class":
                 headers.push({ key: "pull", header: "Pull" });
                 headers.push({ key: "category", header: "Category" });
                 headers.push({ key: "weight", header: "Weight" });
                 headers.push({ key: "speed", header: "Speed" });
                 break;
-            case "Pull":
-                headers.push({ key: "season", header: "Season" });
-                headers.push({ key: "location", header: "Location" });
-                headers.push({ key: "date", header: "Date" });
+
+            case "Hook":
+                headers.push({ key: "class", header: "Class" });
+                headers.push({ key: "puller", header: "Puller" });
+                headers.push({ key: "tractor", header: "Tractor" });
+                headers.push({ key: "distance", header: "Distance" });
                 break;
+
             default:
                 break;
         }
@@ -216,7 +260,7 @@ class Edit extends BasePage {
         return 0;
     };
 
-    getItems = field => {
+    getItems = (field, row) => {
         let options = [];
         switch (field) {
             case "season":
@@ -264,6 +308,17 @@ class Edit extends BasePage {
                     pullers.push(obj);
                 }
                 pullers.sort(this.pullerSort);
+
+                const classType = this.getClassType(this.state.class);
+                if (this.state.classPullers[classType]) {
+                    let normalPullers = [];
+                    for (let pid of this.state.classPullers[classType]) {
+                        const puller = this.state.allObjects[pid];
+                        normalPullers.push(puller);
+                    }
+                    normalPullers.sort(this.pullerSort);
+                    pullers = [...new Set([...normalPullers, ...pullers])];
+                }
                 for (let i in pullers) {
                     const obj = pullers[i];
                     options.push({
@@ -298,6 +353,17 @@ class Edit extends BasePage {
                     tractors.push(obj);
                 }
                 tractors.sort(this.tractorSort);
+
+                const pullerClass = row.puller + " " + row.class;
+                if (this.state.pullerTractors[pullerClass]) {
+                    let normalTractors = [];
+                    for (let tid of this.state.pullerTractors[pullerClass]) {
+                        const tractor = this.state.allObjects[tid];
+                        normalTractors.push(tractor);
+                    }
+                    normalTractors.sort(this.tractorSort);
+                    tractors = [...new Set([...normalTractors, ...tractors])];
+                }
                 for (let i in tractors) {
                     const obj = tractors[i];
                     options.push({
@@ -361,7 +427,7 @@ class Edit extends BasePage {
                     <TypicalDropdown
                         obj={obj}
                         field={header}
-                        items={this.getItems(header)}
+                        items={this.getItems(header, obj)}
                         handleUpdate={e => {
                             this.updateObj(e);
                         }}

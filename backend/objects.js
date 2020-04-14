@@ -382,10 +382,10 @@ class Class extends Base {
         this.weight = parseInt(this.weight);
         this.speed = parseInt(this.speed);
 
-        if (this.category === "farm") {
+        if (this.category === "Farm Stock") {
             this.speed = 3;
-        } else if (this.category === "antique") {
-            if (this.speed === 3) {
+        } else if (this.category === "Antique Modified") {
+            if (this.speed !== 4 && this.speed !== 6) {
                 this.speed = 4;
             }
         }
@@ -539,6 +539,7 @@ function createObj(json) {
     if (result !== "success") return { statusCode: 404, data: result };
 
     const obj = allObjects[json.id];
+    obj.validate();
     persist.saveObj(obj);
     objectEmit(json.id, json.type, "create");
     return { statusCode: 200, data: obj };

@@ -367,8 +367,12 @@ class BasePage extends Component {
         return filtered;
     };
 
-    setUp = allObjects => {
-        let newState = { loading: false, allObjects: allObjects };
+    setUp = (canEdit, allObjects) => {
+        let newState = {
+            loading: false,
+            canEdit: canEdit,
+            allObjects: allObjects
+        };
         if (this.props.location.search) {
             const params = this.props.location.search.split("&");
             for (let i in params) {
@@ -429,23 +433,10 @@ class BasePage extends Component {
             newState.class = latestClass.id;
         }
         this.setState(newState);
+        this.setupDone();
     };
 
-    doneMounting() {
-        const that = this;
-        this.setState({ loading: true });
-        fetch(this.server_host + "/api/objects", { credentials: "include" })
-            .then(response => {
-                return response.json();
-            })
-            .then(allObjects => {
-                this.setUp(allObjects);
-            })
-            .catch(err => {
-                that.setState({ loading: false });
-                alert("Failed to get data");
-            });
-    }
+    setupDone() {}
 
     updatePageWidth() {
         this.setState({
@@ -464,16 +455,24 @@ class BasePage extends Component {
             credentials: "include"
         })
             .then(response => {
-                if (response.status === 200) {
-                    that.setState({ loading: false, canEdit: true });
-                } else {
-                    that.setState({ loading: false, canEdit: false });
-                }
+                const canEdit = response.status === 200;
+                fetch(that.server_host + "/api/objects", {
+                    credentials: "include"
+                })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(allObjects => {
+                        that.setUp(canEdit, allObjects);
+                    })
+                    .catch(err => {
+                        that.setState({ loading: false, canEdit: canEdit });
+                        alert("Failed to get data");
+                    });
             })
             .catch(err => {
                 that.setState({ loading: false, canEdit: false });
             });
-        this.doneMounting();
         this.updatePageWidth();
         window.addEventListener("resize", this.updatePageWidth.bind(this));
     }
