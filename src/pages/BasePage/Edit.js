@@ -46,7 +46,8 @@ class Edit extends BasePage {
                 if (!obj.puller) continue;
                 if (!obj.class) continue;
                 if (!obj.tractor) continue;
-                const pullerClass = obj.puller + " " + obj.class;
+                const classType = this.getClassType(obj.class);
+                const pullerClass = obj.puller + " " + classType;
                 if (!pullerTractors[pullerClass]) {
                     pullerTractors[pullerClass] = new Set();
                 }
@@ -265,6 +266,7 @@ class Edit extends BasePage {
 
     getItems = (field, row) => {
         let options = [];
+        let classType = "";
         switch (field) {
             case "season":
                 for (let id in this.state.allObjects) {
@@ -312,7 +314,7 @@ class Edit extends BasePage {
                 }
                 pullers.sort(this.pullerSort);
 
-                const classType = this.getClassType(this.state.class);
+                classType = this.getClassType(this.state.class);
                 if (this.state.classPullers[classType]) {
                     let normalPullers = [];
                     for (let pid of this.state.classPullers[classType]) {
@@ -357,7 +359,8 @@ class Edit extends BasePage {
                 }
                 tractors.sort(this.tractorSort);
 
-                const pullerClass = row.puller + " " + row.class;
+                classType = this.getClassType(row.class);
+                const pullerClass = row.puller + " " + classType;
                 if (this.state.pullerTractors[pullerClass]) {
                     let normalTractors = [];
                     for (let tid of this.state.pullerTractors[pullerClass]) {
