@@ -180,7 +180,8 @@ class BasePage extends Component {
     genSubjectDropdown = () => {
         const options = [
             { id: "puller", display: "Pullers" },
-            { id: "tractor", display: "Tractors" }
+            { id: "tractor", display: "Tractors" },
+            { id: "brand", display: "Brands" }
         ];
         return (
             <Dropdown

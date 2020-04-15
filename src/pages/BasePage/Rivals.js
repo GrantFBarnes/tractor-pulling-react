@@ -23,6 +23,8 @@ class Rivals extends BasePage {
             return "Puller";
         } else if (this.state.subject === "tractor") {
             return "Tractor";
+        } else if (this.state.subject === "tractor") {
+            return "Brand";
         }
     };
 
@@ -32,6 +34,8 @@ class Rivals extends BasePage {
             display = subject.first_name + " " + subject.last_name;
         } else if (this.state.subject === "tractor") {
             display = subject.brand + " " + subject.model;
+        } else if (this.state.subject === "brand") {
+            display = subject;
         }
         display =
             display + " - (" + wins + " Win" + (wins !== 1 ? "s" : "") + ")";
@@ -64,8 +68,15 @@ class Rivals extends BasePage {
             for (let h in obj.hooks) {
                 const hook = this.state.allObjects[obj.hooks[h]];
                 if (!hook) continue;
-                classSubjects.push(hook[this.state.subject]);
-                positions[hook[this.state.subject]] = hook.position;
+                let val = hook[this.state.subject];
+                if (this.state.subject === "brand") {
+                    const tractor = this.state.allObjects[hook.tractor];
+                    if (!tractor) continue;
+                    val = tractor.brand;
+                }
+                if (!val) continue;
+                classSubjects.push(val);
+                positions[val] = hook.position;
             }
 
             for (let i = 0; i < classSubjects.length - 1; i++) {
@@ -76,9 +87,9 @@ class Rivals extends BasePage {
 
                     let key = "";
                     if (subjectA > subjectB) {
-                        key = subjectB + " " + subjectA;
+                        key = subjectB + "." + subjectA;
                     } else {
-                        key = subjectA + " " + subjectB;
+                        key = subjectA + "." + subjectB;
                     }
                     if (!subjects[key]) {
                         subjects[key] = { winsA: 0, winsB: 0, total: 0 };
@@ -104,12 +115,25 @@ class Rivals extends BasePage {
 
         let rivals = [];
         for (let p in subjects) {
-            const split = p.split(" ");
-            let subjectA = this.state.allObjects[split[0]];
-            let subjectB = this.state.allObjects[split[1]];
+            const split = p.split(".");
+            let subjectA = "";
+            let subjectB = "";
+            if (this.state.allObjects[split[0]]) {
+                subjectA = this.state.allObjects[split[0]];
+                subjectB = this.state.allObjects[split[1]];
+                if (subjects[p].winsA < subjects[p].winsB) {
+                    subjectA = this.state.allObjects[split[1]];
+                    subjectB = this.state.allObjects[split[0]];
+                }
+            } else {
+                subjectA = split[0];
+                subjectB = split[1];
+                if (subjects[p].winsA < subjects[p].winsB) {
+                    subjectA = split[1];
+                    subjectB = split[0];
+                }
+            }
             if (subjects[p].winsA < subjects[p].winsB) {
-                subjectA = this.state.allObjects[split[1]];
-                subjectB = this.state.allObjects[split[0]];
                 const temp = subjects[p].winsA;
                 subjects[p].winsA = subjects[p].winsB;
                 subjects[p].winsB = temp;
