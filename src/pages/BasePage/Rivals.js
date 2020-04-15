@@ -18,28 +18,8 @@ class Rivals extends BasePage {
         return 0;
     };
 
-    getSubjectHeader = () => {
-        if (this.state.subject === "puller") {
-            return "Puller";
-        } else if (this.state.subject === "tractor") {
-            return "Tractor";
-        } else if (this.state.subject === "brand") {
-            return "Brand";
-        }
-    };
-
-    getSubjectDisplay = (subject, wins) => {
-        let display = "";
-        if (this.state.subject === "puller") {
-            display = subject.first_name + " " + subject.last_name;
-        } else if (this.state.subject === "tractor") {
-            display = subject.brand + " " + subject.model;
-        } else if (this.state.subject === "brand") {
-            display = subject;
-        }
-        display =
-            display + " - (" + wins + " Win" + (wins !== 1 ? "s" : "") + ")";
-        return display;
+    getSubjectDisplaySecond = wins => {
+        return " - (" + wins + " Win" + (wins !== 1 ? "s" : "") + ")";
     };
 
     getRivals = () => {
@@ -143,8 +123,12 @@ class Rivals extends BasePage {
                 total: subjects[p].total,
                 winsA: subjects[p].winsA,
                 winsB: subjects[p].winsB,
-                subjectA: this.getSubjectDisplay(subjectA, subjects[p].winsA),
-                subjectB: this.getSubjectDisplay(subjectB, subjects[p].winsB)
+                subjectA:
+                    this.getSubjectDisplay(subjectA) +
+                    this.getSubjectDisplaySecond(subjects[p].winsA),
+                subjectB:
+                    this.getSubjectDisplay(subjectB) +
+                    this.getSubjectDisplaySecond(subjects[p].winsB)
             });
         }
         rivals.sort(this.rivalSort);

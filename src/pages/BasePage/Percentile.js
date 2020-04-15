@@ -16,28 +16,6 @@ class Percentile extends BasePage {
         return 0;
     };
 
-    getSubjectHeader = () => {
-        if (this.state.subject === "puller") {
-            return "Puller";
-        } else if (this.state.subject === "tractor") {
-            return "Tractor";
-        } else if (this.state.subject === "brand") {
-            return "Brand";
-        }
-    };
-
-    getSubjectDisplay = (subject, wins) => {
-        let display = "";
-        if (this.state.subject === "puller") {
-            display = subject.first_name + " " + subject.last_name;
-        } else if (this.state.subject === "tractor") {
-            display = subject.brand + " " + subject.model;
-        } else if (this.state.subject === "brand") {
-            display = subject;
-        }
-        return display;
-    };
-
     getHookVal = hook => {
         if (hook[this.state.subject]) return hook[this.state.subject];
         if (this.state.subject === "brand") {

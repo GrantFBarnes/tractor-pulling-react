@@ -177,6 +177,28 @@ class BasePage extends Component {
         );
     };
 
+    getSubjectHeader = () => {
+        if (this.state.subject === "puller") {
+            return "Puller";
+        } else if (this.state.subject === "tractor") {
+            return "Tractor";
+        } else if (this.state.subject === "brand") {
+            return "Brand";
+        }
+    };
+
+    getSubjectDisplay = subject => {
+        let display = "";
+        if (this.state.subject === "puller") {
+            display = subject.first_name + " " + subject.last_name;
+        } else if (this.state.subject === "tractor") {
+            display = subject.brand + " " + subject.model;
+        } else if (this.state.subject === "brand") {
+            display = subject;
+        }
+        return display;
+    };
+
     genSubjectDropdown = () => {
         const options = [
             { id: "puller", display: "Pullers" },
