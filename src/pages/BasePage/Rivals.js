@@ -10,29 +10,36 @@ class Rivals extends BasePage {
         if (a.winsB < b.winsB) return 1;
         if (a.winsB > b.winsB) return -1;
 
-        if (a.pullerA < b.pullerA) return -1;
-        if (a.pullerA > b.pullerA) return 1;
-        if (a.pullerB < b.pullerB) return -1;
-        if (a.pullerB > b.pullerB) return 1;
+        if (a.subjectA < b.subjectA) return -1;
+        if (a.subjectA > b.subjectA) return 1;
+        if (a.subjectB < b.subjectB) return -1;
+        if (a.subjectB > b.subjectB) return 1;
 
         return 0;
     };
 
-    getPullerDisplay = (puller, wins) => {
-        return (
-            puller.first_name +
-            " " +
-            puller.last_name +
-            " - (" +
-            wins +
-            " Win" +
-            (wins !== 1 ? "s" : "") +
-            ")"
-        );
+    getSubjectHeader = () => {
+        if (this.state.subject === "puller") {
+            return "Puller";
+        } else if (this.state.subject === "tractor") {
+            return "Tractor";
+        }
+    };
+
+    getSubjectDisplay = (subject, wins) => {
+        let display = "";
+        if (this.state.subject === "puller") {
+            display = subject.first_name + " " + subject.last_name;
+        } else if (this.state.subject === "tractor") {
+            display = subject.brand + " " + subject.model;
+        }
+        display =
+            display + " - (" + wins + " Win" + (wins !== 1 ? "s" : "") + ")";
+        return display;
     };
 
     getRivals = () => {
-        let pullers = {};
+        let subjects = {};
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
             if (obj.type !== "Class") continue;
@@ -52,42 +59,43 @@ class Rivals extends BasePage {
                 }
             }
 
-            let classPullers = [];
+            let classSubjects = [];
             let positions = {};
             for (let h in obj.hooks) {
                 const hook = this.state.allObjects[obj.hooks[h]];
                 if (!hook) continue;
-                classPullers.push(hook.puller);
-                positions[hook.puller] = hook.position;
+                classSubjects.push(hook[this.state.subject]);
+                positions[hook[this.state.subject]] = hook.position;
             }
 
-            for (let i = 0; i < classPullers.length - 1; i++) {
-                for (let j = i + 1; j < classPullers.length; j++) {
-                    const pullerA = classPullers[i];
-                    const pullerB = classPullers[j];
+            for (let i = 0; i < classSubjects.length - 1; i++) {
+                for (let j = i + 1; j < classSubjects.length; j++) {
+                    const subjectA = classSubjects[i];
+                    const subjectB = classSubjects[j];
+                    if (subjectA === subjectB) continue;
 
                     let key = "";
-                    if (pullerA > pullerB) {
-                        key = pullerB + " " + pullerA;
+                    if (subjectA > subjectB) {
+                        key = subjectB + " " + subjectA;
                     } else {
-                        key = pullerA + " " + pullerB;
+                        key = subjectA + " " + subjectB;
                     }
-                    if (!pullers[key]) {
-                        pullers[key] = { winsA: 0, winsB: 0, total: 0 };
+                    if (!subjects[key]) {
+                        subjects[key] = { winsA: 0, winsB: 0, total: 0 };
                     }
 
-                    pullers[key].total++;
-                    if (pullerA > pullerB) {
-                        if (positions[pullerA] > positions[pullerB]) {
-                            pullers[key].winsA++;
+                    subjects[key].total++;
+                    if (subjectA > subjectB) {
+                        if (positions[subjectA] > positions[subjectB]) {
+                            subjects[key].winsA++;
                         } else {
-                            pullers[key].winsB++;
+                            subjects[key].winsB++;
                         }
                     } else {
-                        if (positions[pullerB] > positions[pullerA]) {
-                            pullers[key].winsA++;
+                        if (positions[subjectB] > positions[subjectA]) {
+                            subjects[key].winsA++;
                         } else {
-                            pullers[key].winsB++;
+                            subjects[key].winsB++;
                         }
                     }
                 }
@@ -95,24 +103,24 @@ class Rivals extends BasePage {
         }
 
         let rivals = [];
-        for (let p in pullers) {
+        for (let p in subjects) {
             const split = p.split(" ");
-            let pullerA = this.state.allObjects[split[0]];
-            let pullerB = this.state.allObjects[split[1]];
-            if (pullers[p].winsA < pullers[p].winsB) {
-                pullerA = this.state.allObjects[split[1]];
-                pullerB = this.state.allObjects[split[0]];
-                const temp = pullers[p].winsA;
-                pullers[p].winsA = pullers[p].winsB;
-                pullers[p].winsB = temp;
+            let subjectA = this.state.allObjects[split[0]];
+            let subjectB = this.state.allObjects[split[1]];
+            if (subjects[p].winsA < subjects[p].winsB) {
+                subjectA = this.state.allObjects[split[1]];
+                subjectB = this.state.allObjects[split[0]];
+                const temp = subjects[p].winsA;
+                subjects[p].winsA = subjects[p].winsB;
+                subjects[p].winsB = temp;
             }
             rivals.push({
                 id: p,
-                total: pullers[p].total,
-                winsA: pullers[p].winsA,
-                winsB: pullers[p].winsB,
-                pullerA: this.getPullerDisplay(pullerA, pullers[p].winsA),
-                pullerB: this.getPullerDisplay(pullerB, pullers[p].winsB)
+                total: subjects[p].total,
+                winsA: subjects[p].winsA,
+                winsB: subjects[p].winsB,
+                subjectA: this.getSubjectDisplay(subjectA, subjects[p].winsA),
+                subjectB: this.getSubjectDisplay(subjectB, subjects[p].winsB)
             });
         }
         rivals.sort(this.rivalSort);
@@ -125,15 +133,16 @@ class Rivals extends BasePage {
 
     contentRender() {
         const filtered = this.getFiltered();
+        const header = this.getSubjectHeader();
         return (
             <div className="contentContainer">
-                {this.genFilters(filtered, ["season", "pull"])}
+                {this.genFilters(filtered, ["season", "pull", "subject"])}
                 <div className="contentRow">
                     <div className={this.getTableContainerClass()}>
                         {this.genDataTable(this.getRivals(), [
                             { key: "total", header: "Faceoffs" },
-                            { key: "pullerA", header: "Puller" },
-                            { key: "pullerB", header: "Puller" }
+                            { key: "subjectA", header: header },
+                            { key: "subjectB", header: header }
                         ])}
                     </div>
                 </div>

@@ -50,7 +50,8 @@ class BasePage extends Component {
             allObjects: {},
             season: "",
             pull: "",
-            class: ""
+            class: "",
+            subject: "puller"
         };
         this.server_host = window.location.origin;
         if (this.server_host.indexOf("localhost") >= 0) {
@@ -171,6 +172,31 @@ class BasePage extends Component {
                         e.selectedItem = { id: "" };
                     }
                     this.setState({ class: e.selectedItem.id });
+                }}
+            />
+        );
+    };
+
+    genSubjectDropdown = () => {
+        const options = [
+            { id: "puller", display: "Pullers" },
+            { id: "tractor", display: "Tractors" }
+        ];
+        return (
+            <Dropdown
+                id="subject_dropdown"
+                label="Subject"
+                titleText="Subject"
+                light={false}
+                items={options}
+                itemToString={this.itemToString}
+                selectedItem={this.getSelected("subject", options)}
+                initialSelectedItem={this.getSelected("subject", options)}
+                onChange={e => {
+                    if (!e.selectedItem) {
+                        e.selectedItem = { id: "" };
+                    }
+                    this.setState({ subject: e.selectedItem.id });
                 }}
             />
         );
@@ -339,13 +365,20 @@ class BasePage extends Component {
                 </div>
             );
         }
+        if (filters.includes("subject")) {
+            dropdowns.push(
+                <div key="classRow" className="contentRow">
+                    {this.genSubjectDropdown()}
+                </div>
+            );
+        }
         return dropdowns;
     };
 
     genLgWinFilters = (filtered, filters) => {
         return (
             <div className="contentRow">
-                <div className="thirdColumn paddingRight">
+                <div className="sixthColumn paddingRight">
                     {filtered.seasons.length > 1 && filters.includes("season")
                         ? this.genSeasonDropdown(filtered)
                         : null}
@@ -355,9 +388,14 @@ class BasePage extends Component {
                         ? this.genPullDropdown(filtered)
                         : null}
                 </div>
-                <div className="thirdColumn paddingLeft">
+                <div className="thirdColumn paddingLeft paddingRight">
                     {filtered.classes.length > 1 && filters.includes("class")
                         ? this.genClassDropdown(filtered)
+                        : null}
+                </div>
+                <div className="sixthColumn paddingLeft">
+                    {filters.includes("subject")
+                        ? this.genSubjectDropdown()
                         : null}
                 </div>
             </div>

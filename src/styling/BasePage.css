@@ -98,6 +98,18 @@ body {
     vertical-align: top;
 }
 
+.fifthColumn {
+    width: 20%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.sixthColumn {
+    width: 16.6666666666%;
+    display: inline-block;
+    vertical-align: top;
+}
+
 .typical_input {
     min-width: 14em;
 }
