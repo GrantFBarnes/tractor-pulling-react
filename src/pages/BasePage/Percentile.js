@@ -10,14 +10,45 @@ class Percentile extends BasePage {
         if (a.hooks < b.hooks) return 1;
         if (a.hooks > b.hooks) return -1;
 
-        if (a.puller < b.puller) return -1;
-        if (a.puller > b.puller) return 1;
+        if (a.subject < b.subject) return -1;
+        if (a.subject > b.subject) return 1;
 
         return 0;
     };
 
+    getSubjectHeader = () => {
+        if (this.state.subject === "puller") {
+            return "Puller";
+        } else if (this.state.subject === "tractor") {
+            return "Tractor";
+        } else if (this.state.subject === "brand") {
+            return "Brand";
+        }
+    };
+
+    getSubjectDisplay = (subject, wins) => {
+        let display = "";
+        if (this.state.subject === "puller") {
+            display = subject.first_name + " " + subject.last_name;
+        } else if (this.state.subject === "tractor") {
+            display = subject.brand + " " + subject.model;
+        } else if (this.state.subject === "brand") {
+            display = subject;
+        }
+        return display;
+    };
+
+    getHookVal = hook => {
+        if (hook[this.state.subject]) return hook[this.state.subject];
+        if (this.state.subject === "brand") {
+            const tractor = this.state.allObjects[hook.tractor];
+            if (tractor && tractor.brand) return tractor.brand;
+        }
+        return null;
+    };
+
     getPercentiles = () => {
-        let pullers = {};
+        let subjects = {};
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
             if (obj.type !== "Class") continue;
@@ -43,17 +74,20 @@ class Percentile extends BasePage {
             for (let h in obj.hooks) {
                 const hook = this.state.allObjects[obj.hooks[h]];
                 if (!hook) continue;
-                if (!hook.puller) continue;
-                if (!pullers[hook.puller]) {
-                    pullers[hook.puller] = {
+
+                const val = this.getHookVal(hook);
+                if (!val) continue;
+
+                if (!subjects[val]) {
+                    subjects[val] = {
                         hooks: 0,
                         position_sum: 0,
                         distance_sum: 0
                     };
                 }
-                pullers[hook.puller].hooks++;
-                pullers[hook.puller].position_sum =
-                    pullers[hook.puller].position_sum +
+                subjects[val].hooks++;
+                subjects[val].position_sum =
+                    subjects[val].position_sum +
                     (hookCount - hook.position) / (hookCount - 1);
 
                 if (hook.distance > maxDistance) maxDistance = hook.distance;
@@ -63,27 +97,29 @@ class Percentile extends BasePage {
             for (let h in obj.hooks) {
                 const hook = this.state.allObjects[obj.hooks[h]];
                 if (!hook) continue;
-                if (!hook.puller) continue;
 
-                pullers[hook.puller].distance_sum =
-                    pullers[hook.puller].distance_sum +
-                    hook.distance / maxDistance;
+                const val = this.getHookVal(hook);
+                if (!val) continue;
+
+                subjects[val].distance_sum =
+                    subjects[val].distance_sum + hook.distance / maxDistance;
             }
         }
 
         let percentiles = [];
-        for (let p in pullers) {
-            const puller = this.state.allObjects[p];
-            const pos = pullers[p].position_sum / pullers[p].hooks;
-            const dist = pullers[p].distance_sum / pullers[p].hooks;
+        for (let p in subjects) {
+            let subject = this.state.allObjects[p];
+            if (!subject) subject = p;
+            const pos = subjects[p].position_sum / subjects[p].hooks;
+            const dist = subjects[p].distance_sum / subjects[p].hooks;
             percentiles.push({
                 id: p,
-                puller: puller.first_name + " " + puller.last_name,
+                subject: this.getSubjectDisplay(subject),
                 pos: pos,
                 position: parseInt(pos * 100) + "%",
                 dist: dist,
                 distance: parseInt(dist * 100) + "%",
-                hooks: pullers[p].hooks
+                hooks: subjects[p].hooks
             });
         }
         percentiles.sort(this.percentileSort);
@@ -98,11 +134,11 @@ class Percentile extends BasePage {
         const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
-                {this.genFilters(filtered, ["season", "pull"])}
+                {this.genFilters(filtered, ["season", "pull", "subject"])}
                 <div className="contentRow">
                     <div className={this.getTableContainerClass()}>
                         {this.genDataTable(this.getPercentiles(), [
-                            { key: "puller", header: "Puller" },
+                            { key: "subject", header: this.getSubjectHeader() },
                             { key: "position", header: "Position" },
                             { key: "distance", header: "Distance" },
                             { key: "hooks", header: "Total Hooks" }

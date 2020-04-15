@@ -23,7 +23,7 @@ class Rivals extends BasePage {
             return "Puller";
         } else if (this.state.subject === "tractor") {
             return "Tractor";
-        } else if (this.state.subject === "tractor") {
+        } else if (this.state.subject === "brand") {
             return "Brand";
         }
     };
