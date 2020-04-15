@@ -430,6 +430,13 @@ class BasePage extends Component {
         return filtered;
     };
 
+    getContainerClass = () => {
+        if (this.state.sideExpanded) {
+            return "container containerSideExpanded";
+        }
+        return "container containerSideCollapsed";
+    };
+
     setUp = (canEdit, allObjects) => {
         let newState = {
             loading: false,
@@ -544,16 +551,17 @@ class BasePage extends Component {
         window.removeEventListener("resize", this.updatePageWidth.bind(this));
     }
 
+    titleRender() {
+        return "";
+    }
+
+    contentRender() {
+        return null;
+    }
+
     render() {
         return (
-            <div
-                className={
-                    "container " +
-                    (this.state.sideExpanded
-                        ? "containerSideExpanded"
-                        : "containerSideCollapsed")
-                }
-            >
+            <div className={this.getContainerClass()}>
                 {this.state.loading ? <Loading withOverlay={true} /> : null}
                 <Header aria-label="header">
                     <HeaderMenuButton
@@ -623,7 +631,10 @@ class BasePage extends Component {
                     closeModal={this.toggleTokenModal}
                     handleRequestToken={this.handleRequestToken}
                 />
-                <div className="pageContainer">{this.contentRender()}</div>
+                <div className="pageContainer">
+                    <div className="titleHeader">{this.titleRender()}</div>
+                    {this.contentRender()}
+                </div>
             </div>
         );
     }

@@ -119,6 +119,10 @@ class Rivals extends BasePage {
         return rivals;
     };
 
+    titleRender() {
+        return "Rivals";
+    }
+
     contentRender() {
         const filtered = this.getFiltered();
         return (

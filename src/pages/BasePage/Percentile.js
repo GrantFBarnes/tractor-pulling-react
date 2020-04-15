@@ -90,6 +90,10 @@ class Percentile extends BasePage {
         return percentiles;
     };
 
+    titleRender() {
+        return "Percentile";
+    }
+
     contentRender() {
         const filtered = this.getFiltered();
         return (

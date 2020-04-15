@@ -66,6 +66,10 @@ class Distances extends BasePage {
         return distances;
     };
 
+    titleRender() {
+        return "Distances";
+    }
+
     contentRender() {
         const filtered = this.getFiltered();
         return (

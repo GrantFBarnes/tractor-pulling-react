@@ -2,6 +2,10 @@ import React from "react";
 import BasePage from "../BasePage";
 
 class Results extends BasePage {
+    titleRender() {
+        return "Results";
+    }
+
     contentRender() {
         const filtered = this.getFiltered();
         return (
