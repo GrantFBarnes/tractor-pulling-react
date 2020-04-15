@@ -8,14 +8,14 @@ class Distances extends BasePage {
         if (a.total < b.total) return 1;
         if (a.total > b.total) return -1;
 
-        if (a.puller < b.puller) return -1;
-        if (a.puller > b.puller) return 1;
+        if (a.subject < b.subject) return -1;
+        if (a.subject > b.subject) return 1;
 
         return 0;
     };
 
     getDistances = () => {
-        let pullers = {};
+        let subjects = {};
         for (let id in this.state.allObjects) {
             const obj = this.state.allObjects[id];
             if (obj.type !== "Class") continue;
@@ -38,28 +38,36 @@ class Distances extends BasePage {
             for (let h in obj.hooks) {
                 const hook = this.state.allObjects[obj.hooks[h]];
                 if (!hook) continue;
-                if (!hook.puller) continue;
-                if (!pullers[hook.puller]) {
-                    pullers[hook.puller] = { hooks: 0, sum: 0 };
+
+                let val = hook[this.state.subject];
+                if (this.state.subject === "brand") {
+                    const tractor = this.state.allObjects[hook.tractor];
+                    if (!tractor) continue;
+                    val = tractor.brand;
                 }
-                pullers[hook.puller].hooks++;
-                pullers[hook.puller].sum =
-                    pullers[hook.puller].sum + hook.distance;
+                if (!val) continue;
+
+                if (!subjects[val]) {
+                    subjects[val] = { hooks: 0, sum: 0 };
+                }
+                subjects[val].hooks++;
+                subjects[val].sum = subjects[val].sum + hook.distance;
             }
         }
 
         let distances = [];
-        for (let p in pullers) {
-            const puller = this.state.allObjects[p];
-            const average = pullers[p].sum / pullers[p].hooks;
+        for (let p in subjects) {
+            let subject = this.state.allObjects[p];
+            if (!subject) subject = p;
+            const average = subjects[p].sum / subjects[p].hooks;
             distances.push({
                 id: p,
-                puller: puller.first_name + " " + puller.last_name,
+                subject: this.getSubjectDisplay(subject),
                 average: average,
                 averageDisplay: parseInt(average) + " ft",
-                total: pullers[p].sum,
-                totalDisplay: parseInt(pullers[p].sum) + " ft",
-                hooks: pullers[p].hooks
+                total: subjects[p].sum,
+                totalDisplay: parseInt(subjects[p].sum) + " ft",
+                hooks: subjects[p].hooks
             });
         }
         distances.sort(this.distanceSort);
@@ -74,11 +82,11 @@ class Distances extends BasePage {
         const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
-                {this.genFilters(filtered, ["season", "pull"])}
+                {this.genFilters(filtered, ["season", "pull", "subject"])}
                 <div className="contentRow">
                     <div className={this.getTableContainerClass()}>
                         {this.genDataTable(this.getDistances(), [
-                            { key: "puller", header: "Puller" },
+                            { key: "subject", header: this.getSubjectHeader() },
                             { key: "averageDisplay", header: "Average" },
                             { key: "totalDisplay", header: "Total" },
                             { key: "hooks", header: "Total Hooks" }
