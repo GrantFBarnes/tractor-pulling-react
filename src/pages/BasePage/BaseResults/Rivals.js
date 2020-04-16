@@ -1,7 +1,7 @@
 import React from "react";
-import BasePage from "../BasePage";
+import BaseResults from "../BaseResults";
 
-class Rivals extends BasePage {
+class Rivals extends BaseResults {
     rivalSort = (a, b) => {
         if (a.total < b.total) return 1;
         if (a.total > b.total) return -1;
@@ -24,9 +24,8 @@ class Rivals extends BasePage {
 
     getRivals = () => {
         let subjects = {};
-        for (let id in this.state.allObjects) {
-            const obj = this.state.allObjects[id];
-            if (obj.type !== "Class") continue;
+        for (let id in this.state.allTypes.Class) {
+            const obj = this.state.allTypes.Class[id];
 
             const pull = this.state.allObjects[obj.pull];
             if (!pull) continue;
@@ -150,13 +149,11 @@ class Rivals extends BasePage {
             <div className="contentContainer">
                 {this.genFilters(filtered, ["season", "pull", "subject"])}
                 <div className="contentRow">
-                    <div className={this.getTableContainerClass()}>
-                        {this.genDataTable(this.getRivals(), [
-                            { key: "total", header: "Faceoffs" },
-                            { key: "subjectA", header: header },
-                            { key: "subjectB", header: header }
-                        ])}
-                    </div>
+                    {this.genDataTable(this.getRivals(), [
+                        { key: "total", header: "Faceoffs" },
+                        { key: "subjectA", header: header },
+                        { key: "subjectB", header: header }
+                    ])}
                 </div>
             </div>
         );

@@ -2,13 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.scss";
 
-import Distances from "./pages/BasePage/Distances";
-import Edit from "./pages/BasePage/Edit";
+import Distances from "./pages/BasePage/BaseResults/Distances";
+import Percentiles from "./pages/BasePage/BaseResults/Percentiles";
+import Results from "./pages/BasePage/BaseResults/Results";
+import Rivals from "./pages/BasePage/BaseResults/Rivals";
+import Edit from "./pages/BasePage/BaseResults/Edit";
+
 import Home from "./pages/BasePage/Home";
-import Percentile from "./pages/BasePage/Percentile";
-import Results from "./pages/BasePage/Results";
-import Reroute from "./pages/BasePage/Reroute";
-import Rivals from "./pages/BasePage/Rivals";
+
+import Reroute from "./pages/Reroute";
 
 import * as serviceWorker from "./serviceWorker";
 
@@ -20,7 +22,7 @@ const routing = (
             <Route exact path="/home" component={Home} />
             <Route exact path="/results" component={Results} />
             <Route exact path="/distances" component={Distances} />
-            <Route exact path="/percentile" component={Percentile} />
+            <Route exact path="/percentiles" component={Percentiles} />
             <Route exact path="/rivals" component={Rivals} />
             <Route exact path="/edit" component={Edit} />
             <Route exact path="*" component={Reroute} />

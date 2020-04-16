@@ -1,7 +1,7 @@
 import React from "react";
-import BasePage from "../BasePage";
+import BaseResults from "../BaseResults";
 
-class Percentile extends BasePage {
+class Percentiles extends BaseResults {
     percentileSort = (a, b) => {
         if (a.pos < b.pos) return 1;
         if (a.pos > b.pos) return -1;
@@ -31,9 +31,8 @@ class Percentile extends BasePage {
 
     getPercentiles = () => {
         let subjects = {};
-        for (let id in this.state.allObjects) {
-            const obj = this.state.allObjects[id];
-            if (obj.type !== "Class") continue;
+        for (let id in this.state.allTypes.Class) {
+            const obj = this.state.allTypes.Class[id];
 
             const pull = this.state.allObjects[obj.pull];
             if (!pull) continue;
@@ -109,7 +108,7 @@ class Percentile extends BasePage {
     };
 
     titleRender() {
-        return "Percentile";
+        return "Percentiles";
     }
 
     contentRender() {
@@ -118,18 +117,16 @@ class Percentile extends BasePage {
             <div className="contentContainer">
                 {this.genFilters(filtered, ["season", "pull", "subject"])}
                 <div className="contentRow">
-                    <div className={this.getTableContainerClass()}>
-                        {this.genDataTable(this.getPercentiles(), [
-                            { key: "subject", header: this.getSubjectHeader() },
-                            { key: "position", header: "Position" },
-                            { key: "distance", header: "Distance" },
-                            { key: "hooks", header: "Total Hooks" }
-                        ])}
-                    </div>
+                    {this.genDataTable(this.getPercentiles(), [
+                        { key: "subject", header: this.getSubjectHeader() },
+                        { key: "position", header: "Position" },
+                        { key: "distance", header: "Distance" },
+                        { key: "hooks", header: "Total Hooks" }
+                    ])}
                 </div>
             </div>
         );
     }
 }
 
-export default Percentile;
+export default Percentiles;

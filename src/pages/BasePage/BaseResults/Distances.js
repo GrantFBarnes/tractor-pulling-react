@@ -1,7 +1,7 @@
 import React from "react";
-import BasePage from "../BasePage";
+import BaseResults from "../BaseResults";
 
-class Distances extends BasePage {
+class Distances extends BaseResults {
     distanceSort = (a, b) => {
         if (a.average < b.average) return 1;
         if (a.average > b.average) return -1;
@@ -16,9 +16,8 @@ class Distances extends BasePage {
 
     getDistances = () => {
         let subjects = {};
-        for (let id in this.state.allObjects) {
-            const obj = this.state.allObjects[id];
-            if (obj.type !== "Class") continue;
+        for (let id in this.state.allTypes.Class) {
+            const obj = this.state.allTypes.Class[id];
 
             const pull = this.state.allObjects[obj.pull];
             if (!pull) continue;
@@ -88,14 +87,12 @@ class Distances extends BasePage {
             <div className="contentContainer">
                 {this.genFilters(filtered, ["season", "pull", "subject"])}
                 <div className="contentRow">
-                    <div className={this.getTableContainerClass()}>
-                        {this.genDataTable(this.getDistances(), [
-                            { key: "subject", header: this.getSubjectHeader() },
-                            { key: "averageDisplay", header: "Average" },
-                            { key: "totalDisplay", header: "Total" },
-                            { key: "hooks", header: "Total Hooks" }
-                        ])}
-                    </div>
+                    {this.genDataTable(this.getDistances(), [
+                        { key: "subject", header: this.getSubjectHeader() },
+                        { key: "averageDisplay", header: "Average" },
+                        { key: "totalDisplay", header: "Total" },
+                        { key: "hooks", header: "Total Hooks" }
+                    ])}
                 </div>
             </div>
         );

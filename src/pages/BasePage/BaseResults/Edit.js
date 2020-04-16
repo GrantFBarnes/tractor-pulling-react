@@ -1,12 +1,19 @@
 import React from "react";
-import BasePage from "../BasePage";
-import { Button, Dropdown, DataTable } from "carbon-components-react";
+import BaseResults from "../BaseResults";
 
-import TypicalDropdown from "../../components/TypicalField/TypicalDropdown";
-import TypicalTextInput from "../../components/TypicalField/TypicalTextInput";
+import {
+    Button,
+    TextInput,
+    Dropdown,
+    DataTable
+} from "carbon-components-react";
+
+import TypicalDropdown from "../../../components/TypicalField/TypicalDropdown";
+import TypicalTextInput from "../../../components/TypicalField/TypicalTextInput";
 
 import Add20 from "@carbon/icons-react/lib/add/20";
 import Delete20 from "@carbon/icons-react/lib/delete/20";
+import Edit20 from "@carbon/icons-react/lib/edit/20";
 
 const {
     Table,
@@ -20,55 +27,16 @@ const {
     TableContainer
 } = DataTable;
 
-class Edit extends BasePage {
+class Edit extends BaseResults {
     constructor() {
         super();
+        this.state.edit_secret = "";
+        this.state.canEdit = false;
+
         this.state.objType = "";
-        this.state.objTypeOptions = [
-            { id: "Season", display: "Seasons" },
-            { id: "Location", display: "Locations" },
-            { id: "Tractor", display: "Tractors" },
-            { id: "Puller", display: "Pullers" },
-            { id: "Pull", display: "Pulls" },
-            { id: "Class", display: "Classes" },
-            { id: "Hook", display: "Hooks" }
-        ];
+
         this.state.pullerTractors = {};
         this.state.classPullers = {};
-    }
-
-    setupDone() {
-        let pullerTractors = {};
-        let classPullers = {};
-        for (let id in this.state.allObjects) {
-            const obj = this.state.allObjects[id];
-            if (obj.type === "Hook") {
-                if (!obj.puller) continue;
-                if (!obj.class) continue;
-                if (!obj.tractor) continue;
-                const classType = this.getClassType(obj.class);
-                const pullerClass = obj.puller + " " + classType;
-                if (!pullerTractors[pullerClass]) {
-                    pullerTractors[pullerClass] = new Set();
-                }
-
-                pullerTractors[pullerClass].add(obj.tractor);
-            } else if (obj.type === "Class") {
-                const classType = this.getClassType(id);
-                if (!classPullers[classType]) {
-                    classPullers[classType] = new Set();
-                }
-                for (let i in obj.hooks) {
-                    const hook = this.state.allObjects[obj.hooks[i]];
-                    if (!hook.puller) continue;
-                    classPullers[classType].add(hook.puller);
-                }
-            }
-        }
-        this.setState({
-            pullerTractors: pullerTractors,
-            classPullers: classPullers
-        });
     }
 
     getClassType = id => {
@@ -214,9 +182,8 @@ class Edit extends BasePage {
 
     getRows = () => {
         let rows = [];
-        for (let id in this.state.allObjects) {
-            const obj = this.state.allObjects[id];
-            if (obj.type !== this.state.objType) continue;
+        for (let id in this.state.allTypes[this.state.objType]) {
+            const obj = this.state.allTypes[this.state.objType][id];
             switch (this.state.objType) {
                 case "Pull":
                     if (obj.season === this.state.season) {
@@ -240,46 +207,20 @@ class Edit extends BasePage {
         return rows;
     };
 
-    pullerSort = (a, b) => {
-        if (a.first_name < b.first_name) return -1;
-        if (a.first_name > b.first_name) return 1;
-        if (a.last_name < b.last_name) return -1;
-        if (a.last_name > b.last_name) return 1;
-        return 0;
-    };
-
-    tractorSort = (a, b) => {
-        if (a.brand < b.brand) return -1;
-        if (a.brand > b.brand) return 1;
-        if (a.model < b.model) return -1;
-        if (a.model > b.model) return 1;
-        return 0;
-    };
-
-    classSort = (a, b) => {
-        if (a.weight < b.weight) return -1;
-        if (a.weight > b.weight) return 1;
-        if (a.category < b.category) return -1;
-        if (a.category > b.category) return 1;
-        return 0;
-    };
-
     getItems = (field, row) => {
         let options = [];
         let classType = "";
         switch (field) {
             case "season":
-                for (let id in this.state.allObjects) {
-                    const obj = this.state.allObjects[id];
-                    if (obj.type !== "Season") continue;
+                for (let id in this.state.allTypes.Season) {
+                    const obj = this.state.allTypes.Season[id];
                     options.push({ id: id, display: obj.year });
                 }
                 break;
 
             case "location":
-                for (let id in this.state.allObjects) {
-                    const obj = this.state.allObjects[id];
-                    if (obj.type !== "Location") continue;
+                for (let id in this.state.allTypes.Location) {
+                    const obj = this.state.allTypes.Location[id];
                     options.push({
                         id: id,
                         display: obj.town + ", " + obj.state
@@ -288,9 +229,8 @@ class Edit extends BasePage {
                 break;
 
             case "pull":
-                for (let id in this.state.allObjects) {
-                    const obj = this.state.allObjects[id];
-                    if (obj.type !== "Pull") continue;
+                for (let id in this.state.allTypes.Pull) {
+                    const obj = this.state.allTypes.Pull[id];
                     if (obj.season !== this.state.season) continue;
                     const location = this.state.allObjects[obj.location]
                         ? this.state.allObjects[obj.location].town
@@ -307,9 +247,8 @@ class Edit extends BasePage {
 
             case "puller":
                 let pullers = [];
-                for (let id in this.state.allObjects) {
-                    const obj = this.state.allObjects[id];
-                    if (obj.type !== "Puller") continue;
+                for (let id in this.state.allTypes.Puller) {
+                    const obj = this.state.allTypes.Puller[id];
                     pullers.push(obj);
                 }
                 pullers.sort(this.pullerSort);
@@ -335,9 +274,8 @@ class Edit extends BasePage {
 
             case "class":
                 let classes = [];
-                for (let id in this.state.allObjects) {
-                    const obj = this.state.allObjects[id];
-                    if (obj.type !== "Class") continue;
+                for (let id in this.state.allTypes.Class) {
+                    const obj = this.state.allTypes.Class[id];
                     if (obj.pull !== this.state.pull) continue;
                     classes.push(obj);
                 }
@@ -352,9 +290,8 @@ class Edit extends BasePage {
 
             case "tractor":
                 let tractors = [];
-                for (let id in this.state.allObjects) {
-                    const obj = this.state.allObjects[id];
-                    if (obj.type !== "Tractor") continue;
+                for (let id in this.state.allTypes.Tractor) {
+                    const obj = this.state.allTypes.Tractor[id];
                     tractors.push(obj);
                 }
                 tractors.sort(this.tractorSort);
@@ -505,7 +442,7 @@ class Edit extends BasePage {
                 return (
                     <div className="contentRow">
                         {filtered.seasons.length
-                            ? this.genSeasonDropdown(filtered)
+                            ? this.genFilterDropdown("season", filtered.seasons)
                             : null}
                     </div>
                 );
@@ -514,12 +451,15 @@ class Edit extends BasePage {
                     <div className="contentRow">
                         <div className="halfColumn paddingRight">
                             {filtered.seasons.length
-                                ? this.genSeasonDropdown(filtered)
+                                ? this.genFilterDropdown(
+                                      "season",
+                                      filtered.seasons
+                                  )
                                 : null}
                         </div>
                         <div className="halfColumn paddingLeft">
                             {filtered.pulls.length
-                                ? this.genPullDropdown(filtered)
+                                ? this.genFilterDropdown("pull", filtered.pulls)
                                 : null}
                         </div>
                     </div>
@@ -529,17 +469,23 @@ class Edit extends BasePage {
                     <div className="contentRow">
                         <div className="thirdColumn paddingRight">
                             {filtered.seasons.length
-                                ? this.genSeasonDropdown(filtered)
+                                ? this.genFilterDropdown(
+                                      "season",
+                                      filtered.seasons
+                                  )
                                 : null}
                         </div>
                         <div className="thirdColumn paddingLeft paddingRight">
                             {filtered.pulls.length
-                                ? this.genPullDropdown(filtered)
+                                ? this.genFilterDropdown("pull", filtered.pulls)
                                 : null}
                         </div>
                         <div className="thirdColumn paddingLeft">
                             {filtered.classes.length
-                                ? this.genClassDropdown(filtered)
+                                ? this.genFilterDropdown(
+                                      "class",
+                                      filtered.classes
+                                  )
                                 : null}
                         </div>
                     </div>
@@ -549,20 +495,87 @@ class Edit extends BasePage {
         }
     };
 
+    requestEditAccess = () => {
+        const that = this;
+        that.setState({ loading: true });
+        fetch(this.server_host + "/api/token", {
+            credentials: "include",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ edit_secret: this.state.edit_secret })
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    that.setState({ loading: false, canEdit: true });
+                } else {
+                    that.setState({ loading: false, canEdit: false });
+                    alert("Invalid Secret, Access Denied");
+                }
+            })
+            .catch(err => {
+                that.setState({ loading: false, canEdit: false });
+                alert("Error, please try again");
+            });
+    };
+
+    titleRender() {
+        return "Edit";
+    }
+
+    cannotEditContent() {
+        return (
+            <div className="contentContainer">
+                <h4 className="center redText">Not Authorized</h4>
+                <p className="center">
+                    Please enter the secret below to gain access to edit
+                </p>
+                <div className="threeQuartersColumn paddingRight">
+                    <TextInput
+                        id="edit_secret"
+                        labelText="Edit Secret"
+                        placeholder="Enter edit secret to gain access"
+                        value={this.state.edit_secret}
+                        onChange={e => {
+                            this.setState(prevState => ({
+                                edit_secret: e.target.value
+                            }));
+                        }}
+                    />
+                </div>
+
+                <div
+                    style={{ paddingTop: "24px" }}
+                    className="quarterColumn paddingLeft"
+                >
+                    <Button
+                        size="field"
+                        kind="danger"
+                        renderIcon={Edit20}
+                        onClick={() => {
+                            this.requestEditAccess();
+                        }}
+                    >
+                        Submit
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
     contentRender() {
         if (!this.state.canEdit) {
-            return (
-                <div className="contentContainer">
-                    <h3 className="center">Not Allowed to Edit</h3>
-                    <br />
-                    <p className="center">
-                        Please get edit access through the request modal in the
-                        upper right corner or go <a href="/home">home</a>
-                    </p>
-                </div>
-            );
+            return this.cannotEditContent();
         }
         const filtered = this.getFiltered();
+        const objTypeOptions = [
+            { id: "Location", display: "Locations" },
+            { id: "Tractor", display: "Tractors" },
+            { id: "Puller", display: "Pullers" },
+            { id: "Season", display: "Seasons" },
+            { id: "Pull", display: "Pulls" },
+            { id: "Class", display: "Classes" },
+            { id: "Hook", display: "Hooks" }
+        ];
         return (
             <div className="contentContainer">
                 <div className="contentRow">
@@ -572,15 +585,15 @@ class Edit extends BasePage {
                             label="Object Type"
                             titleText="Object Type"
                             light={false}
-                            items={this.state.objTypeOptions}
+                            items={objTypeOptions}
                             itemToString={this.itemToString}
                             selectedItem={this.getSelected(
                                 "objType",
-                                this.state.objTypeOptions
+                                objTypeOptions
                             )}
                             initialSelectedItem={this.getSelected(
                                 "objType",
-                                this.state.objTypeOptions
+                                objTypeOptions
                             )}
                             onChange={e => {
                                 if (!e.selectedItem) {
@@ -595,7 +608,7 @@ class Edit extends BasePage {
                         className="halfColumn paddingLeft"
                     >
                         <Button
-                            size="small"
+                            size="field"
                             kind="primary"
                             renderIcon={Add20}
                             onClick={() => {
@@ -614,6 +627,55 @@ class Edit extends BasePage {
                 </div>
             </div>
         );
+    }
+
+    generateSmarts(canEdit) {
+        let pullerTractors = {};
+        let classPullers = {};
+        for (let id in this.state.allTypes.Hook) {
+            const obj = this.state.allTypes.Hook[id];
+            if (!obj.puller) continue;
+            if (!obj.class) continue;
+            if (!obj.tractor) continue;
+            const classType = this.getClassType(obj.class);
+            const pullerClass = obj.puller + " " + classType;
+            if (!pullerTractors[pullerClass]) {
+                pullerTractors[pullerClass] = new Set();
+            }
+
+            pullerTractors[pullerClass].add(obj.tractor);
+        }
+
+        for (let id in this.state.allTypes.Class) {
+            const obj = this.state.allTypes.Class[id];
+            const classType = this.getClassType(id);
+            if (!classPullers[classType]) {
+                classPullers[classType] = new Set();
+            }
+            for (let i in obj.hooks) {
+                const hook = this.state.allObjects[obj.hooks[i]];
+                if (!hook.puller) continue;
+                classPullers[classType].add(hook.puller);
+            }
+        }
+        this.setState({
+            canEdit: canEdit,
+            pullerTractors: pullerTractors,
+            classPullers: classPullers
+        });
+    }
+
+    postDataSetUp() {
+        const that = this;
+        fetch(this.server_host + "/api/authenticated", {
+            credentials: "include"
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    that.generateSmarts(true);
+                }
+            })
+            .catch(err => {});
     }
 }
 
