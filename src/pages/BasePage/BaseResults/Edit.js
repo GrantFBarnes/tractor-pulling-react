@@ -39,11 +39,6 @@ class Edit extends BaseResults {
         this.state.classPullers = {};
     }
 
-    getClassType = id => {
-        const obj = this.state.allObjects[id];
-        return obj.weight + " " + obj.category + " " + obj.speed;
-    };
-
     updateObj = e => {
         let newVal = e.target.value;
         if (newVal === "true" || newVal === "on") {

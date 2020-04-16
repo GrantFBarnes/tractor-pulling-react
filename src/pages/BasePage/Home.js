@@ -8,6 +8,7 @@ import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rivals32 from "@carbon/icons-react/lib/partnership/32";
 import Ruler32 from "@carbon/icons-react/lib/ruler/32";
 import Video20 from "@carbon/icons-react/lib/video/20";
+import Trophy32 from "@carbon/icons-react/lib/trophy/32";
 
 class Home extends BasePage {
     titleRender() {
@@ -20,6 +21,11 @@ class Home extends BasePage {
                 <div className="contentRow center">
                     <Button kind="ghost" renderIcon={ListNum32} href="/results">
                         Results
+                    </Button>
+                </div>
+                <div className="contentRow center">
+                    <Button kind="ghost" renderIcon={Trophy32} href="/wins">
+                        Wins
                     </Button>
                 </div>
                 <div className="contentRow center">

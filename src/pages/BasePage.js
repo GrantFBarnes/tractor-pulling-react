@@ -16,6 +16,7 @@ import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rival32 from "@carbon/icons-react/lib/partnership/32";
 import Ruler32 from "@carbon/icons-react/lib/ruler/32";
 import Video20 from "@carbon/icons-react/lib/video/20";
+import Trophy32 from "@carbon/icons-react/lib/trophy/32";
 
 import "../styling/BasePage.css";
 
@@ -94,6 +95,9 @@ class BasePage extends Component {
                             </SideNavLink>
                             <SideNavLink renderIcon={ListNum32} href="/results">
                                 Results
+                            </SideNavLink>
+                            <SideNavLink renderIcon={Trophy32} href="/wins">
+                                Wins
                             </SideNavLink>
                             <SideNavLink renderIcon={Ruler32} href="/distances">
                                 Distances

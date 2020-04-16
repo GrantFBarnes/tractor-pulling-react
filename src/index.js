@@ -6,6 +6,7 @@ import Distances from "./pages/BasePage/BaseResults/Distances";
 import Percentiles from "./pages/BasePage/BaseResults/Percentiles";
 import Results from "./pages/BasePage/BaseResults/Results";
 import Rivals from "./pages/BasePage/BaseResults/Rivals";
+import Wins from "./pages/BasePage/BaseResults/Wins";
 import Edit from "./pages/BasePage/BaseResults/Edit";
 
 import Home from "./pages/BasePage/Home";
@@ -24,6 +25,7 @@ const routing = (
             <Route exact path="/distances" component={Distances} />
             <Route exact path="/percentiles" component={Percentiles} />
             <Route exact path="/rivals" component={Rivals} />
+            <Route exact path="/wins" component={Wins} />
             <Route exact path="/edit" component={Edit} />
             <Route exact path="*" component={Reroute} />
         </Switch>

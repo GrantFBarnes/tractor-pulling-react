@@ -28,6 +28,15 @@ class BaseResults extends BasePage {
         this.state.subject = "puller";
     }
 
+    getClassType = id => {
+        const obj = this.state.allObjects[id];
+        if (!obj) return "";
+        if (!obj.weight) return "";
+        let result = obj.weight + " " + obj.category;
+        if (obj.speed === 6) result += " (" + obj.speed + ")";
+        return result;
+    };
+
     getSubjectHeader = () => {
         switch (this.state.subject) {
             case "puller":
