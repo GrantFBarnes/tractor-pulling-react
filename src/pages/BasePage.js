@@ -180,6 +180,8 @@ class BasePage extends Component {
     getSubjectHeader = () => {
         if (this.state.subject === "puller") {
             return "Puller";
+        } else if (this.state.subject === "combo") {
+            return "Puller/Tractor";
         } else if (this.state.subject === "tractor") {
             return "Tractor";
         } else if (this.state.subject === "brand") {
@@ -191,6 +193,17 @@ class BasePage extends Component {
         let display = "";
         if (this.state.subject === "puller") {
             display = subject.first_name + " " + subject.last_name;
+        } else if (this.state.subject === "combo") {
+            const split = subject.split(" ");
+            const puller = this.state.allObjects[split[0]];
+            if (puller) {
+                display += puller.first_name + " " + puller.last_name;
+            }
+            display += " - ";
+            const tractor = this.state.allObjects[split[1]];
+            if (tractor) {
+                display += tractor.brand + " " + tractor.model;
+            }
         } else if (this.state.subject === "tractor") {
             display = subject.brand + " " + subject.model;
         } else if (this.state.subject === "brand") {
@@ -202,6 +215,7 @@ class BasePage extends Component {
     genSubjectDropdown = () => {
         const options = [
             { id: "puller", display: "Pullers" },
+            { id: "combo", display: "Puller/Tractor" },
             { id: "tractor", display: "Tractors" },
             { id: "brand", display: "Brands" }
         ];
@@ -484,9 +498,9 @@ class BasePage extends Component {
         if (!filtered.pulls.length || !pullFound) filtered.classes = [];
         if (!filtered.classes.length || !classFound) filtered.hooks = [];
 
-        filtered.seasons.push({ id: "", display: "(Blank)" });
-        filtered.pulls.push({ id: "", display: "(Blank)" });
-        filtered.classes.push({ id: "", display: "(Blank)" });
+        filtered.seasons.unshift({ id: "", display: "All" });
+        filtered.pulls.unshift({ id: "", display: "All" });
+        filtered.classes.unshift({ id: "", display: "All" });
 
         return filtered;
     };

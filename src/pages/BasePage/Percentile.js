@@ -18,7 +18,11 @@ class Percentile extends BasePage {
 
     getHookVal = hook => {
         if (hook[this.state.subject]) return hook[this.state.subject];
-        if (this.state.subject === "brand") {
+        if (this.state.subject === "combo") {
+            if (hook.puller && hook.tractor) {
+                return hook.puller + " " + hook.tractor;
+            }
+        } else if (this.state.subject === "brand") {
             const tractor = this.state.allObjects[hook.tractor];
             if (tractor && tractor.brand) return tractor.brand;
         }
@@ -66,7 +70,7 @@ class Percentile extends BasePage {
                 subjects[val].hooks++;
                 subjects[val].position_sum =
                     subjects[val].position_sum +
-                    (hookCount - hook.position) / (hookCount - 1);
+                    (hookCount - hook.position) / hookCount;
 
                 if (hook.distance > maxDistance) maxDistance = hook.distance;
             }

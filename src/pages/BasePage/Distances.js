@@ -40,7 +40,11 @@ class Distances extends BasePage {
                 if (!hook) continue;
 
                 let val = hook[this.state.subject];
-                if (this.state.subject === "brand") {
+                if (this.state.subject === "combo") {
+                    if (!hook.puller) continue;
+                    if (!hook.tractor) continue;
+                    val = hook.puller + " " + hook.tractor;
+                } else if (this.state.subject === "brand") {
                     const tractor = this.state.allObjects[hook.tractor];
                     if (!tractor) continue;
                     val = tractor.brand;
