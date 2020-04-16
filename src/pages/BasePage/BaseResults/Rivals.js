@@ -131,6 +131,7 @@ class Rivals extends BaseResults {
         const winsB = row.cells[3].value;
         const gap = (winsA - winsB) / (winsA + winsB);
 
+        if (gap === 0) return "";
         if (cell.id.endsWith("A")) {
             if (gap >= 0.5) return "greenText";
             return "yellowText";
