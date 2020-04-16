@@ -77,6 +77,15 @@ class Distances extends BaseResults {
         return distances;
     };
 
+    getCellClass = (cell, row) => {
+        if (!cell.id.endsWith("averageDisplay")) return "";
+        const distance = parseInt(cell.value.replace(" ft", ""));
+        if (distance >= 300) return "greenText";
+        if (distance >= 200) return "yellowText";
+        if (distance >= 100) return "orangeText";
+        return "redText";
+    };
+
     titleRender() {
         return "Distances";
     }

@@ -19,8 +19,20 @@ body {
     text-align: center;
 }
 
+.greenText {
+    color: #00ff1f !important;
+}
+
+.yellowText {
+    color: yellow !important;
+}
+
+.orangeText {
+    color: #ffa400 !important;
+}
+
 .redText {
-    color: red;
+    color: red !important;
 }
 
 .containerSideExpanded {

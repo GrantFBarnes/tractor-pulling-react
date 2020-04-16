@@ -97,6 +97,10 @@ class BaseResults extends BasePage {
         return "tableContainer tableContainerSideCollapsed";
     };
 
+    getCellClass = (cell, row) => {
+        return "";
+    };
+
     genDataTable = (rows, headers) => {
         return (
             <div className={this.getTableContainerClass()}>
@@ -132,7 +136,13 @@ class BaseResults extends BasePage {
                                     {rows.map(row => (
                                         <TableRow key={row.id}>
                                             {row.cells.map(cell => (
-                                                <TableCell key={cell.id}>
+                                                <TableCell
+                                                    key={cell.id}
+                                                    className={this.getCellClass(
+                                                        cell,
+                                                        row
+                                                    )}
+                                                >
                                                     {cell.value}
                                                 </TableCell>
                                             ))}

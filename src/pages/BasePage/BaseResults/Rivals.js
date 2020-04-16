@@ -3,8 +3,6 @@ import BaseResults from "../BaseResults";
 
 class Rivals extends BaseResults {
     rivalSort = (a, b) => {
-        if (a.total < b.total) return 1;
-        if (a.total > b.total) return -1;
         if (a.winsA < b.winsA) return 1;
         if (a.winsA > b.winsA) return -1;
         if (a.winsB < b.winsB) return 1;
@@ -16,10 +14,6 @@ class Rivals extends BaseResults {
         if (a.subjectB > b.subjectB) return 1;
 
         return 0;
-    };
-
-    getSubjectDisplaySecond = wins => {
-        return " - (" + wins + " Win" + (wins !== 1 ? "s" : "") + ")";
     };
 
     getRivals = () => {
@@ -75,10 +69,9 @@ class Rivals extends BaseResults {
                         key = subjectA + "." + subjectB;
                     }
                     if (!subjects[key]) {
-                        subjects[key] = { winsA: 0, winsB: 0, total: 0 };
+                        subjects[key] = { winsA: 0, winsB: 0 };
                     }
 
-                    subjects[key].total++;
                     if (subjectA > subjectB) {
                         if (positions[subjectA] > positions[subjectB]) {
                             subjects[key].winsA++;
@@ -123,19 +116,29 @@ class Rivals extends BaseResults {
             }
             rivals.push({
                 id: p,
-                total: subjects[p].total,
                 winsA: subjects[p].winsA,
                 winsB: subjects[p].winsB,
-                subjectA:
-                    this.getSubjectDisplay(subjectA) +
-                    this.getSubjectDisplaySecond(subjects[p].winsA),
-                subjectB:
-                    this.getSubjectDisplay(subjectB) +
-                    this.getSubjectDisplaySecond(subjects[p].winsB)
+                subjectA: this.getSubjectDisplay(subjectA),
+                subjectB: this.getSubjectDisplay(subjectB)
             });
         }
         rivals.sort(this.rivalSort);
         return rivals;
+    };
+
+    getCellClass = (cell, row) => {
+        const winsA = row.cells[0].value;
+        const winsB = row.cells[3].value;
+        const gap = (winsA - winsB) / (winsA + winsB);
+
+        if (cell.id.endsWith("A")) {
+            if (gap >= 0.5) return "greenText";
+            return "yellowText";
+        } else if (cell.id.endsWith("B")) {
+            if (gap >= 0.5) return "redText";
+            return "orangeText";
+        }
+        return "";
     };
 
     titleRender() {
@@ -150,9 +153,10 @@ class Rivals extends BaseResults {
                 {this.genFilters(filtered, ["season", "pull", "subject"])}
                 <div className="contentRow">
                     {this.genDataTable(this.getRivals(), [
-                        { key: "total", header: "Faceoffs" },
+                        { key: "winsA", header: "Wins" },
                         { key: "subjectA", header: header },
-                        { key: "subjectB", header: header }
+                        { key: "subjectB", header: header },
+                        { key: "winsB", header: "Wins" }
                     ])}
                 </div>
             </div>

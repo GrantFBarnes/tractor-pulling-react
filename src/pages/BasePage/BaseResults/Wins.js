@@ -61,6 +61,14 @@ class Wins extends BaseResults {
         return wins;
     };
 
+    getCellClass = (cell, row) => {
+        if (!cell.id.endsWith("wins")) return "";
+        if (cell.value >= 7) return "greenText";
+        if (cell.value >= 5) return "yellowText";
+        if (cell.value >= 3) return "orangeText";
+        return "redText";
+    };
+
     titleRender() {
         return "Wins";
     }

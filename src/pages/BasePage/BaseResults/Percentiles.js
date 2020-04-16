@@ -107,6 +107,17 @@ class Percentiles extends BaseResults {
         return percentiles;
     };
 
+    getCellClass = (cell, row) => {
+        if (cell.id.endsWith("position") || cell.id.endsWith("distance")) {
+            const percent = parseInt(cell.value.replace("%", ""));
+            if (percent >= 75) return "greenText";
+            if (percent >= 50) return "yellowText";
+            if (percent >= 25) return "orangeText";
+            return "redText";
+        }
+        return "";
+    };
+
     titleRender() {
         return "Percentiles";
     }
