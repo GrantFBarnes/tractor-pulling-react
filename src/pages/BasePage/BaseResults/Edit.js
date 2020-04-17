@@ -64,7 +64,13 @@ class Edit extends BaseResults {
             .then(obj => {
                 let allObjects = this.state.allObjects;
                 allObjects[obj.id] = obj;
-                that.setState({ loading: false, allObjects: allObjects });
+                let allTypes = this.state.allTypes;
+                allTypes[obj.type][obj.id] = obj;
+                that.setState({
+                    loading: false,
+                    allObjects: allObjects,
+                    allTypes: allTypes
+                });
             })
             .catch(err => {
                 that.setState({ loading: false });
@@ -93,7 +99,14 @@ class Edit extends BaseResults {
             .then(newObj => {
                 let allObjects = this.state.allObjects;
                 allObjects[newObj.id] = newObj;
-                that.setState({ loading: false, allObjects: allObjects });
+                let allTypes = this.state.allTypes;
+                if (!allTypes[newObj.type]) allTypes[newObj.type] = {};
+                allTypes[newObj.type][newObj.id] = newObj;
+                that.setState({
+                    loading: false,
+                    allObjects: allObjects,
+                    allTypes: allTypes
+                });
             })
             .catch(err => {
                 that.setState({ loading: false });
@@ -105,6 +118,7 @@ class Edit extends BaseResults {
         if (!id) return;
         const that = this;
         that.setState({ loading: true });
+        const objType = this.state.allObjects[id].type;
         fetch(this.server_host + "/api/object/" + id, {
             credentials: "include",
             method: "DELETE"
@@ -113,7 +127,13 @@ class Edit extends BaseResults {
                 if (response.status === 200) {
                     let allObjects = this.state.allObjects;
                     delete allObjects[id];
-                    that.setState({ loading: false, allObjects: allObjects });
+                    let allTypes = this.state.allTypes;
+                    delete allTypes[objType][id];
+                    that.setState({
+                        loading: false,
+                        allObjects: allObjects,
+                        allTypes: allTypes
+                    });
                 } else {
                     that.setState({ loading: false });
                     alert("Failed to delete object");
@@ -531,8 +551,9 @@ class Edit extends BaseResults {
                         placeholder="Enter edit secret to gain access"
                         value={this.state.edit_secret}
                         onChange={e => {
+                            const target = e.target;
                             this.setState(prevState => ({
-                                edit_secret: e.target.value
+                                edit_secret: target.value
                             }));
                         }}
                     />
