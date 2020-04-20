@@ -3,6 +3,7 @@ import BasePage from "../BasePage";
 
 import { Button } from "carbon-components-react";
 
+import Chart20 from "@carbon/icons-react/lib/chart--bar/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
 import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rivals32 from "@carbon/icons-react/lib/partnership/32";
@@ -45,6 +46,11 @@ class Home extends BasePage {
                 <div className="contentRow center">
                     <Button kind="ghost" renderIcon={Rivals32} href="/rivals">
                         Rivals
+                    </Button>
+                </div>
+                <div className="contentRow center">
+                    <Button kind="ghost" renderIcon={Chart20} href="/charts">
+                        Charts
                     </Button>
                 </div>
                 <div className="contentRow center">

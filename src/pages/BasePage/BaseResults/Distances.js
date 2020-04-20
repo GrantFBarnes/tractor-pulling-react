@@ -91,10 +91,13 @@ class Distances extends BaseResults {
     }
 
     contentRender() {
-        const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
-                {this.genFilters(filtered, ["season", "pull", "subject"])}
+                {this.genFilters(this.getFiltered(), [
+                    "season",
+                    "pull",
+                    "subject"
+                ])}
                 <div className="contentRow">
                     {this.genDataTable(this.getDistances(), [
                         { key: "subject", header: this.getSubjectHeader() },

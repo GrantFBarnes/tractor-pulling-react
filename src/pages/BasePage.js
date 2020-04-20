@@ -9,6 +9,7 @@ import {
     SideNavLink
 } from "carbon-components-react/lib/components/UIShell";
 
+import Chart20 from "@carbon/icons-react/lib/chart--bar/20";
 import Edit20 from "@carbon/icons-react/lib/edit/20";
 import Home20 from "@carbon/icons-react/lib/home/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
@@ -110,6 +111,9 @@ class BasePage extends Component {
                             </SideNavLink>
                             <SideNavLink renderIcon={Rival32} href="/rivals">
                                 Rivals
+                            </SideNavLink>
+                            <SideNavLink renderIcon={Chart20} href="/charts">
+                                Charts
                             </SideNavLink>
                             <SideNavLink
                                 renderIcon={Video20}

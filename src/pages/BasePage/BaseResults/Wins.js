@@ -74,10 +74,9 @@ class Wins extends BaseResults {
     }
 
     contentRender() {
-        const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
-                {this.genFilters(filtered, ["season"])}
+                {this.genFilters(this.getFiltered(), ["season"])}
                 <div className="contentRow">
                     {this.genDataTable(this.getWins(), [
                         { key: "puller", header: "Puller" },

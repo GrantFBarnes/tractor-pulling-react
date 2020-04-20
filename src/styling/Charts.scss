@@ -1,0 +1,20 @@
+.bx--cc--title {
+    .title {
+        fill: white !important;
+    }
+}
+
+.legend-item,
+.tick {
+    text {
+        fill: white !important;
+    }
+}
+
+.bx--chart-holder {
+    background-color: transparent !important;
+}
+
+.bx--cc--grid rect.chart-grid-backdrop {
+    fill: #3d3d3d !important;
+}

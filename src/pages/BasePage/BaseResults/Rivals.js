@@ -147,11 +147,14 @@ class Rivals extends BaseResults {
     }
 
     contentRender() {
-        const filtered = this.getFiltered();
         const header = this.getSubjectHeader();
         return (
             <div className="contentContainer">
-                {this.genFilters(filtered, ["season", "pull", "subject"])}
+                {this.genFilters(this.getFiltered(), [
+                    "season",
+                    "pull",
+                    "subject"
+                ])}
                 <div className="contentRow">
                     {this.genDataTable(this.getRivals(), [
                         { key: "winsA", header: "Wins" },
