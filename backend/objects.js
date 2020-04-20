@@ -3,7 +3,7 @@ const getUUID = require("uuid/v4");
 const persist = require("./persist.js");
 
 var allObjects = {};
-var allClasses = {};
+var allTypes = {};
 
 class Base {
     constructor(json) {
@@ -469,9 +469,9 @@ function getObject(id) {
 }
 
 function getObjectsByType(type) {
-    if (!allClasses[type]) return { statusCode: 400, data: "type not valid" };
+    if (!allTypes[type]) return { statusCode: 400, data: "type not valid" };
     let objects = {};
-    for (let i in allClasses[type]) {
+    for (let i in allTypes[type]) {
         objects[i] = allObjects[i].toJSON();
     }
     return { statusCode: 200, data: objects };
@@ -526,8 +526,8 @@ function addNewObject(json) {
             return "type not valid";
     }
 
-    if (!allClasses[json.type]) allClasses[json.type] = new Set();
-    allClasses[json.type].add(obj.id);
+    if (!allTypes[json.type]) allTypes[json.type] = new Set();
+    allTypes[json.type].add(obj.id);
     allObjects[obj.id] = obj;
     return "success";
 }
@@ -560,9 +560,9 @@ function deleteObj(id) {
     const obj = allObjects[id];
     if (!obj) return { statusCode: 400, data: "obj not found" };
 
-    if (!allClasses[obj.type]) allClasses[obj.type] = new Set();
-    allClasses[obj.type].delete(id);
-    if (!allClasses[obj.type].size) delete allClasses[obj.type];
+    if (!allTypes[obj.type]) allTypes[obj.type] = new Set();
+    allTypes[obj.type].delete(id);
+    if (!allTypes[obj.type].size) delete allTypes[obj.type];
     delete allObjects[id];
     persist.deleteObj(obj);
     objectEmit(obj.id, obj.type, "delete");
@@ -579,4 +579,4 @@ module.exports.updateObj = updateObj;
 module.exports.deleteObj = deleteObj;
 
 module.exports.allObjects = allObjects;
-module.exports.allClasses = allClasses;
+module.exports.allTypes = allTypes;
