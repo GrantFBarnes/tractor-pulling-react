@@ -8,7 +8,8 @@ import "../../../styling/Charts.scss";
 
 class Charts extends BaseResults {
     getBarChart = (data, title) => {
-        const height = 450 + data.length * 10;
+        const height =
+            Math.max(window.innerHeight, JSON.stringify(data).length) * 0.85;
         return (
             <SimpleBarChart
                 data={data}
