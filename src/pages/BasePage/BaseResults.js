@@ -26,6 +26,19 @@ class BaseResults extends BasePage {
         this.state.pull = "";
         this.state.class = "";
         this.state.subject = "puller";
+        this.state.metric = "wins";
+
+        this.subjectOptions = [
+            { id: "puller", display: "Pullers" },
+            { id: "combo", display: "Puller/Tractor" },
+            { id: "tractor", display: "Tractors" },
+            { id: "brand", display: "Brands" }
+        ];
+        this.metricOptions = [
+            { id: "wins", display: "Wins" },
+            { id: "hooks", display: "Hooks" },
+            { id: "distance", display: "Distance" }
+        ];
     }
 
     getClassType = id => {
@@ -276,6 +289,8 @@ class BaseResults extends BasePage {
                 return "Class";
             case "subject":
                 return "Subject";
+            case "metric":
+                return "Metric";
             default:
                 return filter;
         }
@@ -347,8 +362,15 @@ class BaseResults extends BasePage {
         }
         if (filters.includes("subject")) {
             dropdowns.push(
-                <div key="classRow" className="contentRow">
-                    {this.genFilterDropdown("subject", filtered.subjects)}
+                <div key="subjectRow" className="contentRow">
+                    {this.genFilterDropdown("subject", this.subjectOptions)}
+                </div>
+            );
+        }
+        if (filters.includes("metric")) {
+            dropdowns.push(
+                <div key="metricRow" className="contentRow">
+                    {this.genFilterDropdown("metric", this.metricOptions)}
                 </div>
             );
         }
@@ -356,30 +378,52 @@ class BaseResults extends BasePage {
     };
 
     genLgWinFilters = (filtered, filters) => {
-        return (
-            <div className="contentRow">
-                <div className="sixthColumn paddingRight">
-                    {filtered.seasons.length > 1 && filters.includes("season")
-                        ? this.genFilterDropdown("season", filtered.seasons)
-                        : null}
+        let dropdowns = [];
+        if (filtered.seasons.length > 1 && filters.includes("season")) {
+            dropdowns.push(
+                <div key="seasonDropdown" className="sixthColumn paddingRight">
+                    {this.genFilterDropdown("season", filtered.seasons)}
                 </div>
-                <div className="thirdColumn paddingLeft paddingRight">
-                    {filtered.pulls.length > 1 && filters.includes("pull")
-                        ? this.genFilterDropdown("pull", filtered.pulls)
-                        : null}
+            );
+        }
+        if (filtered.pulls.length > 1 && filters.includes("pull")) {
+            dropdowns.push(
+                <div
+                    key="pullDropdown"
+                    className="thirdColumn paddingLeft paddingRight"
+                >
+                    {this.genFilterDropdown("pull", filtered.pulls)}
                 </div>
-                <div className="thirdColumn paddingLeft paddingRight">
-                    {filtered.classes.length > 1 && filters.includes("class")
-                        ? this.genFilterDropdown("class", filtered.classes)
-                        : null}
+            );
+        }
+        if (filtered.classes.length > 1 && filters.includes("class")) {
+            dropdowns.push(
+                <div
+                    key="classDropdown"
+                    className="thirdColumn paddingLeft paddingRight"
+                >
+                    {this.genFilterDropdown("class", filtered.classes)}
                 </div>
-                <div className="sixthColumn paddingLeft">
-                    {filters.includes("subject")
-                        ? this.genFilterDropdown("subject", filtered.subjects)
-                        : null}
+            );
+        }
+        if (filters.includes("subject")) {
+            dropdowns.push(
+                <div
+                    key="subjectDropdown"
+                    className="quarterColumn paddingLeft paddingRight"
+                >
+                    {this.genFilterDropdown("subject", this.subjectOptions)}
                 </div>
-            </div>
-        );
+            );
+        }
+        if (filters.includes("metric")) {
+            dropdowns.push(
+                <div key="metricDropdown" className="quarterColumn paddingLeft">
+                    {this.genFilterDropdown("metric", this.metricOptions)}
+                </div>
+            );
+        }
+        return <div className="contentRow">{dropdowns}</div>;
     };
 
     genFilters = (filtered, filters) => {
@@ -390,18 +434,7 @@ class BaseResults extends BasePage {
     };
 
     getFiltered = () => {
-        let filtered = {
-            seasons: [],
-            pulls: [],
-            classes: [],
-            hooks: [],
-            subjects: [
-                { id: "puller", display: "Pullers" },
-                { id: "combo", display: "Puller/Tractor" },
-                { id: "tractor", display: "Tractors" },
-                { id: "brand", display: "Brands" }
-            ]
-        };
+        let filtered = { seasons: [], pulls: [], classes: [], hooks: [] };
 
         let seasonFound = false;
         for (let id in this.state.allTypes.Season) {
@@ -475,15 +508,7 @@ class BaseResults extends BasePage {
             for (let i in params) {
                 params[i] = params[i].replace("?", "");
                 let split = params[i].split("=");
-                if (split[0] === "season") {
-                    newState.season = split[1];
-                } else if (split[0] === "pull") {
-                    newState.pull = split[1];
-                } else if (split[0] === "class") {
-                    newState.class = split[1];
-                } else if (split[0] === "subject") {
-                    newState.subject = split[1];
-                }
+                newState[split[0]] = split[1];
             }
         } else {
             // Set to the latest pull
