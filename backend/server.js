@@ -27,7 +27,7 @@ app.use(
 );
 app.use(parser.urlencoded({ extended: false }));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader(
         "Access-Control-Allow-Methods",
@@ -42,7 +42,7 @@ app.use(function(req, res, next) {
 });
 
 ////////////////////////////////////////////////////////////////////////////////
-app.get("*", function(request, response) {
+app.get("*", function (request, response) {
     response.sendFile("index.html", { root: "./build/" });
 });
 
