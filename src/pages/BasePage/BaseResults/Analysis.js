@@ -15,6 +15,22 @@ class Analysis extends BaseResults {
         return 0;
     };
 
+    getXName = () => {
+        for (let i in this.subjectOptions) {
+            if (this.subjectOptions[i].id !== this.state.subject) continue;
+            return this.subjectOptions[i].display;
+        }
+        return "";
+    };
+
+    getYName = () => {
+        for (let i in this.metricOptions) {
+            if (this.metricOptions[i].id !== this.state.metric) continue;
+            return this.metricOptions[i].display;
+        }
+        return "";
+    };
+
     getMeticVal = hook => {
         switch (this.state.metric) {
             case "wins":
@@ -30,12 +46,163 @@ class Analysis extends BaseResults {
         return 0;
     };
 
-    getYName = () => {
-        for (let i in this.metricOptions) {
-            if (this.metricOptions[i].id !== this.state.metric) continue;
-            return this.metricOptions[i].display;
+    getSubject = hook => {
+        const puller = this.state.allObjects[hook.puller];
+        const tractor = this.state.allObjects[hook.tractor];
+        switch (this.state.subject) {
+            case "puller":
+                if (puller) return puller.first_name + " " + puller.last_name;
+                break;
+
+            case "combo":
+                if (puller && tractor) {
+                    if (this.constructor.name === "Pullers") {
+                        return tractor.brand + " " + tractor.model;
+                    }
+                    return (
+                        puller.first_name +
+                        " " +
+                        puller.last_name +
+                        " - " +
+                        tractor.brand +
+                        " " +
+                        tractor.model
+                    );
+                }
+                break;
+
+            case "tractor":
+                if (tractor) return tractor.brand + " " + tractor.model;
+                break;
+
+            case "brand":
+                if (tractor) return tractor.brand;
+                break;
+
+            default:
+                break;
         }
-        return "";
+        return null;
+    };
+
+    getData = () => {
+        let subjects = {};
+        for (let id in this.state.allTypes.Class) {
+            const obj = this.state.allTypes.Class[id];
+
+            const pull = this.state.allObjects[obj.pull];
+            if (!pull) continue;
+
+            if (this.constructor.name !== "Pullers") {
+                if (this.state.pull) {
+                    if (obj.pull !== this.state.pull) {
+                        continue;
+                    }
+                }
+            }
+
+            let date = new Date(pull.date).toJSON();
+
+            if (this.state.season) {
+                if (pull.season !== this.state.season) {
+                    continue;
+                }
+            } else {
+                date = new Date(pull.date.split("/")[2]).toJSON();
+            }
+
+            const hookCount = obj.hooks.length;
+            if (hookCount <= 1) continue;
+            for (let h in obj.hooks) {
+                const hook = this.state.allObjects[obj.hooks[h]];
+                if (!hook) continue;
+                if (!hook.puller) continue;
+                if (!hook.tractor) continue;
+
+                const subject = this.getSubject(hook);
+                if (!subject) continue;
+
+                if (this.constructor.name === "Pullers") {
+                    if (hook.puller !== this.state.puller) continue;
+
+                    if (!subjects[subject]) subjects[subject] = {};
+                    if (this.state.metric === "percentile") {
+                        if (!subjects[subject][date]) {
+                            subjects[subject][date] = { total: 0, sum: 0 };
+                        }
+                        subjects[subject][date].total++;
+                        subjects[subject][date].sum =
+                            subjects[subject][date].sum +
+                            (hookCount - hook.position) / hookCount;
+                    } else {
+                        if (!subjects[subject][date]) {
+                            subjects[subject][date] = 0;
+                        }
+                        subjects[subject][date] =
+                            subjects[subject][date] + this.getMeticVal(hook);
+                    }
+                } else {
+                    if (this.state.metric === "percentile") {
+                        if (!subjects[subject]) {
+                            subjects[subject] = { total: 0, sum: 0 };
+                        }
+                        subjects[subject].total++;
+                        subjects[subject].sum =
+                            subjects[subject].sum +
+                            (hookCount - hook.position) / hookCount;
+                    } else {
+                        if (!subjects[subject]) subjects[subject] = 0;
+                        subjects[subject] =
+                            subjects[subject] + this.getMeticVal(hook);
+                    }
+                }
+            }
+        }
+
+        let data = [];
+        for (let x in subjects) {
+            if (!subjects[x]) continue;
+            if (this.constructor.name === "Pullers") {
+                if (this.state.metric === "percentile") {
+                    for (let d in subjects[x]) {
+                        data.push({
+                            group: x,
+                            value: parseInt(
+                                (subjects[x][d].sum / subjects[x][d].total) *
+                                    100
+                            ),
+                            date: d
+                        });
+                    }
+                } else {
+                    for (let d in subjects[x]) {
+                        data.push({ group: x, value: subjects[x][d], date: d });
+                    }
+                }
+            } else {
+                if (this.state.metric === "percentile") {
+                    data.push({
+                        group: x,
+                        value: parseInt(
+                            (subjects[x].sum / subjects[x].total) * 100
+                        )
+                    });
+                } else {
+                    data.push({ group: x, value: subjects[x] });
+                }
+            }
+        }
+        data.sort(this.dataSort);
+
+        if (this.constructor.name !== "Pullers") {
+            while (data.length > 11) {
+                data[data.length - 2].group = "Other";
+                data[data.length - 2].value =
+                    data[data.length - 2].value + data[data.length - 1].value;
+                data.pop();
+            }
+        }
+        return data;
     };
 }
 

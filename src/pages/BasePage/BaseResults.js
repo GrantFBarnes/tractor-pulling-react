@@ -38,7 +38,8 @@ class BaseResults extends BasePage {
         this.metricOptions = [
             { id: "wins", display: "Wins" },
             { id: "hooks", display: "Hooks" },
-            { id: "distance", display: "Distance" }
+            { id: "distance", display: "Distance" },
+            { id: "percentile", display: "Position Percentile" }
         ];
     }
 

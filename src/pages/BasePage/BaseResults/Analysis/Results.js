@@ -40,100 +40,9 @@ class Results extends Analysis {
         );
     };
 
-    getSubjectVal = hook => {
-        const puller = this.state.allObjects[hook.puller];
-        const tractor = this.state.allObjects[hook.tractor];
-        switch (this.state.subject) {
-            case "puller":
-                if (puller) return puller.first_name + " " + puller.last_name;
-                break;
-
-            case "combo":
-                if (puller && tractor) {
-                    return (
-                        puller.first_name +
-                        " " +
-                        puller.last_name +
-                        " - " +
-                        tractor.brand +
-                        " " +
-                        tractor.model
-                    );
-                }
-                break;
-
-            case "tractor":
-                if (tractor) return tractor.brand + " " + tractor.model;
-                break;
-
-            case "brand":
-                if (tractor) return tractor.brand;
-                break;
-
-            default:
-                break;
-        }
-        return null;
-    };
-
-    getData = () => {
-        let subjects = {};
-        for (let id in this.state.allTypes.Class) {
-            const obj = this.state.allTypes.Class[id];
-
-            const pull = this.state.allObjects[obj.pull];
-            if (!pull) continue;
-
-            if (this.state.pull) {
-                if (obj.pull !== this.state.pull) {
-                    continue;
-                }
-            }
-
-            if (this.state.season) {
-                if (pull.season !== this.state.season) {
-                    continue;
-                }
-            }
-
-            for (let h in obj.hooks) {
-                const hook = this.state.allObjects[obj.hooks[h]];
-                if (!hook) continue;
-
-                const val = this.getSubjectVal(hook);
-                if (!val) continue;
-
-                if (!subjects[val]) subjects[val] = 0;
-                subjects[val] = subjects[val] + this.getMeticVal(hook);
-            }
-        }
-
-        let data = [];
-        for (let x in subjects) {
-            if (!subjects[x]) continue;
-            data.push({ group: x, value: subjects[x] });
-        }
-        data.sort(this.dataSort);
-        while (data.length > 11) {
-            data[data.length - 2].group = "Other";
-            data[data.length - 2].value =
-                data[data.length - 2].value + data[data.length - 1].value;
-            data.pop();
-        }
-        return data;
-    };
-
     titleRender() {
         return "Result Analysis";
     }
-
-    getXName = () => {
-        for (let i in this.subjectOptions) {
-            if (this.subjectOptions[i].id !== this.state.subject) continue;
-            return this.subjectOptions[i].display;
-        }
-        return "";
-    };
 
     contentRender() {
         const data = this.getData();
@@ -153,9 +62,11 @@ class Results extends Analysis {
                 <div className="contentRow">
                     {this.getBarChart(data, height, x, y)}
                 </div>
-                <div className="contentRow">
-                    {this.getPieChart(data, height, x, y)}
-                </div>
+                {this.state.metric !== "percentile" ? (
+                    <div className="contentRow">
+                        {this.getPieChart(data, height, x, y)}
+                    </div>
+                ) : null}
             </div>
         );
     }
