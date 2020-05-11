@@ -9,6 +9,7 @@ import "../../../../styling/Charts.scss";
 class Pullers extends Analysis {
     constructor() {
         super();
+        this.page = "Pullers";
         this.state.subject = "combo";
     }
 

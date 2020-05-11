@@ -7,6 +7,11 @@ import "@carbon/charts/styles.css";
 import "../../../../styling/Charts.scss";
 
 class Results extends Analysis {
+    constructor() {
+        super();
+        this.page = "Results";
+    }
+
     getPieChart = (data, height, x, y) => {
         return (
             <PieChart

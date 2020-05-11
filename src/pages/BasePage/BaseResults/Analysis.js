@@ -56,7 +56,7 @@ class Analysis extends BaseResults {
 
             case "combo":
                 if (puller && tractor) {
-                    if (this.constructor.name === "Pullers") {
+                    if (this.page === "Pullers") {
                         return tractor.brand + " " + tractor.model;
                     }
                     return (
@@ -93,7 +93,7 @@ class Analysis extends BaseResults {
             const pull = this.state.allObjects[obj.pull];
             if (!pull) continue;
 
-            if (this.constructor.name !== "Pullers") {
+            if (this.page === "Results") {
                 if (this.state.pull) {
                     if (obj.pull !== this.state.pull) {
                         continue;
@@ -122,7 +122,7 @@ class Analysis extends BaseResults {
                 const subject = this.getSubject(hook);
                 if (!subject) continue;
 
-                if (this.constructor.name === "Pullers") {
+                if (this.page === "Pullers") {
                     if (hook.puller !== this.state.puller) continue;
 
                     if (!subjects[subject]) subjects[subject] = {};
@@ -141,7 +141,7 @@ class Analysis extends BaseResults {
                         subjects[subject][date] =
                             subjects[subject][date] + this.getMeticVal(hook);
                     }
-                } else {
+                } else if (this.page === "Results") {
                     if (this.state.metric === "percentile") {
                         if (!subjects[subject]) {
                             subjects[subject] = { total: 0, sum: 0 };
@@ -162,7 +162,7 @@ class Analysis extends BaseResults {
         let data = [];
         for (let x in subjects) {
             if (!subjects[x]) continue;
-            if (this.constructor.name === "Pullers") {
+            if (this.page === "Pullers") {
                 if (this.state.metric === "percentile") {
                     for (let d in subjects[x]) {
                         data.push({
@@ -179,7 +179,7 @@ class Analysis extends BaseResults {
                         data.push({ group: x, value: subjects[x][d], date: d });
                     }
                 }
-            } else {
+            } else if (this.page === "Results") {
                 if (this.state.metric === "percentile") {
                     data.push({
                         group: x,
@@ -194,7 +194,7 @@ class Analysis extends BaseResults {
         }
         data.sort(this.dataSort);
 
-        if (this.constructor.name !== "Pullers") {
+        if (this.page === "Results") {
             while (data.length > 11) {
                 data[data.length - 2].group = "Other";
                 data[data.length - 2].value =
