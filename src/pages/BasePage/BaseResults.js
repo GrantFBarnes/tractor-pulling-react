@@ -27,6 +27,7 @@ class BaseResults extends BasePage {
         this.state.class = "";
         this.state.subject = "puller";
         this.state.metric = "wins";
+        this.state.puller = "";
 
         this.subjectOptions = [
             { id: "puller", display: "Pullers" },
@@ -212,10 +213,10 @@ class BaseResults extends BasePage {
     };
 
     pullerSort = (a, b) => {
-        if (a.first_name < b.first_name) return -1;
-        if (a.first_name > b.first_name) return 1;
         if (a.last_name < b.last_name) return -1;
         if (a.last_name > b.last_name) return 1;
+        if (a.first_name < b.first_name) return -1;
+        if (a.first_name > b.first_name) return 1;
         return 0;
     };
 
@@ -273,6 +274,16 @@ class BaseResults extends BasePage {
                 }
                 break;
 
+            case "pullers":
+                for (let i in objs) {
+                    const obj = objs[i];
+                    objs[i] = {
+                        id: obj.id,
+                        display: obj.last_name + ", " + obj.first_name
+                    };
+                }
+                break;
+
             default:
                 break;
         }
@@ -291,6 +302,8 @@ class BaseResults extends BasePage {
                 return "Subject";
             case "metric":
                 return "Metric";
+            case "puller":
+                return "Puller";
             default:
                 return filter;
         }
@@ -374,6 +387,13 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+        if (filters.includes("puller")) {
+            dropdowns.push(
+                <div key="pullerRow" className="contentRow">
+                    {this.genFilterDropdown("puller", filtered.pullers)}
+                </div>
+            );
+        }
         return dropdowns;
     };
 
@@ -423,6 +443,13 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+        if (filters.includes("puller")) {
+            dropdowns.push(
+                <div key="pullerDropdown" className="quarterColumn paddingLeft">
+                    {this.genFilterDropdown("puller", filtered.pullers)}
+                </div>
+            );
+        }
         return <div className="contentRow">{dropdowns}</div>;
     };
 
@@ -434,7 +461,13 @@ class BaseResults extends BasePage {
     };
 
     getFiltered = () => {
-        let filtered = { seasons: [], pulls: [], classes: [], hooks: [] };
+        let filtered = {
+            seasons: [],
+            pulls: [],
+            classes: [],
+            hooks: [],
+            pullers: []
+        };
 
         let seasonFound = false;
         for (let id in this.state.allTypes.Season) {
@@ -471,6 +504,12 @@ class BaseResults extends BasePage {
             }
         }
         filtered.hooks.sort(this.hookSort);
+
+        for (let id in this.state.allTypes.Puller) {
+            const obj = this.state.allTypes.Puller[id];
+            filtered.pullers.push(obj);
+        }
+        filtered.pullers.sort(this.pullerSort);
 
         for (let i in filtered) {
             filtered[i] = this.getFilterDisplay(filtered[i], i);

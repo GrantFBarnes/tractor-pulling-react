@@ -7,6 +7,7 @@ import Distances from "./pages/BasePage/BaseResults/Distances";
 import Percentiles from "./pages/BasePage/BaseResults/Percentiles";
 import Results from "./pages/BasePage/BaseResults/Results";
 import Rivals from "./pages/BasePage/BaseResults/Rivals";
+import Time from "./pages/BasePage/BaseResults/Time";
 import Wins from "./pages/BasePage/BaseResults/Wins";
 import Edit from "./pages/BasePage/BaseResults/Edit";
 
@@ -29,6 +30,7 @@ const routing = (
             <Route exact path="/percentiles" component={Percentiles} />
             <Route exact path="/results" component={Results} />
             <Route exact path="/rivals" component={Rivals} />
+            <Route exact path="/time" component={Time} />
             <Route exact path="/wins" component={Wins} />
 
             <Route exact path="*" component={Reroute} />
