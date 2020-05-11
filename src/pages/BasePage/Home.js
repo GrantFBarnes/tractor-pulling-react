@@ -50,13 +50,21 @@ class Home extends BasePage {
                     </Button>
                 </div>
                 <div className="contentRow center">
-                    <Button kind="ghost" renderIcon={ChartBar20} href="/charts">
-                        Charts
+                    <Button
+                        kind="ghost"
+                        renderIcon={ChartBar20}
+                        href="/analysis/results"
+                    >
+                        Result Analysis
                     </Button>
                 </div>
                 <div className="contentRow center">
-                    <Button kind="ghost" renderIcon={ChartLine20} href="/time">
-                        Time Analysis
+                    <Button
+                        kind="ghost"
+                        renderIcon={ChartLine20}
+                        href="/analysis/pullers"
+                    >
+                        Puller Analysis
                     </Button>
                 </div>
                 <div className="contentRow center">

@@ -1,12 +1,12 @@
 import React from "react";
-import BaseResults from "../BaseResults";
+import Analysis from "../Analysis";
 
 import { SimpleBarChart, PieChart } from "@carbon/charts-react";
 import "@carbon/charts/styles.css";
 
-import "../../../styling/Charts.scss";
+import "../../../../styling/Charts.scss";
 
-class Charts extends BaseResults {
+class Results extends Analysis {
     getPieChart = (data, height, x, y) => {
         return (
             <PieChart
@@ -38,16 +38,6 @@ class Charts extends BaseResults {
                 }}
             />
         );
-    };
-
-    dataSort = (a, b) => {
-        if (a.value < b.value) return 1;
-        if (a.value > b.value) return -1;
-
-        if (a.group < b.group) return -1;
-        if (a.group > b.group) return 1;
-
-        return 0;
     };
 
     getSubjectVal = hook => {
@@ -84,21 +74,6 @@ class Charts extends BaseResults {
                 break;
         }
         return null;
-    };
-
-    getMeticVal = hook => {
-        switch (this.state.metric) {
-            case "wins":
-                if (hook.position === 1) return 1;
-                break;
-            case "hooks":
-                return 1;
-            case "distance":
-                return hook.distance;
-            default:
-                break;
-        }
-        return 0;
     };
 
     getData = () => {
@@ -149,21 +124,13 @@ class Charts extends BaseResults {
     };
 
     titleRender() {
-        return "Charts";
+        return "Result Analysis";
     }
 
     getXName = () => {
         for (let i in this.subjectOptions) {
             if (this.subjectOptions[i].id !== this.state.subject) continue;
             return this.subjectOptions[i].display;
-        }
-        return "";
-    };
-
-    getYName = () => {
-        for (let i in this.metricOptions) {
-            if (this.metricOptions[i].id !== this.state.metric) continue;
-            return this.metricOptions[i].display;
         }
         return "";
     };
@@ -194,4 +161,4 @@ class Charts extends BaseResults {
     }
 }
 
-export default Charts;
+export default Results;

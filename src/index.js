@@ -2,16 +2,17 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.scss";
 
-import Charts from "./pages/BasePage/BaseResults/Charts";
+import Home from "./pages/BasePage/Home";
+import Edit from "./pages/BasePage/BaseResults/Edit";
+
 import Distances from "./pages/BasePage/BaseResults/Distances";
 import Percentiles from "./pages/BasePage/BaseResults/Percentiles";
 import Results from "./pages/BasePage/BaseResults/Results";
 import Rivals from "./pages/BasePage/BaseResults/Rivals";
-import Time from "./pages/BasePage/BaseResults/Time";
 import Wins from "./pages/BasePage/BaseResults/Wins";
-import Edit from "./pages/BasePage/BaseResults/Edit";
 
-import Home from "./pages/BasePage/Home";
+import AnalysisResults from "./pages/BasePage/BaseResults/Analysis/Results";
+import AnalysisPullers from "./pages/BasePage/BaseResults/Analysis/Pullers";
 
 import Reroute from "./pages/Reroute";
 
@@ -25,13 +26,14 @@ const routing = (
             <Route exact path="/home" component={Home} />
             <Route exact path="/edit" component={Edit} />
 
-            <Route exact path="/charts" component={Charts} />
             <Route exact path="/distances" component={Distances} />
             <Route exact path="/percentiles" component={Percentiles} />
             <Route exact path="/results" component={Results} />
             <Route exact path="/rivals" component={Rivals} />
-            <Route exact path="/time" component={Time} />
             <Route exact path="/wins" component={Wins} />
+
+            <Route exact path="/analysis/results" component={AnalysisResults} />
+            <Route exact path="/analysis/pullers" component={AnalysisPullers} />
 
             <Route exact path="*" component={Reroute} />
         </Switch>

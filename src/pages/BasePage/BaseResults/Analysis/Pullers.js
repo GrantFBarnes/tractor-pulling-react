@@ -1,12 +1,12 @@
 import React from "react";
-import BaseResults from "../BaseResults";
+import Analysis from "../Analysis";
 
 import { LineChart } from "@carbon/charts-react";
 import "@carbon/charts/styles.css";
 
-import "../../../styling/Charts.scss";
+import "../../../../styling/Charts.scss";
 
-class Time extends BaseResults {
+class Pullers extends Analysis {
     getLineChart = (data, x, y) => {
         if (!data.length) return "No data, choose a different Season or Puller";
         return (
@@ -28,17 +28,6 @@ class Time extends BaseResults {
         const tractor = this.state.allObjects[tractor_id];
         if (!tractor) return tractor_id;
         return tractor.brand + " " + tractor.model;
-    };
-
-    dataSort = (a, b) => {
-        if (a.date < b.date) return 1;
-        if (a.date > b.date) return -1;
-        if (a.value < b.value) return 1;
-        if (a.value > b.value) return -1;
-        if (a.group < b.group) return 1;
-        if (a.group > b.group) return -1;
-
-        return 0;
     };
 
     getData = () => {
@@ -102,7 +91,7 @@ class Time extends BaseResults {
     };
 
     titleRender() {
-        return "Time Chart";
+        return "Puller Analysis";
     }
 
     contentRender() {
@@ -117,4 +106,4 @@ class Time extends BaseResults {
     }
 }
 
-export default Time;
+export default Pullers;

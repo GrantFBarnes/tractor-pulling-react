@@ -380,17 +380,17 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
-        if (filters.includes("metric")) {
-            dropdowns.push(
-                <div key="metricRow" className="contentRow">
-                    {this.genFilterDropdown("metric", this.metricOptions)}
-                </div>
-            );
-        }
         if (filters.includes("puller")) {
             dropdowns.push(
                 <div key="pullerRow" className="contentRow">
                     {this.genFilterDropdown("puller", filtered.pullers)}
+                </div>
+            );
+        }
+        if (filters.includes("metric")) {
+            dropdowns.push(
+                <div key="metricRow" className="contentRow">
+                    {this.genFilterDropdown("metric", this.metricOptions)}
                 </div>
             );
         }
@@ -436,17 +436,20 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+        if (filters.includes("puller")) {
+            dropdowns.push(
+                <div
+                    key="pullerDropdown"
+                    className="quarterColumn paddingLeft paddingRight"
+                >
+                    {this.genFilterDropdown("puller", filtered.pullers)}
+                </div>
+            );
+        }
         if (filters.includes("metric")) {
             dropdowns.push(
                 <div key="metricDropdown" className="quarterColumn paddingLeft">
                     {this.genFilterDropdown("metric", this.metricOptions)}
-                </div>
-            );
-        }
-        if (filters.includes("puller")) {
-            dropdowns.push(
-                <div key="pullerDropdown" className="quarterColumn paddingLeft">
-                    {this.genFilterDropdown("puller", filtered.pullers)}
                 </div>
             );
         }

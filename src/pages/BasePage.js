@@ -113,11 +113,17 @@ class BasePage extends Component {
                             <SideNavLink renderIcon={Rival32} href="/rivals">
                                 Rivals
                             </SideNavLink>
-                            <SideNavLink renderIcon={ChartBar20} href="/charts">
-                                Charts
+                            <SideNavLink
+                                renderIcon={ChartBar20}
+                                href="/analysis/results"
+                            >
+                                Result Analysis
                             </SideNavLink>
-                            <SideNavLink renderIcon={ChartLine20} href="/time">
-                                Time Analysis
+                            <SideNavLink
+                                renderIcon={ChartLine20}
+                                href="/analysis/pullers"
+                            >
+                                Puller Analysis
                             </SideNavLink>
                             <SideNavLink
                                 renderIcon={Video20}
