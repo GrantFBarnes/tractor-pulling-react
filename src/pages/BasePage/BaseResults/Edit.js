@@ -268,6 +268,22 @@ class Edit extends BaseResults {
                 }
                 break;
 
+            case "class":
+                let classes = [];
+                for (let id in this.state.allTypes.Class) {
+                    const obj = this.state.allTypes.Class[id];
+                    if (obj.pull !== this.state.pull) continue;
+                    classes.push(obj);
+                }
+                classes.sort(this.classSort);
+                for (let i in classes) {
+                    const obj = classes[i];
+                    let display = obj.weight + " " + obj.category;
+                    if (obj.speed > 4) display += " (" + obj.speed + ")";
+                    options.push({ id: obj.id, display: display });
+                }
+                break;
+
             case "puller":
                 let pullers = [];
                 for (let id in this.state.allTypes.Puller) {
@@ -292,22 +308,6 @@ class Edit extends BaseResults {
                         id: obj.id,
                         display: obj.first_name + " " + obj.last_name
                     });
-                }
-                break;
-
-            case "class":
-                let classes = [];
-                for (let id in this.state.allTypes.Class) {
-                    const obj = this.state.allTypes.Class[id];
-                    if (obj.pull !== this.state.pull) continue;
-                    classes.push(obj);
-                }
-                classes.sort(this.classSort);
-                for (let i in classes) {
-                    const obj = classes[i];
-                    let display = obj.weight + " " + obj.category;
-                    if (obj.speed > 4) display += " (" + obj.speed + ")";
-                    options.push({ id: obj.id, display: display });
                 }
                 break;
 
@@ -653,7 +653,7 @@ class Edit extends BaseResults {
         );
     }
 
-    generateSmarts(canEdit) {
+    generateSmarts() {
         let pullerTractors = {};
         let classPullers = {};
         for (let id in this.state.allTypes.Hook) {
@@ -661,29 +661,22 @@ class Edit extends BaseResults {
             if (!obj.puller) continue;
             if (!obj.class) continue;
             if (!obj.tractor) continue;
+
             const classType = this.getClassType(obj.class);
+
+            if (!classPullers[classType]) {
+                classPullers[classType] = new Set();
+            }
+            classPullers[classType].add(obj.puller);
+
             const pullerClass = obj.puller + " " + classType;
             if (!pullerTractors[pullerClass]) {
                 pullerTractors[pullerClass] = new Set();
             }
-
             pullerTractors[pullerClass].add(obj.tractor);
         }
-
-        for (let id in this.state.allTypes.Class) {
-            const obj = this.state.allTypes.Class[id];
-            const classType = this.getClassType(id);
-            if (!classPullers[classType]) {
-                classPullers[classType] = new Set();
-            }
-            for (let i in obj.hooks) {
-                const hook = this.state.allObjects[obj.hooks[i]];
-                if (!hook.puller) continue;
-                classPullers[classType].add(hook.puller);
-            }
-        }
         this.setState({
-            canEdit: canEdit,
+            canEdit: true,
             pullerTractors: pullerTractors,
             classPullers: classPullers
         });
@@ -696,7 +689,7 @@ class Edit extends BaseResults {
         })
             .then(response => {
                 if (response.status === 200) {
-                    that.generateSmarts(true);
+                    that.generateSmarts();
                 }
             })
             .catch(err => {});
