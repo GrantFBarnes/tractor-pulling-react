@@ -142,33 +142,6 @@ class Location extends Base {
         super(json);
         this.town = json.town ? json.town : "";
         this.state = json.state ? json.state : "";
-        this.pulls = json.pulls ? new Set(json.pulls) : new Set(); // reference children Pull ids
-    }
-
-    updateReferences(objID, objType, method, fields) {
-        let obj = {};
-        switch (objType) {
-            case "Pull":
-                this.updateRef(method, "pulls", objID, "location");
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    changeMatters(objID, objType, method, fields) {
-        switch (objType) {
-            case "Pull":
-                if (!fields.size || fields.has("location")) {
-                    return true;
-                }
-                break;
-
-            default:
-                break;
-        }
-        return false;
     }
 }
 
@@ -177,33 +150,6 @@ class Puller extends Base {
         super(json);
         this.first_name = json.first_name ? json.first_name : "";
         this.last_name = json.last_name ? json.last_name : "";
-        this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // reference children Hook ids
-    }
-
-    updateReferences(objID, objType, method, fields) {
-        let obj = {};
-        switch (objType) {
-            case "Hook":
-                this.updateRef(method, "hooks", objID, "puller");
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    changeMatters(objID, objType, method, fields) {
-        switch (objType) {
-            case "Hook":
-                if (!fields.size || fields.has("puller")) {
-                    return true;
-                }
-                break;
-
-            default:
-                break;
-        }
-        return false;
     }
 }
 
@@ -212,33 +158,6 @@ class Tractor extends Base {
         super(json);
         this.brand = json.brand ? json.brand : "";
         this.model = json.model ? json.model : "";
-        this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // reference children Hook ids
-    }
-
-    updateReferences(objID, objType, method, fields) {
-        let obj = {};
-        switch (objType) {
-            case "Hook":
-                this.updateRef(method, "hooks", objID, "tractor");
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    changeMatters(objID, objType, method, fields) {
-        switch (objType) {
-            case "Hook":
-                if (!fields.size || fields.has("tractor")) {
-                    return true;
-                }
-                break;
-
-            default:
-                break;
-        }
-        return false;
     }
 }
 
@@ -246,34 +165,6 @@ class Season extends Base {
     constructor(json) {
         super(json);
         this.year = json.year ? json.year : "";
-
-        this.pulls = json.pulls ? new Set(json.pulls) : new Set(); // children Pull ids
-    }
-
-    updateReferences(objID, objType, method, fields) {
-        let obj = {};
-        switch (objType) {
-            case "Pull":
-                this.updateRef(method, "pulls", objID, "season");
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    changeMatters(objID, objType, method, fields) {
-        switch (objType) {
-            case "Pull":
-                if (!fields.size) {
-                    return true;
-                }
-                break;
-
-            default:
-                break;
-        }
-        return false;
     }
 }
 
@@ -284,8 +175,6 @@ class Pull extends Base {
 
         this.location = json.location ? json.location : ""; // reference Location id
         this.date = json.date ? json.date : "";
-
-        this.classes = json.classes ? new Set(json.classes) : new Set(); // children Class ids
     }
 
     updateReferences(objID, objType, method, fields) {
@@ -293,16 +182,6 @@ class Pull extends Base {
             if (method === "delete") {
                 this.location = "";
             }
-        }
-
-        let obj = {};
-        switch (objType) {
-            case "Class":
-                this.updateRef(method, "classes", objID, "pull");
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -320,16 +199,6 @@ class Pull extends Base {
             }
         }
 
-        switch (objType) {
-            case "Class":
-                if (!fields.size) {
-                    return true;
-                }
-                break;
-
-            default:
-                break;
-        }
         return false;
     }
 }
@@ -445,10 +314,10 @@ class Hook extends Base {
     validate() {
         this.distance = parseFloat(this.distance);
 
-        const parent = allObjects[this.class];
-        if (parent) {
+        const parentClass = allObjects[this.class];
+        if (parentClass) {
             let position = 1;
-            for (let i of parent.hooks) {
+            for (let i of parentClass.hooks) {
                 if (i === this.id) continue;
                 const hook = allObjects[i];
                 if (!hook) continue;
@@ -456,6 +325,16 @@ class Hook extends Base {
             }
             this.position = position;
         }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+function validateAll() {
+    for (let id in allObjects) {
+        const obj = allObjects[id];
+        obj.validate();
+        persist.saveObj(obj);
     }
 }
 
@@ -568,6 +447,8 @@ function deleteObj(id) {
     objectEmit(obj.id, obj.type, "delete");
     return { statusCode: 200, data: "success" };
 }
+
+module.exports.validateAll = validateAll;
 
 module.exports.getObject = getObject;
 module.exports.getObjectsByType = getObjectsByType;

@@ -30,6 +30,7 @@ function initData() {
             objects.addNewObject(JSON.parse(file));
         }
     }
+    objects.validateAll();
 }
 
 module.exports.deleteObj = deleteObj;
