@@ -335,6 +335,42 @@ function validateAll() {
         const obj = allObjects[id];
         obj.validate();
         persist.saveObj(obj);
+
+        let missFields = [];
+        let emptyFields = [];
+        switch (obj.type) {
+            case "Tractor":
+                missFields = ["brand", "model"];
+                break;
+            case "Puller":
+                missFields = ["first_name", "last_name"];
+                break;
+            case "Location":
+                missFields = ["town", "state"];
+                break;
+            case "Season":
+                missFields = ["year"];
+                break;
+            case "Pull":
+                missFields = ["date", "location"];
+                break;
+            case "Class":
+                missFields = ["pull", "category", "weight"];
+                emptyFields = ["hooks"];
+                break;
+            case "Hook":
+                missFields = ["puller", "tractor", "distance", "position"];
+                break;
+            default:
+                break;
+        }
+
+        for (let f of missFields) {
+            if (!obj[f]) console.log(f, obj);
+        }
+        for (let f of emptyFields) {
+            if (!obj[f] || !obj[f].size) console.log(f, obj);
+        }
     }
 }
 
