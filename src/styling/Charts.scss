@@ -12,6 +12,11 @@
     }
 }
 
+.dot,
+.line {
+    stroke-width: 12px !important;
+}
+
 .bx--chart-holder {
     background-color: transparent !important;
 }
