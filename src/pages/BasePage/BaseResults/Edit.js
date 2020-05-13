@@ -684,7 +684,7 @@ class Edit extends BaseResults {
             options.pull.push({
                 id: id,
                 display: location + " - " + season,
-                season: season
+                season: obj.season
             });
         }
 
