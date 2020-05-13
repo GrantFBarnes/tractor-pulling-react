@@ -3,6 +3,7 @@ import BaseResults from "../BaseResults";
 
 import {
     Button,
+    Toggle,
     TextInput,
     Dropdown,
     DataTable
@@ -34,6 +35,7 @@ class Edit extends BaseResults {
         this.state.canEdit = false;
 
         this.state.objType = "";
+        this.state.includeAll = false;
 
         this.state.pullerTractors = {};
         this.state.classPullers = {};
@@ -244,33 +246,21 @@ class Edit extends BaseResults {
                 break;
 
             case "puller":
-                options = JSON.parse(JSON.stringify(this.state.options.puller));
-
                 classType = this.getClassType(this.state.class);
-                if (this.state.classPullers[classType]) {
-                    options = [
-                        ...new Set([
-                            ...this.state.classPullers[classType],
-                            ...options
-                        ])
-                    ];
+                if (this.state.includeAll) {
+                    options = this.state.options.puller;
+                } else {
+                    options = this.state.classPullers[classType];
                 }
                 break;
 
             case "tractor":
-                options = JSON.parse(
-                    JSON.stringify(this.state.options.tractor)
-                );
-
                 classType = this.getClassType(row.class);
                 const pullerClass = row.puller + " " + classType;
-                if (this.state.pullerTractors[pullerClass]) {
-                    options = [
-                        ...new Set([
-                            ...this.state.pullerTractors[pullerClass],
-                            ...options
-                        ])
-                    ];
+                if (this.state.includeAll) {
+                    options = this.state.options.tractor;
+                } else {
+                    options = this.state.pullerTractors[pullerClass];
                 }
                 break;
 
@@ -278,6 +268,7 @@ class Edit extends BaseResults {
                 options = this.state.options[field];
                 break;
         }
+        if (!options) options = [];
         return options;
     };
 
@@ -552,7 +543,7 @@ class Edit extends BaseResults {
                     </div>
                     <div
                         style={{ paddingTop: "24px" }}
-                        className="halfColumn paddingLeft"
+                        className="quarterColumn paddingLeft paddingRight"
                     >
                         <Button
                             size="field"
@@ -564,6 +555,18 @@ class Edit extends BaseResults {
                         >
                             Create New
                         </Button>
+                    </div>
+                    <div className="quarterColumn paddingLeft">
+                        <Toggle
+                            labelText="Dropdown Options"
+                            toggled={this.state.includeAll ? true : false}
+                            id="include_all_toggle"
+                            labelA="Only Done Before"
+                            labelB="Include All Options"
+                            onToggle={e => {
+                                this.setState({ includeAll: e });
+                            }}
+                        />
                     </div>
                 </div>
                 {this.genFilters(filtered)}
