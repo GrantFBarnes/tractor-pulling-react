@@ -60,8 +60,8 @@ class Analysis extends BaseResults {
                         return tractor.brand + " " + tractor.model;
                     }
                     return (
-                        puller.first_name +
-                        " " +
+                        puller.first_name[0] +
+                        ". " +
                         puller.last_name +
                         " - " +
                         tractor.brand +

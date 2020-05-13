@@ -140,6 +140,10 @@ class BasePage extends Component {
                 <div className="pageContainer">
                     <h3 className="titleHeader">{this.titleRender()}</h3>
                     {this.contentRender()}
+                    <div className="footer">
+                        <div className="halfColumn footerText"></div>
+                        <div className="halfColumn footerText right"></div>
+                    </div>
                 </div>
             </div>
         );

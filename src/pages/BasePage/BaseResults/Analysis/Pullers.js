@@ -24,7 +24,8 @@ class Pullers extends Analysis {
                         bottom: { mapsTo: "date", scaleType: "time" },
                         left: { mapsTo: "value", scaleType: "linear" }
                     },
-                    height: "350px"
+                    curve: "curveMonotoneX", // most to least curvy curveBasis, curveNatural, curveMonotoneX, empty
+                    height: window.innerHeight * 0.7 + "px"
                 }}
             />
         );

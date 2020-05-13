@@ -52,8 +52,10 @@ class Results extends Analysis {
     contentRender() {
         const data = this.getData();
         const height =
-            Math.max(window.innerHeight, JSON.stringify(data).length) * 0.85 +
-            "px";
+            Math.max(
+                window.innerHeight * 0.7,
+                JSON.stringify(data).length * 0.9
+            ) + "px";
         const x = this.getXName();
         const y = this.getYName();
         return (
@@ -68,9 +70,15 @@ class Results extends Analysis {
                     {this.getBarChart(data, height, x, y)}
                 </div>
                 {this.state.metric !== "percentile" ? (
-                    <div className="contentRow">
-                        {this.getPieChart(data, height, x, y)}
-                    </div>
+                    <>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <div className="contentRow">
+                            {this.getPieChart(data, height, x, y)}
+                        </div>
+                    </>
                 ) : null}
             </div>
         );
