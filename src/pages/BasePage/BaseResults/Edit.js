@@ -37,6 +37,7 @@ class Edit extends BaseResults {
 
         this.state.pullerTractors = {};
         this.state.classPullers = {};
+        this.state.options = {};
     }
 
     updateObj = e => {
@@ -222,137 +223,59 @@ class Edit extends BaseResults {
         return rows;
     };
 
-    pullerSort = (a, b) => {
-        if (a.first_name < b.first_name) return -1;
-        if (a.first_name > b.first_name) return 1;
-        if (a.last_name < b.last_name) return -1;
-        if (a.last_name > b.last_name) return 1;
-        return 0;
-    };
-
     getItems = (field, row) => {
         let options = [];
         let classType = "";
         switch (field) {
-            case "season":
-                for (let id in this.state.allTypes.Season) {
-                    const obj = this.state.allTypes.Season[id];
-                    options.push({ id: id, display: obj.year });
-                }
-                break;
-
-            case "location":
-                for (let id in this.state.allTypes.Location) {
-                    const obj = this.state.allTypes.Location[id];
-                    options.push({
-                        id: id,
-                        display: obj.town + ", " + obj.state
-                    });
-                }
-                break;
-
             case "pull":
-                for (let id in this.state.allTypes.Pull) {
-                    const obj = this.state.allTypes.Pull[id];
+                for (let id in this.state.options.pull) {
+                    const obj = this.state.options.pull[id];
                     if (obj.season !== this.state.season) continue;
-                    const location = this.state.allObjects[obj.location]
-                        ? this.state.allObjects[obj.location].town
-                        : "(No Town)";
-                    const season = this.state.allObjects[obj.season]
-                        ? this.state.allObjects[obj.season].year
-                        : "(No Year)";
-                    options.push({
-                        id: id,
-                        display: location + " - " + season
-                    });
+                    options.push(obj);
                 }
                 break;
 
             case "class":
-                let classes = [];
-                for (let id in this.state.allTypes.Class) {
-                    const obj = this.state.allTypes.Class[id];
+                for (let id in this.state.options.class) {
+                    const obj = this.state.options.class[id];
                     if (obj.pull !== this.state.pull) continue;
-                    classes.push(obj);
-                }
-                classes.sort(this.classSort);
-                for (let i in classes) {
-                    const obj = classes[i];
-                    let display = obj.weight + " " + obj.category;
-                    if (obj.speed > 4) display += " (" + obj.speed + ")";
-                    options.push({ id: obj.id, display: display });
+                    options.push(obj);
                 }
                 break;
 
             case "puller":
-                let pullers = [];
-                for (let id in this.state.allTypes.Puller) {
-                    const obj = this.state.allTypes.Puller[id];
-                    pullers.push(obj);
-                }
-                pullers.sort(this.pullerSort);
+                options = JSON.parse(JSON.stringify(this.state.options.puller));
 
                 classType = this.getClassType(this.state.class);
                 if (this.state.classPullers[classType]) {
-                    let normalPullers = [];
-                    for (let pid of this.state.classPullers[classType]) {
-                        const puller = this.state.allObjects[pid];
-                        normalPullers.push(puller);
-                    }
-                    normalPullers.sort(this.pullerSort);
-                    pullers = [...new Set([...normalPullers, ...pullers])];
-                }
-                for (let i in pullers) {
-                    const obj = pullers[i];
-                    options.push({
-                        id: obj.id,
-                        display: obj.first_name + " " + obj.last_name
-                    });
+                    options = [
+                        ...new Set([
+                            ...this.state.classPullers[classType],
+                            ...options
+                        ])
+                    ];
                 }
                 break;
 
             case "tractor":
-                let tractors = [];
-                for (let id in this.state.allTypes.Tractor) {
-                    const obj = this.state.allTypes.Tractor[id];
-                    tractors.push(obj);
-                }
-                tractors.sort(this.tractorSort);
+                options = JSON.parse(
+                    JSON.stringify(this.state.options.tractor)
+                );
 
                 classType = this.getClassType(row.class);
                 const pullerClass = row.puller + " " + classType;
                 if (this.state.pullerTractors[pullerClass]) {
-                    let normalTractors = [];
-                    for (let tid of this.state.pullerTractors[pullerClass]) {
-                        const tractor = this.state.allObjects[tid];
-                        normalTractors.push(tractor);
-                    }
-                    normalTractors.sort(this.tractorSort);
-                    tractors = [...new Set([...normalTractors, ...tractors])];
+                    options = [
+                        ...new Set([
+                            ...this.state.pullerTractors[pullerClass],
+                            ...options
+                        ])
+                    ];
                 }
-                for (let i in tractors) {
-                    const obj = tractors[i];
-                    options.push({
-                        id: obj.id,
-                        display: obj.brand + " " + obj.model
-                    });
-                }
-                break;
-
-            case "category":
-                options.push({ id: "Farm Stock", display: "Farm Stock" });
-                options.push({
-                    id: "Antique Modified",
-                    display: "Antique Modified"
-                });
-                break;
-
-            case "state":
-                options.push({ id: "WI", display: "Wisconsin" });
-                options.push({ id: "IL", display: "Illinois" });
                 break;
 
             default:
+                options = this.state.options[field];
                 break;
         }
         return options;
@@ -529,7 +452,7 @@ class Edit extends BaseResults {
         })
             .then(response => {
                 if (response.status === 200) {
-                    that.setState({ loading: false, canEdit: true });
+                    that.genOptions();
                 } else {
                     that.setState({ loading: false, canEdit: false });
                     alert("Invalid Secret, Access Denied");
@@ -653,7 +576,15 @@ class Edit extends BaseResults {
         );
     }
 
-    generateSmarts() {
+    pullerSort = (a, b) => {
+        if (a.first_name < b.first_name) return -1;
+        if (a.first_name > b.first_name) return 1;
+        if (a.last_name < b.last_name) return -1;
+        if (a.last_name > b.last_name) return 1;
+        return 0;
+    };
+
+    genOptions() {
         let pullerTractors = {};
         let classPullers = {};
         for (let id in this.state.allTypes.Hook) {
@@ -675,10 +606,127 @@ class Edit extends BaseResults {
             }
             pullerTractors[pullerClass].add(obj.tractor);
         }
+
+        // Sort helpers
+
+        for (let c in classPullers) {
+            let pList = [];
+            for (let pid of classPullers[c]) {
+                pList.push(this.state.allObjects[pid]);
+            }
+            pList = pList.sort(this.pullerSort);
+            for (let i in pList) {
+                const puller = pList[i];
+                pList[i] = {
+                    id: puller.id,
+                    display: puller.first_name + " " + puller.last_name
+                };
+            }
+            classPullers[c] = pList;
+        }
+
+        for (let c in pullerTractors) {
+            let tList = [];
+            for (let pid of pullerTractors[c]) {
+                tList.push(this.state.allObjects[pid]);
+            }
+            tList = tList.sort(this.tractorSort);
+            for (let i in tList) {
+                const tractor = tList[i];
+                tList[i] = {
+                    id: tractor.id,
+                    display: tractor.brand + " " + tractor.model
+                };
+            }
+            pullerTractors[c] = tList;
+        }
+
+        // get constant options
+
+        let options = {
+            season: [],
+            location: [],
+            pull: [],
+            class: [],
+            puller: [],
+            tractor: [],
+            category: [
+                { id: "Farm Stock", display: "Farm Stock" },
+                { id: "Antique Modified", display: "Antique Modified" }
+            ],
+            state: [
+                { id: "WI", display: "Wisconsin" },
+                { id: "IL", display: "Illinois" }
+            ]
+        };
+
+        for (let id in this.state.allTypes.Season) {
+            const obj = this.state.allTypes.Season[id];
+            options.season.push({ id: id, display: obj.year });
+        }
+
+        for (let id in this.state.allTypes.Location) {
+            const obj = this.state.allTypes.Location[id];
+            options.location.push({
+                id: id,
+                display: obj.town + ", " + obj.state
+            });
+        }
+
+        for (let id in this.state.allTypes.Pull) {
+            const obj = this.state.allTypes.Pull[id];
+            const location = this.state.allObjects[obj.location]
+                ? this.state.allObjects[obj.location].town
+                : "(No Town)";
+            const season = this.state.allObjects[obj.season]
+                ? this.state.allObjects[obj.season].year
+                : "(No Year)";
+            options.pull.push({
+                id: id,
+                display: location + " - " + season,
+                season: season
+            });
+        }
+
+        for (let id in this.state.allTypes.Class) {
+            const obj = this.state.allTypes.Class[id];
+            let display = obj.weight + " " + obj.category;
+            if (obj.speed > 4) display += " (" + obj.speed + ")";
+            options.class.push({
+                id: obj.id,
+                display: display,
+                pull: obj.pull
+            });
+        }
+
+        let pType = Object.values(this.state.allTypes.Puller).sort(
+            this.pullerSort
+        );
+        for (let id in pType) {
+            const obj = pType[id];
+            options.puller.push({
+                id: obj.id,
+                display: obj.first_name + " " + obj.last_name
+            });
+        }
+
+        let tType = Object.values(this.state.allTypes.Tractor).sort(
+            this.tractorSort
+        );
+        for (let i in tType) {
+            const obj = tType[i];
+            options.tractor.push({
+                id: obj.id,
+                display: obj.brand + " " + obj.model
+            });
+        }
+
         this.setState({
+            loading: false,
             canEdit: true,
             pullerTractors: pullerTractors,
-            classPullers: classPullers
+            classPullers: classPullers,
+            options: options
         });
     }
 
@@ -689,7 +737,7 @@ class Edit extends BaseResults {
         })
             .then(response => {
                 if (response.status === 200) {
-                    that.generateSmarts();
+                    that.genOptions();
                 }
             })
             .catch(err => {});
