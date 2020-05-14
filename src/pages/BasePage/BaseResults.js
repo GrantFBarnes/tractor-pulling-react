@@ -3,8 +3,6 @@ import BasePage from "../BasePage";
 
 import { Dropdown, DataTable } from "carbon-components-react";
 
-import "../../styling/BasePage.css";
-
 const {
     Table,
     TableHead,

@@ -16,10 +16,10 @@ import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
 import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rivals32 from "@carbon/icons-react/lib/partnership/32";
 import Ruler32 from "@carbon/icons-react/lib/ruler/32";
-import Video20 from "@carbon/icons-react/lib/video/20";
+import YouTube20 from "@carbon/icons-react/lib/logo--youtube/20";
 import Trophy32 from "@carbon/icons-react/lib/trophy/32";
 
-import "../styling/BasePage.css";
+import "../styling/BasePage.scss";
 
 class BasePage extends Component {
     constructor() {
@@ -31,7 +31,12 @@ class BasePage extends Component {
         }
 
         this.buttons = {
-            results: { text: "Results", icon: ListNum32, href: "/results" },
+            results: {
+                text: "Results",
+                icon: ListNum32,
+                href: "/results",
+                full: true
+            },
             wins: { text: "Wins", icon: Trophy32, href: "/wins" },
             distances: { text: "Distances", icon: Ruler32, href: "/distances" },
             percentiles: {
@@ -52,7 +57,7 @@ class BasePage extends Component {
             },
             youtube: {
                 text: "YouTube",
-                icon: Video20,
+                icon: YouTube20,
                 href:
                     "https://www.youtube.com/channel/UCIJUfssINon5pT4x9R25Iyg",
                 target: "_blank"

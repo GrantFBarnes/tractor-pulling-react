@@ -7,7 +7,9 @@ class Home extends BasePage {
     genButton = button => {
         return (
             <Button
-                kind="ghost"
+                kind={button.full ? "primary" : "ghost"}
+                size="field"
+                className="homeButton"
                 renderIcon={button.icon}
                 href={button.href}
                 target={button.target}
@@ -35,7 +37,13 @@ class Home extends BasePage {
         for (let i = 0; i < keys.length; i++) {
             const left = this.buttons[keys[i]];
             const right = this.buttons[keys[i + 1]];
-            if (right) {
+            if (left.full || !right) {
+                buttons.push(
+                    <div className="contentRow center">
+                        {this.genButton(left)}
+                    </div>
+                );
+            } else {
                 buttons.push(
                     <div className="contentRow center">
                         <div className="halfColumn paddingRight">
@@ -46,14 +54,8 @@ class Home extends BasePage {
                         </div>
                     </div>
                 );
-            } else {
-                buttons.push(
-                    <div className="contentRow center">
-                        {this.genButton(left)}
-                    </div>
-                );
+                i++;
             }
-            i++;
         }
         return buttons;
     };
@@ -65,6 +67,8 @@ class Home extends BasePage {
     contentRender() {
         return (
             <div className="contentContainer">
+                <br />
+                <br />
                 {this.state.smallWindow
                     ? this.genSmButtons()
                     : this.genLgButtons()}
