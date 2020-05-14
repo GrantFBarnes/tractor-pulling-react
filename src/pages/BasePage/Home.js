@@ -3,16 +3,61 @@ import BasePage from "../BasePage";
 
 import { Button } from "carbon-components-react";
 
-import ChartBar20 from "@carbon/icons-react/lib/chart--bar/20";
-import ChartLine20 from "@carbon/icons-react/lib/chart--line/20";
-import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
-import Percent32 from "@carbon/icons-react/lib/percentage/32";
-import Rivals32 from "@carbon/icons-react/lib/partnership/32";
-import Ruler32 from "@carbon/icons-react/lib/ruler/32";
-import Video20 from "@carbon/icons-react/lib/video/20";
-import Trophy32 from "@carbon/icons-react/lib/trophy/32";
-
 class Home extends BasePage {
+    genButton = button => {
+        return (
+            <Button
+                kind="ghost"
+                renderIcon={button.icon}
+                href={button.href}
+                target={button.target}
+            >
+                {button.text}
+            </Button>
+        );
+    };
+
+    genSmButtons = () => {
+        let buttons = [];
+        for (let text in this.buttons) {
+            buttons.push(
+                <div className="contentRow center">
+                    {this.genButton(this.buttons[text])}
+                </div>
+            );
+        }
+        return buttons;
+    };
+
+    genLgButtons = () => {
+        let buttons = [];
+        let keys = Object.keys(this.buttons);
+        for (let i = 0; i < keys.length; i++) {
+            const left = this.buttons[keys[i]];
+            const right = this.buttons[keys[i + 1]];
+            if (right) {
+                buttons.push(
+                    <div className="contentRow center">
+                        <div className="halfColumn paddingRight">
+                            {this.genButton(left)}
+                        </div>
+                        <div className="halfColumn paddingLeft">
+                            {this.genButton(right)}
+                        </div>
+                    </div>
+                );
+            } else {
+                buttons.push(
+                    <div className="contentRow center">
+                        {this.genButton(left)}
+                    </div>
+                );
+            }
+            i++;
+        }
+        return buttons;
+    };
+
     titleRender() {
         return "Community Antique Tractor Pulling";
     }
@@ -20,62 +65,9 @@ class Home extends BasePage {
     contentRender() {
         return (
             <div className="contentContainer">
-                <div className="contentRow center">
-                    <Button kind="ghost" renderIcon={ListNum32} href="/results">
-                        Results
-                    </Button>
-                </div>
-                <div className="contentRow center">
-                    <Button kind="ghost" renderIcon={Trophy32} href="/wins">
-                        Wins
-                    </Button>
-                </div>
-                <div className="contentRow center">
-                    <Button kind="ghost" renderIcon={Ruler32} href="/distances">
-                        Distances
-                    </Button>
-                </div>
-                <div className="contentRow center">
-                    <Button
-                        kind="ghost"
-                        renderIcon={Percent32}
-                        href="/percentiles"
-                    >
-                        Percentiles
-                    </Button>
-                </div>
-                <div className="contentRow center">
-                    <Button kind="ghost" renderIcon={Rivals32} href="/rivals">
-                        Rivals
-                    </Button>
-                </div>
-                <div className="contentRow center">
-                    <Button
-                        kind="ghost"
-                        renderIcon={ChartBar20}
-                        href="/analysis/results"
-                    >
-                        Result Analysis
-                    </Button>
-                </div>
-                <div className="contentRow center">
-                    <Button
-                        kind="ghost"
-                        renderIcon={ChartLine20}
-                        href="/analysis/pullers"
-                    >
-                        Puller Analysis
-                    </Button>
-                </div>
-                <div className="contentRow center">
-                    <Button
-                        kind="ghost"
-                        renderIcon={Video20}
-                        href={this.youtube_link}
-                    >
-                        YouTube
-                    </Button>
-                </div>
+                {this.state.smallWindow
+                    ? this.genSmButtons()
+                    : this.genLgButtons()}
             </div>
         );
     }

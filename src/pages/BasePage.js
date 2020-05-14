@@ -11,11 +11,10 @@ import {
 
 import ChartBar20 from "@carbon/icons-react/lib/chart--bar/20";
 import ChartLine20 from "@carbon/icons-react/lib/chart--line/20";
-import Edit20 from "@carbon/icons-react/lib/edit/20";
 import Home20 from "@carbon/icons-react/lib/home/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
 import Percent32 from "@carbon/icons-react/lib/percentage/32";
-import Rival32 from "@carbon/icons-react/lib/partnership/32";
+import Rivals32 from "@carbon/icons-react/lib/partnership/32";
 import Ruler32 from "@carbon/icons-react/lib/ruler/32";
 import Video20 from "@carbon/icons-react/lib/video/20";
 import Trophy32 from "@carbon/icons-react/lib/trophy/32";
@@ -30,9 +29,58 @@ class BasePage extends Component {
         if (this.server_host.indexOf("localhost") >= 0) {
             this.server_host = "http://localhost:8080";
         }
-        this.youtube_link =
-            "https://www.youtube.com/channel/UCIJUfssINon5pT4x9R25Iyg";
+
+        this.buttons = {
+            results: { text: "Results", icon: ListNum32, href: "/results" },
+            wins: { text: "Wins", icon: Trophy32, href: "/wins" },
+            distances: { text: "Distances", icon: Ruler32, href: "/distances" },
+            percentiles: {
+                text: "Percentiles",
+                icon: Percent32,
+                href: "/percentiles"
+            },
+            rivals: { text: "Rivals", icon: Rivals32, href: "/rivals" },
+            resultAnalysis: {
+                text: "Result Analysis",
+                icon: ChartBar20,
+                href: "/analysis/results"
+            },
+            pullerAnalysis: {
+                text: "Puller Analysis",
+                icon: ChartLine20,
+                href: "/analysis/pullers"
+            },
+            youtube: {
+                text: "YouTube",
+                icon: Video20,
+                href:
+                    "https://www.youtube.com/channel/UCIJUfssINon5pT4x9R25Iyg",
+                target: "_blank"
+            }
+        };
     }
+
+    genSideNavLink = button => {
+        return (
+            <SideNavLink
+                renderIcon={button.icon}
+                href={button.href}
+                target={button.target}
+            >
+                {button.text}
+            </SideNavLink>
+        );
+    };
+
+    genSideNav = () => {
+        let buttons = [
+            this.genSideNavLink({ text: "Home", icon: Home20, href: "/home" })
+        ];
+        for (let text in this.buttons) {
+            buttons.push(this.genSideNavLink(this.buttons[text]));
+        }
+        return buttons;
+    };
 
     setUp() {
         this.setState({ loading: false });
@@ -91,50 +139,7 @@ class BasePage extends Component {
                         aria-label="side nav"
                         expanded={this.state.sideExpanded}
                     >
-                        <SideNavItems>
-                            <SideNavLink renderIcon={Home20} href="/home">
-                                Home
-                            </SideNavLink>
-                            <SideNavLink renderIcon={ListNum32} href="/results">
-                                Results
-                            </SideNavLink>
-                            <SideNavLink renderIcon={Trophy32} href="/wins">
-                                Wins
-                            </SideNavLink>
-                            <SideNavLink renderIcon={Ruler32} href="/distances">
-                                Distances
-                            </SideNavLink>
-                            <SideNavLink
-                                renderIcon={Percent32}
-                                href="/percentiles"
-                            >
-                                Percentile
-                            </SideNavLink>
-                            <SideNavLink renderIcon={Rival32} href="/rivals">
-                                Rivals
-                            </SideNavLink>
-                            <SideNavLink
-                                renderIcon={ChartBar20}
-                                href="/analysis/results"
-                            >
-                                Result Analysis
-                            </SideNavLink>
-                            <SideNavLink
-                                renderIcon={ChartLine20}
-                                href="/analysis/pullers"
-                            >
-                                Puller Analysis
-                            </SideNavLink>
-                            <SideNavLink
-                                renderIcon={Video20}
-                                href={this.youtube_link}
-                            >
-                                Youtube
-                            </SideNavLink>
-                            <SideNavLink renderIcon={Edit20} href="/edit">
-                                Edit
-                            </SideNavLink>
-                        </SideNavItems>
+                        <SideNavItems>{this.genSideNav()}</SideNavItems>
                     </SideNav>
                 </Header>
                 <div className="pageContainer">
