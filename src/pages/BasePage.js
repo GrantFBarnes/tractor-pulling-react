@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Loading } from "carbon-components-react";
+import { Loading, Button } from "carbon-components-react";
 import {
     Header,
     HeaderName,
@@ -21,10 +21,17 @@ import Trophy32 from "@carbon/icons-react/lib/trophy/32";
 
 import "../styling/BasePage.scss";
 
+import ContactModal from "../components/ContactModal";
+
 class BasePage extends Component {
     constructor() {
         super();
-        this.state = { loading: true, smallWindow: false, sideExpanded: false };
+        this.state = {
+            loading: true,
+            smallWindow: false,
+            sideExpanded: false,
+            contactOpen: false
+        };
         this.server_host = window.location.origin;
         if (this.server_host.indexOf("localhost") >= 0) {
             this.server_host = "http://localhost:8080";
@@ -65,9 +72,38 @@ class BasePage extends Component {
         };
     }
 
+    toggleContact = () => {
+        this.setState({ contactOpen: !this.state.contactOpen });
+    };
+
+    sendEmail = data => {
+        const that = this;
+        that.setState({ loading: true });
+        return new Promise((resolve, reject) => {
+            fetch(this.server_host + "/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        resolve("success");
+                    } else {
+                        reject("error");
+                    }
+                    that.setState({ loading: false });
+                })
+                .catch(err => {
+                    reject("error");
+                    that.setState({ loading: false });
+                });
+        });
+    };
+
     genSideNavLink = button => {
         return (
             <SideNavLink
+                key={button.text}
                 renderIcon={button.icon}
                 href={button.href}
                 target={button.target}
@@ -152,9 +188,23 @@ class BasePage extends Component {
                     {this.contentRender()}
                     <div className="footer">
                         <div className="halfColumn footerText"></div>
-                        <div className="halfColumn footerText right"></div>
+                        <div className="halfColumn footerText right">
+                            <Button
+                                kind="ghost"
+                                onClick={() => {
+                                    this.toggleContact();
+                                }}
+                            >
+                                Contact
+                            </Button>
+                        </div>
                     </div>
                 </div>
+                <ContactModal
+                    open={this.state.contactOpen}
+                    closeModal={this.toggleContact}
+                    sendEmail={this.sendEmail}
+                ></ContactModal>
             </div>
         );
     }

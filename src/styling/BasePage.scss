@@ -80,7 +80,7 @@ body {
 }
 
 .footerText {
-    opacity: 35%;
+    opacity: 50%;
     padding: 20px;
     font-size: 12px;
 }
@@ -169,4 +169,19 @@ body {
 .bx--modal-container {
     max-width: 90vw;
     max-height: 85vh;
+}
+
+.bx--text-area__wrapper[data-invalid] > .bx--text-area--invalid,
+.bx--text-input__field-wrapper[data-invalid] {
+    outline: 2px solid red;
+}
+
+.bx--text-area__wrapper[data-invalid] ~ .bx--form-requirement,
+.bx--text-input__field-wrapper[data-invalid] ~ .bx--form-requirement {
+    color: red;
+}
+
+.bx--text-area__invalid-icon,
+.bx--text-input__invalid-icon {
+    fill: red !important;
 }

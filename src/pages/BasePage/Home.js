@@ -39,13 +39,13 @@ class Home extends BasePage {
             const right = this.buttons[keys[i + 1]];
             if (left.full || !right) {
                 buttons.push(
-                    <div className="contentRow center">
+                    <div key={i} className="contentRow center">
                         {this.genButton(left)}
                     </div>
                 );
             } else {
                 buttons.push(
-                    <div className="contentRow center">
+                    <div key={i} className="contentRow center">
                         <div className="halfColumn paddingRight">
                             {this.genButton(left)}
                         </div>

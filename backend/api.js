@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const authentication = require("./authentication.js");
+const email = require("./email.js");
 const objects = require("./objects.js");
 
 function returnSuccess(response) {
@@ -21,6 +22,22 @@ function returnResponse(response, result) {
     });
     response.write(JSON.stringify(result.data));
     response.end();
+}
+
+function returnPromiseResponse(response, promise) {
+    promise
+        .then(result => {
+            response.writeHead(result.statusCode, {
+                "Content-Type": "application/json"
+            });
+            response.write(JSON.stringify(result.data));
+            response.end();
+        })
+        .catch(err => {
+            response.writeHead(500, { "Content-Type": "application/json" });
+            response.write("error");
+            response.end();
+        });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +108,11 @@ router.post("/api/object", (request, response) => {
         return;
     }
     returnResponse(response, objects.createObj(request.body));
+});
+
+// Send email to get in contact with developer
+router.post("/api/contact", (request, response) => {
+    returnPromiseResponse(response, email.sendEmail(request.body));
 });
 
 ////////////////////////////////////////////////////////////////////////////////
