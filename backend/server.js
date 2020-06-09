@@ -2,7 +2,6 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const express = require("express");
 const http = require("http");
-const https = require("https");
 const parser = require("body-parser");
 const session = require("express-session");
 
@@ -50,11 +49,11 @@ app.get("*", function (request, response) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function main() {
-    let server;
+    const server = http.createServer(app);
     if (util.isProd) {
-        server = app.listen(80);
+        server.listen(80);
     } else {
-        server = http.createServer(app).listen(8080);
+        server.listen(8080);
         console.log("Running local environment on http://localhost:8080");
     }
     persist.initData();
