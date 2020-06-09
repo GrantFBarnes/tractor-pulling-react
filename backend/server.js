@@ -2,6 +2,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const express = require("express");
 const http = require("http");
+const https = require("https");
 const parser = require("body-parser");
 const session = require("express-session");
 
@@ -29,7 +30,7 @@ app.use(parser.urlencoded({ extended: false }));
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.setHeader(
+    res.header(
         "Access-Control-Allow-Methods",
         "GET, POST, OPTIONS, PUT, PATCH, DELETE"
     );
@@ -37,7 +38,7 @@ app.use(function (req, res, next) {
         "Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept"
     );
-    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Credentials", true);
     next();
 });
 
@@ -49,12 +50,11 @@ app.get("*", function (request, response) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function main() {
-    const server = http.createServer(app);
+    let server;
     if (util.isProd) {
-        server.listen(80);
-        console.log("Running in production");
+        server = app.listen(80);
     } else {
-        server.listen(8080);
+        server = http.createServer(app).listen(8080);
         console.log("Running local environment on http://localhost:8080");
     }
     persist.initData();
