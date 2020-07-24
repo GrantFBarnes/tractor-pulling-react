@@ -24,7 +24,7 @@ class BaseResults extends BasePage {
         this.state.pull = "";
         this.state.class = "";
         this.state.subject = "puller";
-        this.state.metric = "wins";
+        this.state.metric = "percentile";
         this.state.puller = "";
 
         this.subjectOptions = [
@@ -34,10 +34,10 @@ class BaseResults extends BasePage {
             { id: "brand", display: "Brands" }
         ];
         this.metricOptions = [
+            { id: "percentile", display: "Position Percentile" },
             { id: "wins", display: "Wins" },
             { id: "hooks", display: "Hooks" },
-            { id: "distance", display: "Distance" },
-            { id: "percentile", display: "Position Percentile" }
+            { id: "distance", display: "Distance" }
         ];
     }
 
