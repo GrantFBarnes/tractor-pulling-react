@@ -5,8 +5,11 @@ class Wins extends BaseResults {
     WinSort = (a, b) => {
         if (a.wins < b.wins) return 1;
         if (a.wins > b.wins) return -1;
-        if (a.percent < b.percent) return 1;
-        if (a.percent > b.percent) return -1;
+
+        const percentA = parseInt(a.percent.split("%")[0]);
+        const percentB = parseInt(b.percent.split("%")[0]);
+        if (percentA < percentB) return 1;
+        if (percentA > percentB) return -1;
 
         if (a.class < b.class) return -1;
         if (a.class > b.class) return 1;
@@ -18,6 +21,7 @@ class Wins extends BaseResults {
 
     getWins = () => {
         let classes = {};
+        let pulls = new Set();
         for (let id in this.state.allTypes.Class) {
             const obj = this.state.allTypes.Class[id];
 
@@ -29,6 +33,8 @@ class Wins extends BaseResults {
                     continue;
                 }
             }
+
+            pulls.add(obj.pull);
 
             const classType = this.getClassType(id);
             for (let h in obj.hooks) {
@@ -54,12 +60,14 @@ class Wins extends BaseResults {
                 const puller = this.state.allObjects[p];
                 if (!puller) continue;
                 const percent = classes[c][p] / classes[c]["total"];
+                const ppercent = classes[c][p] / pulls.size;
                 wins.push({
                     id: p + c,
                     puller: this.getSubjectDisplay(puller),
                     class: c,
                     wins: classes[c][p],
-                    percent: parseInt(percent * 100) + "%"
+                    percent: parseInt(percent * 100) + "%",
+                    ppercent: parseInt(ppercent * 100) + "%"
                 });
             }
         }
@@ -96,7 +104,8 @@ class Wins extends BaseResults {
                         { key: "puller", header: "Puller" },
                         { key: "class", header: "Class" },
                         { key: "wins", header: "Wins" },
-                        { key: "percent", header: "Win %" }
+                        { key: "percent", header: "Win % Over Classes" },
+                        { key: "ppercent", header: "Win % Over Pulls" }
                     ])}
                 </div>
             </div>
