@@ -5,6 +5,8 @@ class Wins extends BaseResults {
     WinSort = (a, b) => {
         if (a.wins < b.wins) return 1;
         if (a.wins > b.wins) return -1;
+        if (a.percent < b.percent) return 1;
+        if (a.percent > b.percent) return -1;
 
         if (a.class < b.class) return -1;
         if (a.class > b.class) return 1;
@@ -15,7 +17,7 @@ class Wins extends BaseResults {
     };
 
     getWins = () => {
-        let pullers = {};
+        let classes = {};
         for (let id in this.state.allTypes.Class) {
             const obj = this.state.allTypes.Class[id];
 
@@ -34,26 +36,30 @@ class Wins extends BaseResults {
                 if (!hook) continue;
                 if (!hook.puller) continue;
                 if (hook.position !== 1) continue;
-                if (!pullers[hook.puller]) {
-                    pullers[hook.puller] = {};
+
+                if (!classes[classType]) {
+                    classes[classType] = { total: 0 };
                 }
-                if (!pullers[hook.puller][classType]) {
-                    pullers[hook.puller][classType] = 0;
+                if (!classes[classType][hook.puller]) {
+                    classes[classType][hook.puller] = 0;
                 }
-                pullers[hook.puller][classType]++;
+                classes[classType][hook.puller]++;
+                classes[classType]["total"]++;
             }
         }
 
         let wins = [];
-        for (let p in pullers) {
-            const puller = this.state.allObjects[p];
-            if (!puller) continue;
-            for (let c in pullers[p]) {
+        for (let c in classes) {
+            for (let p in classes[c]) {
+                const puller = this.state.allObjects[p];
+                if (!puller) continue;
+                const percent = classes[c][p] / classes[c]["total"];
                 wins.push({
                     id: p + c,
                     puller: this.getSubjectDisplay(puller),
                     class: c,
-                    wins: pullers[p][c]
+                    wins: classes[c][p],
+                    percent: parseInt(percent * 100) + "%"
                 });
             }
         }
@@ -62,11 +68,19 @@ class Wins extends BaseResults {
     };
 
     getCellClass = (cell, row) => {
-        if (!cell.id.endsWith("wins")) return "";
-        if (cell.value >= 7) return "greenText";
-        if (cell.value >= 5) return "yellowText";
-        if (cell.value >= 3) return "orangeText";
-        return "redText";
+        if (cell.id.endsWith("wins")) {
+            if (cell.value >= 7) return "greenText";
+            if (cell.value >= 5) return "yellowText";
+            if (cell.value >= 3) return "orangeText";
+            return "redText";
+        } else if (cell.id.endsWith("percent")) {
+            const percent = cell.value.split("%")[0];
+            if (percent >= 55) return "greenText";
+            if (percent >= 40) return "yellowText";
+            if (percent >= 20) return "orangeText";
+            return "redText";
+        }
+        return "";
     };
 
     titleRender() {
@@ -81,7 +95,8 @@ class Wins extends BaseResults {
                     {this.genDataTable(this.getWins(), [
                         { key: "puller", header: "Puller" },
                         { key: "class", header: "Class" },
-                        { key: "wins", header: "Wins" }
+                        { key: "wins", header: "Wins" },
+                        { key: "percent", header: "Win %" }
                     ])}
                 </div>
             </div>
