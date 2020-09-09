@@ -10,6 +10,9 @@ const {
     TableBody,
     TableCell,
     TableHeader,
+    TableExpandHeader,
+    TableExpandRow,
+    TableExpandedRow,
     TableToolbar,
     TableToolbarSearch,
     TableContainer
@@ -133,9 +136,10 @@ class BaseResults extends BasePage {
                             </TableToolbar>
                             <Table>
                                 <TableHead>
-                                    <tr>
-                                        {headers.map(header => (
+                                    <TableRow>
+                                        {headers.map((header, i) => (
                                             <TableHeader
+                                                key={i}
                                                 {...getHeaderProps({
                                                     header
                                                 })}
@@ -143,7 +147,7 @@ class BaseResults extends BasePage {
                                                 {header.header}
                                             </TableHeader>
                                         ))}
-                                    </tr>
+                                    </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {rows.map(row => (
@@ -161,6 +165,124 @@ class BaseResults extends BasePage {
                                             ))}
                                         </TableRow>
                                     ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                />
+            </div>
+        );
+    };
+
+    getInnerRows = data => {
+        return [];
+    };
+
+    getInnerHeaders = () => {
+        return [];
+    };
+
+    genInnerTable = data => {
+        return (
+            <div className="tableContainer indent">
+                <DataTable
+                    rows={this.getInnerRows(data)}
+                    headers={this.getInnerHeaders()}
+                    render={({ rows, headers }) => (
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        {headers.map((header, i) => (
+                                            <TableHeader key={i}>
+                                                {header.header}
+                                            </TableHeader>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {rows.map(row => (
+                                        <TableRow key={row.id}>
+                                            {row.cells.map(cell => (
+                                                <TableCell
+                                                    key={cell.id}
+                                                    className={this.getCellClass(
+                                                        cell,
+                                                        row
+                                                    )}
+                                                >
+                                                    {cell.value}
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                />
+            </div>
+        );
+    };
+
+    genExpandTable = (rows, headers) => {
+        let rowMap = {};
+        for (let i in rows) {
+            rowMap[rows[i].id] = rows[i];
+        }
+        return (
+            <div className={this.getTableContainerClass()}>
+                <DataTable
+                    rows={rows}
+                    headers={headers}
+                    isSortable
+                    render={({ rows, headers, getRowProps }) => (
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableExpandHeader />
+                                        {headers.map((header, i) => (
+                                            <TableHeader key={i}>
+                                                {header.header}
+                                            </TableHeader>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {rows.map(row => {
+                                        if (!rowMap[row.id]) return null;
+                                        return (
+                                            <React.Fragment key={row.id}>
+                                                <TableExpandRow
+                                                    {...getRowProps({ row })}
+                                                >
+                                                    {row.cells.map(
+                                                        (cell, i) => (
+                                                            <TableCell
+                                                                key={
+                                                                    cell.id + i
+                                                                }
+                                                                className={this.getCellClass(
+                                                                    cell,
+                                                                    row
+                                                                )}
+                                                            >
+                                                                {cell.value}
+                                                            </TableCell>
+                                                        )
+                                                    )}
+                                                </TableExpandRow>
+                                                <TableExpandedRow
+                                                    colSpan={headers.length + 1}
+                                                >
+                                                    {this.genInnerTable(
+                                                        rowMap[row.id]
+                                                    )}
+                                                </TableExpandedRow>
+                                            </React.Fragment>
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -349,7 +471,7 @@ class BaseResults extends BasePage {
         );
     };
 
-    genSmWinFilters = (filtered, filters) => {
+    genSmWinFilters = (filtered, filters, display) => {
         let dropdowns = [];
         if (filtered.seasons.length > 1 && filters.includes("season")) {
             dropdowns.push(
@@ -393,10 +515,21 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
+        if (display) {
+            for (let f in display) {
+                dropdowns.push(
+                    <div key={"displayField" + f} className="contentRow">
+                        <label className="bx--label">{f}</label>
+                        <p>{display[f]}</p>
+                    </div>
+                );
+            }
+        }
         return dropdowns;
     };
 
-    genLgWinFilters = (filtered, filters) => {
+    genLgWinFilters = (filtered, filters, display) => {
         let dropdowns = [];
         if (filtered.seasons.length > 1 && filters.includes("season")) {
             dropdowns.push(
@@ -452,14 +585,28 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
+        if (display) {
+            for (let f in display) {
+                dropdowns.push(
+                    <div
+                        key={"displayField" + f}
+                        className="quarterColumn paddingLeft paddingRight"
+                    >
+                        <label className="bx--label">{f}</label>
+                        <p>{display[f]}</p>
+                    </div>
+                );
+            }
+        }
         return <div className="contentRow">{dropdowns}</div>;
     };
 
-    genFilters = (filtered, filters) => {
+    genFilters = (filtered, filters, display) => {
         if (this.state.smallWindow) {
-            return this.genSmWinFilters(filtered, filters);
+            return this.genSmWinFilters(filtered, filters, display);
         }
-        return this.genLgWinFilters(filtered, filters);
+        return this.genLgWinFilters(filtered, filters, display);
     };
 
     getFiltered = () => {

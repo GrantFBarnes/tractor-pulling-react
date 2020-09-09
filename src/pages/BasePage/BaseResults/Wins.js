@@ -2,24 +2,77 @@ import React from "react";
 import BaseResults from "../BaseResults";
 
 class Wins extends BaseResults {
-    WinSort = (a, b) => {
+    getCellClass = (cell, row) => {
+        const id = cell.id.toLowerCase();
+        if (id.endsWith("wins")) {
+            if (cell.value >= 7) return "greenText";
+            if (cell.value >= 5) return "yellowText";
+            if (cell.value >= 3) return "orangeText";
+            return "redText";
+        } else if (id.endsWith("percent")) {
+            const percent = cell.value.split("%")[0];
+            if (percent >= 55) return "greenText";
+            if (percent >= 40) return "yellowText";
+            if (percent >= 20) return "orangeText";
+            return "redText";
+        }
+        return "";
+    };
+
+    titleRender() {
+        return "Wins";
+    }
+
+    winSort = (a, b) => {
         if (a.wins < b.wins) return 1;
         if (a.wins > b.wins) return -1;
 
-        const percentA = parseInt(a.percent.split("%")[0]);
-        const percentB = parseInt(b.percent.split("%")[0]);
+        const percentA = parseInt(a.classPercent.split("%")[0]);
+        const percentB = parseInt(b.classPercent.split("%")[0]);
         if (percentA < percentB) return 1;
         if (percentA > percentB) return -1;
 
-        if (a.class < b.class) return -1;
-        if (a.class > b.class) return 1;
         if (a.puller < b.puller) return -1;
         if (a.puller > b.puller) return 1;
 
         return 0;
     };
 
-    getWins = () => {
+    getInnerRows = data => {
+        let wins = [];
+        for (let p in data.pullers) {
+            const puller = this.state.allObjects[p];
+            if (!puller) continue;
+            const classPercent = data.pullers[p] / data.pulled;
+            const pullPercent = data.pullers[p] / data.pulls;
+            wins.push({
+                id: p,
+                puller: this.getSubjectDisplay(puller),
+                wins: data.pullers[p],
+                classPercent: parseInt(classPercent * 100) + "%",
+                pullPercent: parseInt(pullPercent * 100) + "%"
+            });
+        }
+        wins.sort(this.winSort);
+        return wins;
+    };
+
+    getInnerHeaders = () => {
+        return [
+            { key: "puller", header: "Puller" },
+            { key: "wins", header: "Wins" },
+            { key: "classPercent", header: "Win % Over Class Pulled" },
+            { key: "pullPercent", header: "Win % Over All Pulls" }
+        ];
+    };
+
+    classWinSort = (a, b) => {
+        const classA = this.state.allObjects[a.id];
+        const classB = this.state.allObjects[b.id];
+        return this.classSort(classA, classB);
+    };
+
+    getClassWins = () => {
         let classes = {};
         let pulls = new Set();
         for (let id in this.state.allTypes.Class) {
@@ -44,68 +97,52 @@ class Wins extends BaseResults {
                 if (hook.position !== 1) continue;
 
                 if (!classes[classType]) {
-                    classes[classType] = { total: 0 };
+                    classes[classType] = {
+                        id: id,
+                        class: classType,
+                        pulled: 0,
+                        pullers: {}
+                    };
                 }
-                if (!classes[classType][hook.puller]) {
-                    classes[classType][hook.puller] = 0;
+                if (!classes[classType].pullers[hook.puller]) {
+                    classes[classType].pullers[hook.puller] = 0;
                 }
-                classes[classType][hook.puller]++;
-                classes[classType]["total"]++;
+                classes[classType].pullers[hook.puller]++;
+                classes[classType].pulled++;
             }
         }
 
-        let wins = [];
+        let classWins = [];
         for (let c in classes) {
-            for (let p in classes[c]) {
-                const puller = this.state.allObjects[p];
-                if (!puller) continue;
-                const percent = classes[c][p] / classes[c]["total"];
-                const ppercent = classes[c][p] / pulls.size;
-                wins.push({
-                    id: p + c,
-                    puller: this.getSubjectDisplay(puller),
-                    class: c,
-                    wins: classes[c][p],
-                    percent: parseInt(percent * 100) + "%",
-                    ppercent: parseInt(ppercent * 100) + "%"
-                });
-            }
+            classWins.push({
+                mostWins: Math.max(...Object.values(classes[c].pullers)),
+                pullerCount: Object.keys(classes[c].pullers).length,
+                pulls: pulls.size,
+                ...classes[c]
+            });
         }
-        wins.sort(this.WinSort);
-        return wins;
+        classWins.sort(this.classWinSort);
+        return classWins;
     };
-
-    getCellClass = (cell, row) => {
-        if (cell.id.endsWith("wins")) {
-            if (cell.value >= 7) return "greenText";
-            if (cell.value >= 5) return "yellowText";
-            if (cell.value >= 3) return "orangeText";
-            return "redText";
-        } else if (cell.id.endsWith("percent")) {
-            const percent = cell.value.split("%")[0];
-            if (percent >= 55) return "greenText";
-            if (percent >= 40) return "yellowText";
-            if (percent >= 20) return "orangeText";
-            return "redText";
-        }
-        return "";
-    };
-
-    titleRender() {
-        return "Wins";
-    }
 
     contentRender() {
+        const rows = this.getClassWins();
+        let pullCount = 0;
+        for (let i in rows) {
+            pullCount = rows[i].pulls;
+            break;
+        }
         return (
             <div className="contentContainer">
-                {this.genFilters(this.getFiltered(), ["season"])}
+                {this.genFilters(this.getFiltered(), ["season"], {
+                    Pulls: pullCount
+                })}
                 <div className="contentRow">
-                    {this.genDataTable(this.getWins(), [
-                        { key: "puller", header: "Puller" },
+                    {this.genExpandTable(rows, [
                         { key: "class", header: "Class" },
-                        { key: "wins", header: "Wins" },
-                        { key: "percent", header: "Win % Over Classes" },
-                        { key: "ppercent", header: "Win % Over Pulls" }
+                        { key: "mostWins", header: "Most Wins by 1 Puller" },
+                        { key: "pullerCount", header: "Pullers Who Won" },
+                        { key: "pulled", header: "Times Pulled" }
                     ])}
                 </div>
             </div>
