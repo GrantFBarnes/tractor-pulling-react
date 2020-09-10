@@ -114,9 +114,25 @@ class Wins extends BaseResults {
 
         let classWins = [];
         for (let c in classes) {
+            let pullerCount = 0;
+            let wins = 0;
+            let leaders = [];
+            for (let p in classes[c].pullers) {
+                pullerCount++;
+                if (classes[c].pullers[p] > wins) {
+                    wins = classes[c].pullers[p];
+                    leaders = [];
+                }
+                if (classes[c].pullers[p] >= wins) {
+                    leaders.push(
+                        this.getSubjectDisplay(this.state.allObjects[p])
+                    );
+                }
+            }
             classWins.push({
-                mostWins: Math.max(...Object.values(classes[c].pullers)),
-                pullerCount: Object.keys(classes[c].pullers).length,
+                wins: wins,
+                leaders: leaders.toString(),
+                pullerCount: pullerCount,
                 pulls: pulls.size,
                 ...classes[c]
             });
@@ -140,7 +156,8 @@ class Wins extends BaseResults {
                 <div className="contentRow">
                     {this.genExpandTable(rows, [
                         { key: "class", header: "Class" },
-                        { key: "mostWins", header: "Most Wins by 1 Puller" },
+                        { key: "wins", header: "Wins" },
+                        { key: "leaders", header: "Leaders" },
                         { key: "pullerCount", header: "Pullers Who Won" },
                         { key: "pulled", header: "Times Pulled" }
                     ])}
