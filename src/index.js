@@ -16,8 +16,6 @@ import AnalysisPullers from "./pages/BasePage/BaseResults/Analysis/Pullers";
 
 import Reroute from "./pages/Reroute";
 
-import * as serviceWorker from "./serviceWorker";
-
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 
 const routing = (
@@ -41,8 +39,3 @@ const routing = (
 );
 
 ReactDOM.render(routing, document.getElementById("root"));
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
