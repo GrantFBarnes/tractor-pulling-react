@@ -236,12 +236,20 @@ class BaseResults extends BasePage {
                     rows={rows}
                     headers={headers}
                     isSortable
-                    render={({ rows, headers, getRowProps }) => (
+                    render={({
+                        rows,
+                        headers,
+                        getRowProps,
+                        getExpandHeaderProps
+                    }) => (
                         <TableContainer>
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableExpandHeader />
+                                        <TableExpandHeader
+                                            enableExpando={true}
+                                            {...getExpandHeaderProps()}
+                                        />
                                         {headers.map((header, i) => (
                                             <TableHeader key={i}>
                                                 {header.header}
