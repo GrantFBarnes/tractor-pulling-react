@@ -15,8 +15,6 @@ You will need to install [Node.js](https://nodejs.org/en/download/) on your loca
 You will need to set the following environment variables
 
 ```
-TPC_EMAIL // Email address for contact
-TPC_EMAIL_PW // Password of email address
 TRACTORPULLINGENV // prod or something else
 CATP_EDIT_SECRET // secret to allow edit access
 JWT_SECRET // secret to encrypt tokens

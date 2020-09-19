@@ -1,4 +1,3 @@
-import React from "react";
 import BaseResults from "../BaseResults";
 
 class Analysis extends BaseResults {

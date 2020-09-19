@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const authentication = require("./authentication.js");
-const email = require("./email.js");
 const objects = require("./objects.js");
 
 function returnSuccess(response) {
@@ -108,11 +107,6 @@ router.post("/api/object", (request, response) => {
         return;
     }
     returnResponse(response, objects.createObj(request.body));
-});
-
-// Send email to get in contact with developer
-router.post("/api/contact", (request, response) => {
-    returnPromiseResponse(response, email.sendEmail(request.body));
 });
 
 ////////////////////////////////////////////////////////////////////////////////
