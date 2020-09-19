@@ -14,7 +14,7 @@ class TypicalTextInput extends TypicalField {
                 className="typical_input"
                 onChange={e => {
                     const target = e.target;
-                    this.setState(prevState => ({ value: target.value }));
+                    this.setState({ value: target.value });
                 }}
                 onBlur={e => {
                     this.props.handleUpdate(e);

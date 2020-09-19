@@ -3,6 +3,16 @@ import BasePage from "../BasePage";
 
 import { Button } from "carbon-components-react";
 
+import logo from "../../images/logo.png";
+import tractor1 from "../../images/tractor1.png";
+import tractor2 from "../../images/tractor2.png";
+import tractor3 from "../../images/tractor3.png";
+import tractor4 from "../../images/tractor4.png";
+import tractor5 from "../../images/tractor5.png";
+import tractor6 from "../../images/tractor6.png";
+
+import ImageCarousel from "../../components/ImageCarousel";
+
 class Home extends BasePage {
     genButton = button => {
         return (
@@ -23,7 +33,7 @@ class Home extends BasePage {
         let buttons = [];
         for (let text in this.buttons) {
             buttons.push(
-                <div className="contentRow center">
+                <div key={text + "Button"} className="contentRow center">
                     {this.genButton(this.buttons[text])}
                 </div>
             );
@@ -61,12 +71,22 @@ class Home extends BasePage {
     };
 
     titleRender() {
-        return "Community Antique Tractor Pulling";
+        return <img src={logo} alt="Community Antique Tractor Pullers" />;
     }
 
     contentRender() {
         return (
             <div className="contentContainer">
+                <ImageCarousel
+                    images={[
+                        tractor1,
+                        tractor2,
+                        tractor3,
+                        tractor4,
+                        tractor5,
+                        tractor6
+                    ]}
+                ></ImageCarousel>
                 <br />
                 <br />
                 {this.state.smallWindow

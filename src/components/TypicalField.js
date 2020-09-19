@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 
 class TypicalField extends Component {
     constructor() {
@@ -6,19 +6,8 @@ class TypicalField extends Component {
         this.state = { value: "" };
     }
 
-    updateComponent() {
-        if (!this.props.obj) return;
-        this.setState({ value: this.props.obj[this.props.field] });
-    }
-
-    componentWillMount() {
-        this.updateComponent();
-    }
-
-    componentDidUpdate(oldProps) {
-        if (oldProps !== this.props) {
-            this.updateComponent();
-        }
+    static getDerivedStateFromProps(props, state) {
+        return { value: state.value || props.obj[props.field] };
     }
 
     render() {

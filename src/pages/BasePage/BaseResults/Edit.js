@@ -474,9 +474,7 @@ class Edit extends BaseResults {
                         value={this.state.edit_secret}
                         onChange={e => {
                             const target = e.target;
-                            this.setState(prevState => ({
-                                edit_secret: target.value
-                            }));
+                            this.setState({ edit_secret: target.value });
                         }}
                     />
                 </div>
