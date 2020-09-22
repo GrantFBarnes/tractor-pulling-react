@@ -25,8 +25,6 @@ class BasePage extends Component {
     constructor() {
         super();
 
-        window.addEventListener("resize", this.updatePageWidth.bind(this));
-
         this.state = { loading: true, smallWindow: false, sideExpanded: false };
         this.server_host = window.location.origin;
         if (this.server_host.indexOf("localhost") >= 0) {
@@ -91,6 +89,10 @@ class BasePage extends Component {
         return buttons;
     };
 
+    setUp() {
+        this.setState({ loading: false });
+    }
+
     updatePageWidth() {
         this.setState({
             sideExpanded: window.innerWidth > 1056,
@@ -98,12 +100,14 @@ class BasePage extends Component {
         });
     }
 
-    static getDerivedStateFromProps() {
-        return {
-            loading: false,
-            sideExpanded: window.innerWidth > 1056,
-            smallWindow: window.innerWidth < 600
-        };
+    componentWillMount() {
+        this.setUp();
+        this.updatePageWidth();
+        window.addEventListener("resize", this.updatePageWidth.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updatePageWidth.bind(this));
     }
 
     getContainerClass() {

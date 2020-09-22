@@ -3,22 +3,14 @@ import React, { Component } from "react";
 class ImageCarousel extends Component {
     constructor() {
         super();
-        this.state = { image: 0, cron: true };
-        setInterval(this.autoSwitch, 4000);
+        this.state = { image: 0 };
+        setInterval(this.switchImage, 4000);
     }
 
-    getNextImage = () => {
-        if (this.props.images.length === this.state.image + 1) return 0;
-        return this.state.image + 1;
-    };
-
-    clickSwitch = () => {
-        this.setState({ image: this.getNextImage(), cron: false });
-    };
-
-    autoSwitch = () => {
-        if (!this.state.cron) return;
-        this.setState({ image: this.getNextImage() });
+    switchImage = () => {
+        let nextImage = this.state.image + 1;
+        if (this.props.images.length === nextImage) nextImage = 0;
+        this.setState({ image: nextImage });
     };
 
     render() {
@@ -27,7 +19,7 @@ class ImageCarousel extends Component {
             <div
                 style={{ textAlign: "center" }}
                 onClick={() => {
-                    this.clickSwitch();
+                    this.switchImage();
                 }}
             >
                 <img src={this.props.images[this.state.image]} alt="" />
