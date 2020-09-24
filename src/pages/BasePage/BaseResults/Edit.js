@@ -174,6 +174,7 @@ class Edit extends BaseResults {
                 headers.push({ key: "season", header: "Season" });
                 headers.push({ key: "location", header: "Location" });
                 headers.push({ key: "date", header: "Date" });
+                headers.push({ key: "youtube", header: "YouTube" });
                 break;
 
             case "Class":

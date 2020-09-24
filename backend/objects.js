@@ -175,6 +175,7 @@ class Pull extends Base {
 
         this.location = json.location ? json.location : ""; // reference Location id
         this.date = json.date ? json.date : "";
+        this.youtube = json.youtube ? json.youtube : "";
     }
 
     updateReferences(objID, objType, method, fields) {
