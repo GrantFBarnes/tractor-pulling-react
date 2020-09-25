@@ -1,7 +1,9 @@
 import React from "react";
 import BasePage from "../BasePage";
 
-import { Dropdown, DataTable } from "carbon-components-react";
+import { Button, Dropdown, DataTable } from "carbon-components-react";
+
+import YouTube20 from "@carbon/icons-react/lib/logo--youtube/20";
 
 const {
     Table,
@@ -349,6 +351,23 @@ class BaseResults extends BasePage {
         return 0;
     };
 
+    getYouTubeButton = () => {
+        const pull = this.state.allObjects[this.state.pull];
+        if (!pull) return null;
+        if (!pull.youtube) return null;
+        return (
+            <Button
+                kind="danger"
+                size="field"
+                renderIcon={YouTube20}
+                href={"https://www.youtube.com/watch?v=" + pull.youtube}
+                target="_blank"
+            >
+                YouTube
+            </Button>
+        );
+    };
+
     getFilterDisplay = (objs, type) => {
         switch (type) {
             case "seasons":
@@ -534,6 +553,13 @@ class BaseResults extends BasePage {
                 );
             }
         }
+
+        dropdowns.push(
+            <div key="youtubeLink" className="contentRow center">
+                {this.getYouTubeButton()}
+            </div>
+        );
+
         return dropdowns;
     };
 
@@ -607,6 +633,16 @@ class BaseResults extends BasePage {
                 );
             }
         }
+
+        dropdowns.push(
+            <div
+                key="youtubeLink"
+                className="sixthColumn paddingLeft paddingTop"
+            >
+                {this.getYouTubeButton()}
+            </div>
+        );
+
         return <div className="contentRow">{dropdowns}</div>;
     };
 
