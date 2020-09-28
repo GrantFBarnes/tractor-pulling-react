@@ -385,10 +385,9 @@ class BaseResults extends BasePage {
                           ", " +
                           this.state.allObjects[obj.location].state
                         : "(No Location)";
-                    objs[i] = {
-                        id: obj.id,
-                        display: obj.date + " - " + location
-                    };
+                    let display = obj.date + " - " + location;
+                    if (obj.youtube) display += " - (Video)";
+                    objs[i] = { id: obj.id, display: display };
                 }
                 break;
 
