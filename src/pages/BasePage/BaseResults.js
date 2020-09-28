@@ -499,6 +499,7 @@ class BaseResults extends BasePage {
 
     genSmWinFilters = (filtered, filters, display) => {
         let dropdowns = [];
+
         if (filtered.seasons.length > 1 && filters.includes("season")) {
             dropdowns.push(
                 <div key="seasonRow" className="contentRow">
@@ -506,6 +507,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filtered.pulls.length > 1 && filters.includes("pull")) {
             dropdowns.push(
                 <div key="pullRow" className="contentRow">
@@ -513,6 +515,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filtered.classes.length > 1 && filters.includes("class")) {
             dropdowns.push(
                 <div key="classRow" className="contentRow">
@@ -520,6 +523,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filters.includes("subject")) {
             dropdowns.push(
                 <div key="subjectRow" className="contentRow">
@@ -527,6 +531,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filters.includes("puller")) {
             dropdowns.push(
                 <div key="pullerRow" className="contentRow">
@@ -534,10 +539,19 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filters.includes("metric")) {
             dropdowns.push(
                 <div key="metricRow" className="contentRow">
                     {this.genFilterDropdown("metric", this.metricOptions)}
+                </div>
+            );
+        }
+
+        if (filters.includes("youtube")) {
+            dropdowns.push(
+                <div key="youtubeButton" className="contentRow center">
+                    {this.getYouTubeButton()}
                 </div>
             );
         }
@@ -553,17 +567,12 @@ class BaseResults extends BasePage {
             }
         }
 
-        dropdowns.push(
-            <div key="youtubeLink" className="contentRow center">
-                {this.getYouTubeButton()}
-            </div>
-        );
-
         return dropdowns;
     };
 
     genLgWinFilters = (filtered, filters, display) => {
         let dropdowns = [];
+
         if (filtered.seasons.length > 1 && filters.includes("season")) {
             dropdowns.push(
                 <div key="seasonDropdown" className="sixthColumn paddingRight">
@@ -571,6 +580,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filtered.pulls.length > 1 && filters.includes("pull")) {
             dropdowns.push(
                 <div
@@ -581,6 +591,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filtered.classes.length > 1 && filters.includes("class")) {
             dropdowns.push(
                 <div
@@ -591,6 +602,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filters.includes("subject")) {
             dropdowns.push(
                 <div
@@ -601,6 +613,7 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filters.includes("puller")) {
             dropdowns.push(
                 <div
@@ -611,10 +624,22 @@ class BaseResults extends BasePage {
                 </div>
             );
         }
+
         if (filters.includes("metric")) {
             dropdowns.push(
                 <div key="metricDropdown" className="quarterColumn paddingLeft">
                     {this.genFilterDropdown("metric", this.metricOptions)}
+                </div>
+            );
+        }
+
+        if (filters.includes("youtube")) {
+            dropdowns.push(
+                <div
+                    key="youtubeButton"
+                    className="sixthColumn paddingLeft paddingTop"
+                >
+                    {this.getYouTubeButton()}
                 </div>
             );
         }
@@ -632,15 +657,6 @@ class BaseResults extends BasePage {
                 );
             }
         }
-
-        dropdowns.push(
-            <div
-                key="youtubeLink"
-                className="sixthColumn paddingLeft paddingTop"
-            >
-                {this.getYouTubeButton()}
-            </div>
-        );
 
         return <div className="contentRow">{dropdowns}</div>;
     };

@@ -128,7 +128,8 @@ class Percentiles extends BaseResults {
                 {this.genFilters(this.getFiltered(), [
                     "season",
                     "pull",
-                    "subject"
+                    "subject",
+                    "youtube"
                 ])}
                 <div className="contentRow">
                     {this.genDataTable(this.getPercentiles(), [

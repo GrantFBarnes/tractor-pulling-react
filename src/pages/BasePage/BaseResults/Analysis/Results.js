@@ -64,7 +64,8 @@ class Results extends Analysis {
                     "season",
                     "pull",
                     "subject",
-                    "metric"
+                    "metric",
+                    "youtube"
                 ])}
                 <div className="contentRow">
                     {this.getBarChart(data, height, x, y)}
