@@ -65,6 +65,7 @@ class Results extends Analysis {
                     "pull",
                     "subject",
                     "metric",
+                    "excel",
                     "youtube"
                 ])}
                 <div className="contentRow">

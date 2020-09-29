@@ -3,6 +3,7 @@ import BasePage from "../BasePage";
 
 import { Button, Dropdown, DataTable } from "carbon-components-react";
 
+import Download20 from "@carbon/icons-react/lib/download/20";
 import YouTube20 from "@carbon/icons-react/lib/logo--youtube/20";
 
 const {
@@ -351,17 +352,63 @@ class BaseResults extends BasePage {
         return 0;
     };
 
+    requestExcel = () => {
+        const pull = this.state.allObjects[this.state.pull];
+        const location = this.state.allObjects[pull.location]
+            ? this.state.allObjects[pull.location].town +
+              ", " +
+              this.state.allObjects[pull.location].state
+            : "(No Location)";
+        const name = pull.date + " - " + location;
+
+        const that = this;
+        that.setState({ loading: true });
+        fetch(this.server_host + "/api/excel/pull/" + this.state.pull, {
+            credentials: "include"
+        })
+            .then(response => {
+                return response.json();
+            })
+            .then(response => {
+                that.setState({ loading: false });
+                that.downloadFile("excel", name + ".xlsx", response);
+            })
+            .catch(err => {
+                that.setState({ loading: false });
+                alert("Failed to get data");
+            });
+    };
+
+    getExcelButton = () => {
+        const pull = this.state.allObjects[this.state.pull];
+        if (!pull) return null;
+        return (
+            <Button
+                style={{ width: "100%" }}
+                kind="primary"
+                size="field"
+                renderIcon={Download20}
+                onClick={() => this.requestExcel()}
+                title="Download Excel Spreadsheet"
+            >
+                Excel
+            </Button>
+        );
+    };
+
     getYouTubeButton = () => {
         const pull = this.state.allObjects[this.state.pull];
         if (!pull) return null;
         if (!pull.youtube) return null;
         return (
             <Button
+                style={{ width: "100%" }}
                 kind="danger"
                 size="field"
                 renderIcon={YouTube20}
                 href={"https://www.youtube.com/watch?v=" + pull.youtube}
                 target="_blank"
+                title="Open YouTube link to this Pull"
             >
                 YouTube
             </Button>
@@ -548,6 +595,14 @@ class BaseResults extends BasePage {
             );
         }
 
+        if (filters.includes("excel")) {
+            dropdowns.push(
+                <div key="excelButton" className="contentRow center">
+                    {this.getExcelButton()}
+                </div>
+            );
+        }
+
         if (filters.includes("youtube")) {
             dropdowns.push(
                 <div key="youtubeButton" className="contentRow center">
@@ -633,11 +688,22 @@ class BaseResults extends BasePage {
             );
         }
 
+        if (filters.includes("excel")) {
+            dropdowns.push(
+                <div
+                    key="excelButton"
+                    className="eighthColumn paddingLeft paddingRight paddingTop"
+                >
+                    {this.getExcelButton()}
+                </div>
+            );
+        }
+
         if (filters.includes("youtube")) {
             dropdowns.push(
                 <div
                     key="youtubeButton"
-                    className="sixthColumn paddingLeft paddingTop"
+                    className="eighthColumn paddingLeft paddingRight paddingTop"
                 >
                     {this.getYouTubeButton()}
                 </div>

@@ -109,6 +109,11 @@ router.post("/api/object", (request, response) => {
     returnResponse(response, objects.createObj(request.body));
 });
 
+// Get excel by pull ID
+router.get("/api/excel/pull/:id", (request, response) => {
+    returnPromiseResponse(response, objects.getPullExcel(request.params.id));
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 

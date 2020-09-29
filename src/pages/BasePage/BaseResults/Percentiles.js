@@ -129,6 +129,7 @@ class Percentiles extends BaseResults {
                     "season",
                     "pull",
                     "subject",
+                    "excel",
                     "youtube"
                 ])}
                 <div className="contentRow">

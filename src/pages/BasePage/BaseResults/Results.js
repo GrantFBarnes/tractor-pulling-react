@@ -78,7 +78,12 @@ class Results extends BaseResults {
         const filtered = this.getFiltered();
         return (
             <div className="contentContainer">
-                {this.genFilters(filtered, ["season", "pull", "youtube"])}
+                {this.genFilters(filtered, [
+                    "season",
+                    "pull",
+                    "excel",
+                    "youtube"
+                ])}
                 <div className="contentRow">
                     {filtered.classes.length > 1 ? (
                         this.genExpandTable(this.getResults(), [

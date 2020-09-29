@@ -89,6 +89,39 @@ class BasePage extends Component {
         return buttons;
     };
 
+    downloadFile = (type, name, content) => {
+        let typeKey = "";
+        switch (type) {
+            case "excel":
+                typeKey =
+                    "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,";
+                break;
+
+            case "csv":
+                typeKey = "data:text/csv;charset=utf-8,";
+                break;
+
+            case "text":
+                typeKey = "data:text/json;charset=utf-8,";
+                break;
+
+            case "pdf":
+                typeKey = "data:application/pdf;base64,";
+                break;
+
+            default:
+                break;
+        }
+
+        const element = document.createElement("a");
+        element.setAttribute("href", typeKey + encodeURIComponent(content));
+        element.setAttribute("download", name);
+        element.style.display = "none";
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    };
+
     setUp() {
         this.setState({ loading: false });
     }

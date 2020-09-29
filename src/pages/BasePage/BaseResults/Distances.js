@@ -97,6 +97,7 @@ class Distances extends BaseResults {
                     "season",
                     "pull",
                     "subject",
+                    "excel",
                     "youtube"
                 ])}
                 <div className="contentRow">

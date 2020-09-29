@@ -1,5 +1,6 @@
 const getUUID = require("uuid/v4");
 
+const excel = require("./excel.js");
 const persist = require("./persist.js");
 
 var allObjects = {};
@@ -34,6 +35,10 @@ class Base {
         }
         this[field] = value;
         return "success";
+    }
+
+    display() {
+        return "";
     }
 
     updateRef(method, field, ref_id, ref_field) {
@@ -143,6 +148,10 @@ class Location extends Base {
         this.town = json.town ? json.town : "";
         this.state = json.state ? json.state : "";
     }
+
+    display() {
+        return this.town + ", " + this.state;
+    }
 }
 
 class Puller extends Base {
@@ -150,6 +159,10 @@ class Puller extends Base {
         super(json);
         this.first_name = json.first_name ? json.first_name : "";
         this.last_name = json.last_name ? json.last_name : "";
+    }
+
+    display() {
+        return this.first_name + " " + this.last_name;
     }
 }
 
@@ -159,12 +172,20 @@ class Tractor extends Base {
         this.brand = json.brand ? json.brand : "";
         this.model = json.model ? json.model : "";
     }
+
+    display() {
+        return this.brand + " " + this.model;
+    }
 }
 
 class Season extends Base {
     constructor(json) {
         super(json);
         this.year = json.year ? json.year : "";
+    }
+
+    display() {
+        return this.year;
     }
 }
 
@@ -176,6 +197,37 @@ class Pull extends Base {
         this.location = json.location ? json.location : ""; // reference Location id
         this.date = json.date ? json.date : "";
         this.youtube = json.youtube ? json.youtube : "";
+    }
+
+    display() {
+        const location = allObjects[this.location];
+        return (
+            this.date +
+            " - " +
+            (location.id ? location.display() : "(No Location)")
+        );
+    }
+
+    getExcelJSON() {
+        let json = { name: this.display(), classes: [] };
+
+        let classIDs = [];
+        if (allTypes.Class) {
+            for (let id of allTypes.Class) {
+                const obj = allObjects[id];
+                if (obj.pull !== this.id) continue;
+                classIDs.push(id);
+            }
+        }
+
+        classIDs = classIDs.sort(classSort);
+
+        for (let i in classIDs) {
+            const obj = allObjects[classIDs[i]];
+            json.classes.push(obj.getExcelJSON());
+        }
+
+        return json;
     }
 
     updateReferences(objID, objType, method, fields) {
@@ -214,6 +266,24 @@ class Class extends Base {
         this.speed = json.speed ? json.speed : 3;
 
         this.hooks = json.hooks ? new Set(json.hooks) : new Set(); // children Hook ids
+    }
+
+    display() {
+        let name = this.weight + " " + this.category;
+        if (this.speed > 4) name += " (" + this.speed + ")";
+        return name;
+    }
+
+    getExcelJSON() {
+        let json = { name: this.display(), hooks: [] };
+
+        const hookIDs = [...this.hooks].sort(hookSort);
+        for (let i in hookIDs) {
+            const obj = allObjects[hookIDs[i]];
+            json.hooks.push(obj.getExcelJSON());
+        }
+
+        return json;
     }
 
     updateReferences(objID, objType, method, fields) {
@@ -273,6 +343,18 @@ class Hook extends Base {
         this.position = json.position ? json.position : 0;
     }
 
+    getExcelJSON() {
+        const puller = allObjects[this.puller];
+        const tractor = allObjects[this.tractor];
+
+        return {
+            position: this.position,
+            puller: puller.id ? puller.display() : "(No Puller)",
+            tractor: tractor.id ? tractor.display() : "(No Tractor)",
+            distance: this.distance
+        };
+    }
+
     updateReferences(objID, objType, method, fields) {
         if (objID === this.puller) {
             if (method === "delete") {
@@ -327,6 +409,64 @@ class Hook extends Base {
             this.position = position;
         }
     }
+}
+
+function seasonSort(a, b) {
+    a = allObjects[a];
+    b = allObjects[b];
+    if (a.year < b.year) return 1;
+    if (a.year > b.year) return -1;
+    return 0;
+}
+
+function pullSort(a, b) {
+    a = allObjects[a];
+    b = allObjects[b];
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    if (dateA < dateB) return 1;
+    if (dateA > dateB) return -1;
+    return 0;
+}
+
+function classSort(a, b) {
+    a = allObjects[a];
+    b = allObjects[b];
+    if (a.weight < b.weight) return -1;
+    if (a.weight > b.weight) return 1;
+    if (a.category < b.category) return 1;
+    if (a.category > b.category) return -1;
+    if (a.speed < b.speed) return -1;
+    if (a.speed > b.speed) return 1;
+    return 0;
+}
+
+function hookSort(a, b) {
+    a = allObjects[a];
+    b = allObjects[b];
+    if (a.position < b.position) return -1;
+    if (a.position > b.position) return 1;
+    return 0;
+}
+
+function tractorSort(a, b) {
+    a = allObjects[a];
+    b = allObjects[b];
+    if (a.brand < b.brand) return -1;
+    if (a.brand > b.brand) return 1;
+    if (a.model < b.model) return -1;
+    if (a.model > b.model) return 1;
+    return 0;
+}
+
+function pullerSort(a, b) {
+    a = allObjects[a];
+    b = allObjects[b];
+    if (a.last_name < b.last_name) return -1;
+    if (a.last_name > b.last_name) return 1;
+    if (a.first_name < b.first_name) return -1;
+    if (a.first_name > b.first_name) return 1;
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -387,14 +527,34 @@ function getObject(id) {
 function getObjectsByType(type) {
     if (!allTypes[type]) return { statusCode: 400, data: "type not valid" };
     let objects = {};
-    for (let i in allTypes[type]) {
-        objects[i] = allObjects[i].toJSON();
+    for (let id of allTypes[type]) {
+        objects[id] = allObjects[id].toJSON();
     }
     return { statusCode: 200, data: objects };
 }
 
 function getAllObjects() {
     return { statusCode: 200, data: allObjects };
+}
+
+function getPullExcel(pull_id) {
+    return new Promise(resolve => {
+        if (!pull_id) {
+            resolve({ statusCode: 400, data: "pull_id not provided" });
+            return;
+        }
+
+        const pull = allObjects[pull_id];
+        if (!pull) {
+            resolve({ statusCode: 400, data: "pull_id not valid" });
+            return;
+        }
+
+        excel.createExcel(pull.getExcelJSON()).then(buffer => {
+            resolve({ statusCode: 200, data: buffer.toString("base64") });
+            return;
+        });
+    });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -490,6 +650,7 @@ module.exports.validateAll = validateAll;
 module.exports.getObject = getObject;
 module.exports.getObjectsByType = getObjectsByType;
 module.exports.getAllObjects = getAllObjects;
+module.exports.getPullExcel = getPullExcel;
 
 module.exports.addNewObject = addNewObject;
 module.exports.createObj = createObj;
