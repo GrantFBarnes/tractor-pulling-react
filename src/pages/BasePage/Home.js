@@ -31,10 +31,11 @@ class Home extends BasePage {
 
     genSmButtons = () => {
         let buttons = [];
-        for (let text in this.buttons) {
+        for (let b in this.buttons) {
+            if (this.buttons[b].sideOnly) continue;
             buttons.push(
-                <div key={text + "Button"} className="contentRow center">
-                    {this.genButton(this.buttons[text])}
+                <div key={b + "Button"} className="contentRow center">
+                    {this.genButton(this.buttons[b])}
                 </div>
             );
         }
@@ -45,15 +46,30 @@ class Home extends BasePage {
         let buttons = [];
         let keys = Object.keys(this.buttons);
         for (let i = 0; i < keys.length; i++) {
-            const left = this.buttons[keys[i]];
-            const right = this.buttons[keys[i + 1]];
-            if (left.full || !right) {
+            let left = this.buttons[keys[i]];
+            while (left && left.sideOnly) {
+                i++;
+                left = this.buttons[keys[i]];
+            }
+            if (!left) break;
+
+            if (left.full) {
                 buttons.push(
                     <div key={i} className="contentRow center">
                         {this.genButton(left)}
                     </div>
                 );
-            } else {
+                continue;
+            }
+
+            let rightIdx = parseInt(i + 1);
+            let right = this.buttons[keys[rightIdx]];
+            while (right && right.sideOnly) {
+                rightIdx++;
+                right = this.buttons[keys[rightIdx]];
+            }
+
+            if (right) {
                 buttons.push(
                     <div key={i} className="contentRow center">
                         <div className="halfColumn paddingRight">
@@ -64,7 +80,13 @@ class Home extends BasePage {
                         </div>
                     </div>
                 );
-                i++;
+                i = rightIdx;
+            } else {
+                buttons.push(
+                    <div key={i} className="contentRow center">
+                        {this.genButton(left)}
+                    </div>
+                );
             }
         }
         return buttons;

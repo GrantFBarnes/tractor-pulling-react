@@ -32,36 +32,70 @@ class BasePage extends Component {
         }
 
         this.buttons = {
+            home: {
+                text: "Home",
+                icon: Home20,
+                href: "/home",
+                full: false,
+                sideOnly: true
+            },
             results: {
                 text: "Results",
                 icon: ListNum32,
                 href: "/results",
-                full: true
+                full: true,
+                sideOnly: false
             },
-            wins: { text: "Wins", icon: Trophy32, href: "/wins" },
-            distances: { text: "Distances", icon: Ruler32, href: "/distances" },
+            wins: {
+                text: "Wins",
+                icon: Trophy32,
+                href: "/wins",
+                full: false,
+                sideOnly: false
+            },
+            distances: {
+                text: "Distances",
+                icon: Ruler32,
+                href: "/distances",
+                full: false,
+                sideOnly: false
+            },
             percentiles: {
                 text: "Percentiles",
                 icon: Percent32,
-                href: "/percentiles"
+                href: "/percentiles",
+                full: false,
+                sideOnly: false
             },
-            rivals: { text: "Rivals", icon: Rivals32, href: "/rivals" },
+            rivals: {
+                text: "Rivals",
+                icon: Rivals32,
+                href: "/rivals",
+                full: false,
+                sideOnly: false
+            },
             resultAnalysis: {
                 text: "Result Analysis",
                 icon: ChartBar20,
-                href: "/analysis/results"
+                href: "/analysis/results",
+                full: false,
+                sideOnly: false
             },
             pullerAnalysis: {
                 text: "Puller Analysis",
                 icon: ChartLine20,
-                href: "/analysis/pullers"
+                href: "/analysis/pullers",
+                full: false,
+                sideOnly: false
             },
             youtube: {
                 text: "YouTube",
                 icon: YouTube20,
                 href:
                     "https://www.youtube.com/channel/UCIJUfssINon5pT4x9R25Iyg",
-                target: "_blank"
+                target: "_blank",
+                full: false,
+                sideOnly: true
             }
         };
     }
@@ -80,9 +114,7 @@ class BasePage extends Component {
     };
 
     genSideNav = () => {
-        let buttons = [
-            this.genSideNavLink({ text: "Home", icon: Home20, href: "/home" })
-        ];
+        let buttons = [];
         for (let text in this.buttons) {
             buttons.push(this.genSideNavLink(this.buttons[text]));
         }
