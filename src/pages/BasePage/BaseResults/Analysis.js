@@ -107,7 +107,7 @@ class Analysis extends BaseResults {
                     continue;
                 }
             } else {
-                date = new Date(pull.date.split("/")[2]).toJSON();
+                date = new Date(pull.date.split("-")[0]).toJSON();
             }
 
             const hookCount = obj.hooks.length;
