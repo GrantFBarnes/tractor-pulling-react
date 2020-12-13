@@ -27,8 +27,8 @@ class Wins extends BaseResults {
         if (a.wins < b.wins) return 1;
         if (a.wins > b.wins) return -1;
 
-        const percentA = parseInt(a.classPercent.split("%")[0]);
-        const percentB = parseInt(b.classPercent.split("%")[0]);
+        const percentA = parseInt(a.percent.split("%")[0]);
+        const percentB = parseInt(b.percent.split("%")[0]);
         if (percentA < percentB) return 1;
         if (percentA > percentB) return -1;
 
@@ -43,14 +43,12 @@ class Wins extends BaseResults {
         for (let p in data.pullers) {
             const puller = this.state.allObjects[p];
             if (!puller) continue;
-            const classPercent = data.pullers[p] / data.pulled;
-            const pullPercent = data.pullers[p] / data.pulls;
+            const percent = data.pullers[p] / data.pulled;
             wins.push({
                 id: p,
                 puller: this.getSubjectDisplay(puller),
                 wins: data.pullers[p],
-                classPercent: parseInt(classPercent * 100) + "%",
-                pullPercent: parseInt(pullPercent * 100) + "%"
+                percent: parseInt(percent * 100) + "%"
             });
         }
         wins.sort(this.winSort);
@@ -60,9 +58,8 @@ class Wins extends BaseResults {
     getInnerHeaders = () => {
         return [
             { key: "puller", header: "Puller" },
-            { key: "wins", header: "Wins" },
-            { key: "classPercent", header: "Win % Over Class Pulled" },
-            { key: "pullPercent", header: "Win % Over All Pulls" }
+            { key: "wins", header: "Win Count" },
+            { key: "percent", header: "Win Percent" }
         ];
     };
 
@@ -95,6 +92,7 @@ class Wins extends BaseResults {
                 if (!hook) continue;
                 if (!hook.puller) continue;
                 if (hook.position !== 1) continue;
+                if (obj.weight % 250 !== 0) continue;
 
                 if (!classes[classType]) {
                     classes[classType] = {
@@ -117,11 +115,13 @@ class Wins extends BaseResults {
             let pullerCount = 0;
             let wins = 0;
             let leaders = [];
+            let percent = 0;
             for (let p in classes[c].pullers) {
                 pullerCount++;
                 if (classes[c].pullers[p] > wins) {
                     wins = classes[c].pullers[p];
                     leaders = [];
+                    percent = classes[c].pullers[p] / classes[c].pulled;
                 }
                 if (classes[c].pullers[p] >= wins) {
                     leaders.push(
@@ -132,6 +132,7 @@ class Wins extends BaseResults {
             classWins.push({
                 wins: wins,
                 leaders: leaders.toString(),
+                percent: parseInt(percent * 100) + "%",
                 pullerCount: pullerCount,
                 pulls: pulls.size,
                 ...classes[c]
@@ -157,6 +158,7 @@ class Wins extends BaseResults {
                     {this.genExpandTable(rows, [
                         { key: "class", header: "Class" },
                         { key: "wins", header: "Wins" },
+                        { key: "percent", header: "%" },
                         { key: "leaders", header: "Leaders" },
                         { key: "pullerCount", header: "Pullers Who Won" },
                         { key: "pulled", header: "Times Pulled" }
