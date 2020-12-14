@@ -11,13 +11,14 @@ import {
 
 import ChartBar20 from "@carbon/icons-react/lib/chart--bar/20";
 import ChartLine20 from "@carbon/icons-react/lib/chart--line/20";
+import Hashtag32 from "@carbon/icons-react/lib/hashtag/32";
 import Home20 from "@carbon/icons-react/lib/home/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
 import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rivals32 from "@carbon/icons-react/lib/partnership/32";
 import Ruler32 from "@carbon/icons-react/lib/ruler/32";
-import YouTube20 from "@carbon/icons-react/lib/logo--youtube/20";
 import Trophy32 from "@carbon/icons-react/lib/trophy/32";
+import YouTube20 from "@carbon/icons-react/lib/logo--youtube/20";
 
 import "../styling/BasePage.scss";
 
@@ -53,6 +54,13 @@ class BasePage extends Component {
                 full: false,
                 sideOnly: false
             },
+            points: {
+                text: "Points",
+                icon: Hashtag32,
+                href: "/points",
+                full: false,
+                sideOnly: false
+            },
             distances: {
                 text: "Distances",
                 icon: Ruler32,
@@ -67,13 +75,6 @@ class BasePage extends Component {
                 full: false,
                 sideOnly: false
             },
-            rivals: {
-                text: "Rivals",
-                icon: Rivals32,
-                href: "/rivals",
-                full: false,
-                sideOnly: false
-            },
             resultAnalysis: {
                 text: "Result Analysis",
                 icon: ChartBar20,
@@ -85,6 +86,13 @@ class BasePage extends Component {
                 text: "Puller Analysis",
                 icon: ChartLine20,
                 href: "/analysis/pullers",
+                full: false,
+                sideOnly: false
+            },
+            rivals: {
+                text: "Rivals",
+                icon: Rivals32,
+                href: "/rivals",
                 full: false,
                 sideOnly: false
             },

@@ -74,6 +74,7 @@ class Wins extends BaseResults {
         let pulls = new Set();
         for (let id in this.state.allTypes.Class) {
             const obj = this.state.allTypes.Class[id];
+            if (obj.weight % 250 !== 0) continue;
 
             const pull = this.state.allObjects[obj.pull];
             if (!pull) continue;
@@ -92,7 +93,6 @@ class Wins extends BaseResults {
                 if (!hook) continue;
                 if (!hook.puller) continue;
                 if (hook.position !== 1) continue;
-                if (obj.weight % 250 !== 0) continue;
 
                 if (!classes[classType]) {
                     classes[classType] = {
@@ -113,14 +113,14 @@ class Wins extends BaseResults {
         let classWins = [];
         for (let c in classes) {
             let pullerCount = 0;
-            let wins = 0;
             let leaders = [];
+            let wins = 0;
             let percent = 0;
             for (let p in classes[c].pullers) {
                 pullerCount++;
                 if (classes[c].pullers[p] > wins) {
-                    wins = classes[c].pullers[p];
                     leaders = [];
+                    wins = classes[c].pullers[p];
                     percent = classes[c].pullers[p] / classes[c].pulled;
                 }
                 if (classes[c].pullers[p] >= wins) {
@@ -130,8 +130,8 @@ class Wins extends BaseResults {
                 }
             }
             classWins.push({
-                wins: wins,
                 leaders: leaders.toString(),
+                wins: wins,
                 percent: parseInt(percent * 100) + "%",
                 pullerCount: pullerCount,
                 pulls: pulls.size,
@@ -157,10 +157,10 @@ class Wins extends BaseResults {
                 <div className="contentRow">
                     {this.genExpandTable(rows, [
                         { key: "class", header: "Class" },
+                        { key: "leaders", header: "Leaders" },
                         { key: "wins", header: "Wins" },
                         { key: "percent", header: "%" },
-                        { key: "leaders", header: "Leaders" },
-                        { key: "pullerCount", header: "Pullers Who Won" },
+                        { key: "pullerCount", header: "Unique Winners" },
                         { key: "pulled", header: "Times Pulled" }
                     ])}
                 </div>
