@@ -6,6 +6,7 @@ import Home from "./pages/BasePage/Home";
 import Edit from "./pages/BasePage/BaseResults/Edit";
 
 import Distances from "./pages/BasePage/BaseResults/Distances";
+import Winnings from "./pages/BasePage/BaseResults/Winnings";
 import Percentiles from "./pages/BasePage/BaseResults/Percentiles";
 import Points from "./pages/BasePage/BaseResults/Points";
 import Results from "./pages/BasePage/BaseResults/Results";
@@ -26,6 +27,7 @@ const routing = (
             <Route exact path="/edit" component={Edit} />
 
             <Route exact path="/distances" component={Distances} />
+            <Route exact path="/winnings" component={Winnings} />
             <Route exact path="/percentiles" component={Percentiles} />
             <Route exact path="/points" component={Points} />
             <Route exact path="/results" component={Results} />

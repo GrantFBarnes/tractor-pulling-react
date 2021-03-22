@@ -352,6 +352,19 @@ class BaseResults extends BasePage {
         return 0;
     };
 
+    getHookVal = hook => {
+        if (hook[this.state.subject]) return hook[this.state.subject];
+        if (this.state.subject === "combo") {
+            if (hook.puller && hook.tractor) {
+                return hook.puller + " " + hook.tractor;
+            }
+        } else if (this.state.subject === "brand") {
+            const tractor = this.state.allObjects[hook.tractor];
+            if (tractor && tractor.brand) return tractor.brand;
+        }
+        return null;
+    };
+
     requestExcel = () => {
         const pull = this.state.allObjects[this.state.pull];
         const location = this.state.allObjects[pull.location]

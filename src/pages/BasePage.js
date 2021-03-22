@@ -14,6 +14,7 @@ import ChartLine20 from "@carbon/icons-react/lib/chart--line/20";
 import Hashtag32 from "@carbon/icons-react/lib/hashtag/32";
 import Home20 from "@carbon/icons-react/lib/home/20";
 import ListNum32 from "@carbon/icons-react/lib/list--numbered/32";
+import Dollar32 from "@carbon/icons-react/lib/currency--dollar/32";
 import Percent32 from "@carbon/icons-react/lib/percentage/32";
 import Rivals32 from "@carbon/icons-react/lib/partnership/32";
 import Ruler32 from "@carbon/icons-react/lib/ruler/32";
@@ -54,10 +55,24 @@ class BasePage extends Component {
                 full: false,
                 sideOnly: false
             },
+            winnings: {
+                text: "Winnings",
+                icon: Dollar32,
+                href: "/winnings",
+                full: false,
+                sideOnly: false
+            },
             points: {
                 text: "Points",
                 icon: Hashtag32,
                 href: "/points",
+                full: false,
+                sideOnly: false
+            },
+            percentiles: {
+                text: "Percentiles",
+                icon: Percent32,
+                href: "/percentiles",
                 full: false,
                 sideOnly: false
             },
@@ -68,10 +83,10 @@ class BasePage extends Component {
                 full: false,
                 sideOnly: false
             },
-            percentiles: {
-                text: "Percentiles",
-                icon: Percent32,
-                href: "/percentiles",
+            rivals: {
+                text: "Rivals",
+                icon: Rivals32,
+                href: "/rivals",
                 full: false,
                 sideOnly: false
             },
@@ -86,13 +101,6 @@ class BasePage extends Component {
                 text: "Puller Analysis",
                 icon: ChartLine20,
                 href: "/analysis/pullers",
-                full: false,
-                sideOnly: false
-            },
-            rivals: {
-                text: "Rivals",
-                icon: Rivals32,
-                href: "/rivals",
                 full: false,
                 sideOnly: false
             },
