@@ -41,6 +41,7 @@ class Pullers extends Analysis {
                 {this.genFilters(this.getFiltered(), [
                     "season",
                     "puller",
+                    "category",
                     "metric"
                 ])}
                 <div className="contentRow">

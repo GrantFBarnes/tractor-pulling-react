@@ -64,6 +64,7 @@ class Results extends Analysis {
                     "season",
                     "pull",
                     "subject",
+                    "category",
                     "metric",
                     "excel",
                     "youtube"

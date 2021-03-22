@@ -57,6 +57,12 @@ class Percentiles extends BaseResults {
         for (let id in this.state.allTypes.Class) {
             const obj = this.state.allTypes.Class[id];
 
+            if (this.state.category) {
+                if (this.state.category !== obj.category) {
+                    continue;
+                }
+            }
+
             const pull = this.state.allObjects[obj.pull];
             if (!pull) continue;
 
@@ -129,7 +135,7 @@ class Percentiles extends BaseResults {
             <div className="contentContainer">
                 {this.genFilters(
                     this.getFiltered(),
-                    ["season", "pull", "subject"],
+                    ["season", "pull", "category", "subject"],
                     {
                         Note:
                             "Values are estimated by typical payouts and $15 entry fees"

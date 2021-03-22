@@ -261,7 +261,7 @@ class Class extends Base {
         super(json);
         this.pull = json.pull ? json.pull : ""; // parent Pull id
 
-        this.category = json.category ? json.category : ""; // farm, antique
+        this.category = json.category ? json.category : ""; // Farm Stock, Antique Modified
         this.weight = json.weight ? json.weight : 0;
         this.speed = json.speed ? json.speed : 3;
 

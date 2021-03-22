@@ -21,6 +21,12 @@ class Rivals extends BaseResults {
         for (let id in this.state.allTypes.Class) {
             const obj = this.state.allTypes.Class[id];
 
+            if (this.state.category) {
+                if (this.state.category !== obj.category) {
+                    continue;
+                }
+            }
+
             const pull = this.state.allObjects[obj.pull];
             if (!pull) continue;
 
@@ -154,6 +160,7 @@ class Rivals extends BaseResults {
                     "season",
                     "pull",
                     "subject",
+                    "category",
                     "excel",
                     "youtube"
                 ])}

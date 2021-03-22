@@ -169,7 +169,7 @@ class BasePage extends Component {
     updatePageWidth() {
         this.setState({
             sideExpanded: window.innerWidth > 1056,
-            smallWindow: window.innerWidth < 600
+            smallWindow: window.innerWidth < 700
         });
     }
 

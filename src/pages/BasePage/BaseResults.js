@@ -30,6 +30,7 @@ class BaseResults extends BasePage {
         this.state.pull = "";
         this.state.class = "";
         this.state.subject = "puller";
+        this.state.category = "";
         this.state.metric = "percentile";
         this.state.puller = "";
 
@@ -38,6 +39,11 @@ class BaseResults extends BasePage {
             { id: "combo", display: "Puller/Tractor" },
             { id: "tractor", display: "Tractors" },
             { id: "brand", display: "Brands" }
+        ];
+        this.categoryOptions = [
+            { id: "", display: "All" },
+            { id: "Farm Stock", display: "Farm Stock" },
+            { id: "Antique Modified", display: "Antique Modified" }
         ];
         this.metricOptions = [
             { id: "percentile", display: "Position Percentile" },
@@ -505,6 +511,8 @@ class BaseResults extends BasePage {
                 return "Pull";
             case "class":
                 return "Class";
+            case "category":
+                return "Category";
             case "subject":
                 return "Subject";
             case "metric":
@@ -592,6 +600,14 @@ class BaseResults extends BasePage {
             );
         }
 
+        if (filters.includes("category")) {
+            dropdowns.push(
+                <div key="categoryRow" className="contentRow">
+                    {this.genFilterDropdown("category", this.categoryOptions)}
+                </div>
+            );
+        }
+
         if (filters.includes("puller")) {
             dropdowns.push(
                 <div key="pullerRow" className="contentRow">
@@ -643,7 +659,10 @@ class BaseResults extends BasePage {
 
         if (filtered.seasons.length > 1 && filters.includes("season")) {
             dropdowns.push(
-                <div key="seasonDropdown" className="sixthColumn paddingRight">
+                <div
+                    key="seasonDropdown"
+                    className="sixthColumn paddingLeft paddingRight"
+                >
                     {this.genFilterDropdown("season", filtered.seasons)}
                 </div>
             );
@@ -682,6 +701,17 @@ class BaseResults extends BasePage {
             );
         }
 
+        if (filters.includes("category")) {
+            dropdowns.push(
+                <div
+                    key="categoryDropdown"
+                    className="quarterColumn paddingLeft paddingRight"
+                >
+                    {this.genFilterDropdown("category", this.categoryOptions)}
+                </div>
+            );
+        }
+
         if (filters.includes("puller")) {
             dropdowns.push(
                 <div
@@ -695,7 +725,10 @@ class BaseResults extends BasePage {
 
         if (filters.includes("metric")) {
             dropdowns.push(
-                <div key="metricDropdown" className="quarterColumn paddingLeft">
+                <div
+                    key="metricDropdown"
+                    className="quarterColumn paddingLeft paddingRight"
+                >
                     {this.genFilterDropdown("metric", this.metricOptions)}
                 </div>
             );
