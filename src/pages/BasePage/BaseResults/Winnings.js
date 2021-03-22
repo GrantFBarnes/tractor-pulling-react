@@ -110,9 +110,12 @@ class Percentiles extends BaseResults {
 
     getCellClass = (cell, row) => {
         if (cell.id.endsWith("net")) {
-            const net = parseInt(cell.value);
-            if (net > 0) return "greenText";
+            if (cell.value > 0) return "greenText";
             return "redText";
+        } else if (cell.id.endsWith("spent")) {
+            return "orangeText";
+        } else if (cell.id.endsWith("won")) {
+            return "yellowText";
         }
         return "";
     };
@@ -135,9 +138,9 @@ class Percentiles extends BaseResults {
                 <div className="contentRow">
                     {this.genDataTable(this.getWinnings(), [
                         { key: "subject", header: this.getSubjectHeader() },
-                        { key: "spent", header: "Spent" },
-                        { key: "won", header: "Won" },
-                        { key: "net", header: "Net Gain" }
+                        { key: "spent", header: "Spent ($)" },
+                        { key: "won", header: "Won ($)" },
+                        { key: "net", header: "Net Gain ($)" }
                     ])}
                 </div>
             </div>

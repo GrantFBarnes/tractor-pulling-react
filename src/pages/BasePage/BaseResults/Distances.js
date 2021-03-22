@@ -62,14 +62,11 @@ class Distances extends BaseResults {
         for (let p in subjects) {
             let subject = this.state.allObjects[p];
             if (!subject) subject = p;
-            const average = subjects[p].sum / subjects[p].hooks;
             distances.push({
                 id: p,
                 subject: this.getSubjectDisplay(subject),
-                average: average,
-                averageDisplay: parseInt(average) + " ft",
-                total: subjects[p].sum,
-                totalDisplay: parseInt(subjects[p].sum) + " ft",
+                average: parseInt(subjects[p].sum / subjects[p].hooks),
+                total: parseInt(subjects[p].sum),
                 hooks: subjects[p].hooks
             });
         }
@@ -78,11 +75,10 @@ class Distances extends BaseResults {
     };
 
     getCellClass = (cell, row) => {
-        if (!cell.id.endsWith("averageDisplay")) return "";
-        const distance = parseInt(cell.value.replace(" ft", ""));
-        if (distance >= 300) return "greenText";
-        if (distance >= 200) return "yellowText";
-        if (distance >= 100) return "orangeText";
+        if (!cell.id.endsWith("average")) return "";
+        if (cell.value >= 300) return "greenText";
+        if (cell.value >= 200) return "yellowText";
+        if (cell.value >= 100) return "orangeText";
         return "redText";
     };
 
@@ -103,8 +99,8 @@ class Distances extends BaseResults {
                 <div className="contentRow">
                     {this.genDataTable(this.getDistances(), [
                         { key: "subject", header: this.getSubjectHeader() },
-                        { key: "averageDisplay", header: "Average" },
-                        { key: "totalDisplay", header: "Total" },
+                        { key: "average", header: "Average (ft)" },
+                        { key: "total", header: "Total (ft)" },
                         { key: "hooks", header: "Total Hooks" }
                     ])}
                 </div>

@@ -3,10 +3,10 @@ import BaseResults from "../BaseResults";
 
 class Percentiles extends BaseResults {
     percentileSort = (a, b) => {
-        if (a.pos < b.pos) return 1;
-        if (a.pos > b.pos) return -1;
-        if (a.dist < b.dist) return 1;
-        if (a.dist > b.dist) return -1;
+        if (a.position < b.position) return 1;
+        if (a.position > b.position) return -1;
+        if (a.distance < b.distance) return 1;
+        if (a.distance > b.distance) return -1;
         if (a.hooks < b.hooks) return 1;
         if (a.hooks > b.hooks) return -1;
 
@@ -83,10 +83,8 @@ class Percentiles extends BaseResults {
             percentiles.push({
                 id: p,
                 subject: this.getSubjectDisplay(subject),
-                pos: pos,
-                position: parseInt(pos * 100) + "%",
-                dist: dist,
-                distance: parseInt(dist * 100) + "%",
+                position: parseInt(pos * 100),
+                distance: parseInt(dist * 100),
                 hooks: subjects[p].hooks
             });
         }
@@ -96,10 +94,9 @@ class Percentiles extends BaseResults {
 
     getCellClass = (cell, row) => {
         if (cell.id.endsWith("position") || cell.id.endsWith("distance")) {
-            const percent = parseInt(cell.value.replace("%", ""));
-            if (percent >= 75) return "greenText";
-            if (percent >= 50) return "yellowText";
-            if (percent >= 25) return "orangeText";
+            if (cell.value >= 75) return "greenText";
+            if (cell.value >= 50) return "yellowText";
+            if (cell.value >= 25) return "orangeText";
             return "redText";
         }
         return "";
@@ -122,8 +119,8 @@ class Percentiles extends BaseResults {
                 <div className="contentRow">
                     {this.genDataTable(this.getPercentiles(), [
                         { key: "subject", header: this.getSubjectHeader() },
-                        { key: "position", header: "Position" },
-                        { key: "distance", header: "Distance" },
+                        { key: "position", header: "Position (%)" },
+                        { key: "distance", header: "Distance (%)" },
                         { key: "hooks", header: "Total Hooks" }
                     ])}
                 </div>
