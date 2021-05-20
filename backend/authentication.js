@@ -5,7 +5,7 @@ const cookieName = "catp_token";
 function requestToken(json) {
     if (!json) return false;
     if (!json.edit_secret) return false;
-    if (json.edit_secret !== process.env.CATP_EDIT_SECRET) return false;
+    if (json.edit_secret !== process.env.GFB_EDIT_SECRET) return false;
     return true;
 }
 
