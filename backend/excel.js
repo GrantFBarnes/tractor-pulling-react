@@ -55,12 +55,12 @@ function cleanUpRows(rows) {
                 console.log(row);
                 return null;
             }
-            row["Class"].replace(c_split[0], "");
+            row["Class"] = row["Class"].replace(c_split[0], "").toLowerCase();
 
-            if (row["Class"].includes("Farm")) {
+            if (row["Class"].includes("farm")) {
                 lastClass.category = "Farm Stock";
                 lastClass.speed = 3;
-            } else if (row["Class"].includes("Antique")) {
+            } else if (row["Class"].includes("antique")) {
                 lastClass.category = "Antique Modified";
                 lastClass.speed = 4;
             } else {
