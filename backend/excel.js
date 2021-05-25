@@ -6,8 +6,37 @@ const xlsx = require("xlsx");
 
 function checkTractor(tractor, brand) {
     if (tractor.includes(brand)) {
-        const model = tractor.replace(brand, "").trim();
+        let model = tractor.replace(brand, "").trim();
         if (!model) return null;
+
+        if (brand === "Allis") {
+            brand = "Allis Chalmers";
+        } else if (brand === "AC") {
+            brand = "Allis Chalmers";
+        } else if (brand === "JD") {
+            brand = "John Deere";
+        } else if (brand === "MM") {
+            brand = "Minneapolis Moline";
+        }
+
+        if (brand === "Allis Chalmers") {
+            if (model === "WD45") {
+                model = "WD 45";
+            }
+        } else if (brand === "Farmall") {
+            if (model === "SH") {
+                model = "Super H";
+            } else if (model === "SM") {
+                model = "Super M";
+            }
+        } else if (brand === "Oliver") {
+            if (model === "S88") {
+                model = "Super 88";
+            } else if (model === "S77") {
+                model = "Super 77";
+            }
+        }
+
         return { brand: brand, model: model };
     }
     return null;
@@ -16,6 +45,8 @@ function checkTractor(tractor, brand) {
 function getTractor(tractor) {
     for (let brand of [
         "Allis Chalmers",
+        "Allis",
+        "AC",
         "Case",
         "Cockshutt",
         "Coop",
@@ -23,8 +54,10 @@ function getTractor(tractor) {
         "Farmall",
         "Ford",
         "John Deere",
+        "JD",
         "Massey",
         "Minneapolis Moline",
+        "MM",
         "Oliver",
         "Rumley",
         "SAME",
