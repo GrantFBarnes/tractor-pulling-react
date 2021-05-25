@@ -28,9 +28,13 @@ function checkTractor(tractor, brand) {
                 model = "Super H";
             } else if (model === "SM") {
                 model = "Super M";
+            } else if (model === "SMTA") {
+                model = "Super MTA";
             }
         } else if (brand === "Oliver") {
-            if (model === "S88") {
+            if (model === "S88 Diesel") {
+                model = "Super 88 Diesel";
+            } else if (model === "S88") {
                 model = "Super 88";
             } else if (model === "S77") {
                 model = "Super 77";
