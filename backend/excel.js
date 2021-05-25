@@ -24,7 +24,9 @@ function checkTractor(tractor, brand) {
                 model = "WD 45";
             }
         } else if (brand === "Farmall") {
-            if (model === "SH") {
+            if (model === "SC") {
+                model = "Super C";
+            } else if (model === "SH") {
                 model = "Super H";
             } else if (model === "SM") {
                 model = "Super M";
