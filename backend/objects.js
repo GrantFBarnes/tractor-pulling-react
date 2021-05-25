@@ -500,7 +500,7 @@ function validateAll() {
                 emptyFields = ["hooks"];
                 break;
             case "Hook":
-                missFields = ["puller", "tractor", "distance", "position"];
+                missFields = ["puller", "tractor", "position"];
                 break;
             default:
                 break;
@@ -672,24 +672,25 @@ function readPullExcel(json) {
 
     for (let c in newClasses) {
         const newClass = newClasses[c];
-        // const createResult = createObj(newClass);
-        // if (createResult.statusCode !== 200) {
-        //     console.log(createResult);
-        //     return createResult;
-        // }
+        const createResult = createObj(newClass);
+        if (createResult.statusCode !== 200) {
+            console.log(createResult);
+            return createResult;
+        }
     }
 
     for (let i in data.rows) {
         const hook = data.rows[i];
+        hook.type = "Hook";
         hook.class = newClasses[hook.weight + hook.category + hook.speed].id;
         delete hook.weight;
         delete hook.category;
         delete hook.speed;
-        // const createResult = createObj(hook);
-        // if (createResult.statusCode !== 200) {
-        //     console.log(createResult);
-        //     return createResult;
-        // }
+        const createResult = createObj(hook);
+        if (createResult.statusCode !== 200) {
+            console.log(createResult);
+            return createResult;
+        }
     }
 
     return readResult;
