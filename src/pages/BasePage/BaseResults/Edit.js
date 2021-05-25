@@ -11,10 +11,12 @@ import {
 
 import TypicalDropdown from "../../../components/TypicalField/TypicalDropdown";
 import TypicalTextInput from "../../../components/TypicalField/TypicalTextInput";
+import ImportModal from "../../../components/ImportModal";
 
 import Add20 from "@carbon/icons-react/lib/add/20";
 import Delete20 from "@carbon/icons-react/lib/delete/20";
 import Edit20 from "@carbon/icons-react/lib/edit/20";
+import Import20 from "@carbon/icons-react/lib/document--import/20";
 
 const {
     Table,
@@ -36,6 +38,8 @@ class Edit extends BaseResults {
 
         this.state.objType = "";
         this.state.includeAll = false;
+
+        this.state.modalOpen = false;
 
         this.state.pullerTractors = {};
         this.state.classPullers = {};
@@ -146,6 +150,37 @@ class Edit extends BaseResults {
                 that.setState({ loading: false });
                 alert("Failed to delete object");
             });
+    };
+
+    importFile = body => {
+        const that = this;
+        that.setState({ loading: true });
+        fetch(this.server_host + "/api/excel/pull", {
+            credentials: "include",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    window.location.reload();
+                } else {
+                    that.setState({ loading: false });
+                    alert("Failed to import file");
+                }
+            })
+            .catch(() => {
+                that.setState({ loading: false });
+                alert("Failed to import file ");
+            });
+    };
+
+    openModal = () => {
+        this.setState({ modalOpen: true });
+    };
+
+    closeModal = () => {
+        this.setState({ modalOpen: false });
     };
 
     getHeaders = () => {
@@ -516,7 +551,7 @@ class Edit extends BaseResults {
         return (
             <div className="contentContainer">
                 <div className="contentRow">
-                    <div className="halfColumn paddingRight">
+                    <div className="quarterColumn paddingRight">
                         <Dropdown
                             id="object_dropdown"
                             label="Object Type"
@@ -555,7 +590,7 @@ class Edit extends BaseResults {
                             Create New
                         </Button>
                     </div>
-                    <div className="quarterColumn paddingLeft">
+                    <div className="quarterColumn paddingLeft paddingRight">
                         <Toggle
                             labelText="Dropdown Options"
                             toggled={this.state.includeAll ? true : false}
@@ -567,6 +602,16 @@ class Edit extends BaseResults {
                             }}
                         />
                     </div>
+                    <div className="quarterColumn paddingLeft">
+                        <Button
+                            size="small"
+                            kind="ghost"
+                            renderIcon={Import20}
+                            onClick={() => this.openModal()}
+                        >
+                            Import Excel
+                        </Button>
+                    </div>
                 </div>
                 {this.genFilters(filtered)}
                 <div className="contentRow">
@@ -574,6 +619,12 @@ class Edit extends BaseResults {
                         {this.genEditTable()}
                     </div>
                 </div>
+
+                <ImportModal
+                    open={this.state.modalOpen}
+                    closeModal={this.closeModal}
+                    importFile={this.importFile}
+                />
             </div>
         );
     }

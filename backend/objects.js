@@ -557,6 +557,144 @@ function getPullExcel(pull_id) {
     });
 }
 
+function readPullExcel(json) {
+    if (!json || !json.file_binary) {
+        return { statusCode: 400, data: "body not valid" };
+    }
+
+    const readResult = excel.readExcel(json.file_binary);
+    if (readResult.statusCode !== 200) return readResult;
+    const data = readResult.data;
+
+    const date = new Date(data.date);
+
+    // Tell if season already exists
+    let valid = false;
+    for (let id of allTypes.Season) {
+        const obj = allObjects[id];
+        if (obj.year != date.getFullYear()) continue;
+        data.season = obj.id;
+        valid = true;
+        break;
+    }
+    if (!valid) {
+        console.log("Invalid Season (Must be created before)");
+        console.log(date);
+        return { statusCode: 400, data: "invalid season" };
+    }
+
+    // Tell if location already exists
+    valid = false;
+    for (let id of allTypes.Location) {
+        const obj = allObjects[id];
+        if (obj.town !== data.town) continue;
+        if (obj.state !== data.state) continue;
+        data.location = obj.id;
+        delete data.town;
+        delete data.state;
+        valid = true;
+        break;
+    }
+    if (!valid) {
+        console.log("Invalid Location (Must be created before)");
+        console.log(data.town, data.state);
+        return { statusCode: 400, data: "invalid location" };
+    }
+
+    // Tell if pull already exists
+    valid = false;
+    for (let id of allTypes.Pull) {
+        const obj = allObjects[id];
+        if (obj.season !== data.season) continue;
+        if (obj.location !== data.location) continue;
+        if (obj.date != data.date) continue;
+        data.pull = obj.id;
+        valid = true;
+        break;
+    }
+    if (!valid) {
+        console.log("Invalid Pull (Must be created before)");
+        return { statusCode: 400, data: "invalid pull" };
+    }
+
+    let newClasses = {};
+    for (let i in data.rows) {
+        const hook = data.rows[i];
+
+        // Tell if tractor already exists
+        valid = false;
+        for (let id of allTypes.Tractor) {
+            const obj = allObjects[id];
+            if (obj.brand !== hook.brand) continue;
+            if (obj.model !== hook.model) continue;
+            data.rows[i].tractor = obj.id;
+            delete data.rows[i].brand;
+            delete data.rows[i].model;
+            valid = true;
+            break;
+        }
+        if (!valid) {
+            console.log("Invalid Tractor (Must be created before)");
+            console.log(hook);
+            return { statusCode: 400, data: "invalid tractor" };
+        }
+
+        // Tell if puller already exists
+        valid = false;
+        for (let id of allTypes.Puller) {
+            const obj = allObjects[id];
+            if (obj.first_name !== hook.first_name) continue;
+            if (obj.last_name !== hook.last_name) continue;
+            data.rows[i].puller = obj.id;
+            delete data.rows[i].first_name;
+            delete data.rows[i].last_name;
+            valid = true;
+            break;
+        }
+        if (!valid) {
+            console.log("Invalid Puller (Must be created before)");
+            console.log(hook);
+            return { statusCode: 400, data: "invalid puller" };
+        }
+
+        const classKey = hook.weight + hook.category + hook.speed;
+        if (!newClasses[classKey]) {
+            newClasses[classKey] = {
+                id: getUUID(),
+                type: "Class",
+                pull: data.pull,
+                weight: hook.weight,
+                category: hook.category,
+                speed: hook.speed
+            };
+        }
+    }
+
+    for (let c in newClasses) {
+        const newClass = newClasses[c];
+        // const createResult = createObj(newClass);
+        // if (createResult.statusCode !== 200) {
+        //     console.log(createResult);
+        //     return createResult;
+        // }
+    }
+
+    for (let i in data.rows) {
+        const hook = data.rows[i];
+        hook.class = newClasses[hook.weight + hook.category + hook.speed].id;
+        delete hook.weight;
+        delete hook.category;
+        delete hook.speed;
+        // const createResult = createObj(hook);
+        // if (createResult.statusCode !== 200) {
+        //     console.log(createResult);
+        //     return createResult;
+        // }
+    }
+
+    return readResult;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 function objectEmit(objID, objType, method, fields) {
@@ -651,6 +789,7 @@ module.exports.getObject = getObject;
 module.exports.getObjectsByType = getObjectsByType;
 module.exports.getAllObjects = getAllObjects;
 module.exports.getPullExcel = getPullExcel;
+module.exports.readPullExcel = readPullExcel;
 
 module.exports.addNewObject = addNewObject;
 module.exports.createObj = createObj;
