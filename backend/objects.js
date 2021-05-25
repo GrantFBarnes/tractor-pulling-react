@@ -563,7 +563,10 @@ function readPullExcel(json) {
     }
 
     const readResult = excel.readExcel(json.file_binary);
-    if (readResult.statusCode !== 200) return readResult;
+    if (readResult.statusCode !== 200) {
+        console.log(readResult);
+        return readResult;
+    }
     const data = readResult.data;
 
     const date = new Date(data.date);
