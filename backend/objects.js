@@ -500,7 +500,7 @@ function validateAll() {
                 emptyFields = ["hooks"];
                 break;
             case "Hook":
-                missFields = ["puller", "tractor", "position"];
+                missFields = ["puller", "tractor", "distance", "position"];
                 break;
             default:
                 break;

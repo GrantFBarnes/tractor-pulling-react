@@ -55,6 +55,7 @@ function cleanUpRows(rows) {
                 console.log(row);
                 return null;
             }
+            row["Class"].replace(c_split[0], "");
 
             if (row["Class"].includes("Farm")) {
                 lastClass.category = "Farm Stock";
@@ -94,7 +95,6 @@ function cleanUpRows(rows) {
             console.log(row);
             return null;
         }
-        if (row.DQ) newRow["distance"] = 0;
 
         const tractor = getTractor(row["Tractor"]);
         if (!tractor) {
