@@ -36,10 +36,14 @@ function checkTractor(tractor, brand) {
         } else if (brand === "Oliver") {
             if (model === "S88 Diesel") {
                 model = "Super 88 Diesel";
+            } else if (model === "NSSS88D") {
+                model = "Super 88 Diesel";
             } else if (model === "S88") {
                 model = "Super 88";
             } else if (model === "S77") {
                 model = "Super 77";
+            } else if (model === "70 Standard") {
+                model = "70";
             }
         }
 
@@ -67,7 +71,8 @@ function getTractor(tractor) {
         "Oliver",
         "Rumley",
         "SAME",
-        "Wards"
+        "Wards",
+        "White"
     ]) {
         const json = checkTractor(tractor, brand);
         if (json) return json;

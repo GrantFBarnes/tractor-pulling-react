@@ -638,7 +638,8 @@ function readPullExcel(json) {
         }
         if (!valid) {
             console.log("Invalid Tractor (Must be created before)");
-            console.log(hook);
+            console.log(hook.brand);
+            console.log(hook.model);
             return { statusCode: 400, data: "invalid tractor" };
         }
 
@@ -656,7 +657,8 @@ function readPullExcel(json) {
         }
         if (!valid) {
             console.log("Invalid Puller (Must be created before)");
-            console.log(hook);
+            console.log(hook.first_name);
+            console.log(hook.last_name);
             return { statusCode: 400, data: "invalid puller" };
         }
 
