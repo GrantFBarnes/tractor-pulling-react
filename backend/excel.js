@@ -80,6 +80,44 @@ function getTractor(tractor) {
     return null;
 }
 
+function getPuller(puller) {
+    const p_split = puller.split(" ");
+    if (p_split.length !== 2) return null;
+
+    let json = {
+        first_name: p_split[0],
+        last_name: p_split[1]
+    };
+
+    switch (json.last_name) {
+        case "Clifton":
+            json.last_name = "Cliffton";
+            if (json.first_name === "Dawn") {
+                json.first_name = "Don";
+            }
+            break;
+
+        case "Maggsmen":
+            json.last_name = "Maggesmen";
+            break;
+
+        case "Skogan":
+            if (json.first_name === "Kodie" || json.first_name === "Kody") {
+                json.first_name = "Cody";
+            }
+            break;
+
+        case "Tshudy":
+            json.last_name = "Tschudy";
+            break;
+
+        default:
+            break;
+    }
+
+    return json;
+}
+
 function cleanUpRows(rows) {
     let newRows = [];
     let lastClass = { category: "", weight: 0, speed: 3 };
@@ -121,14 +159,14 @@ function cleanUpRows(rows) {
         delete row["Pos"];
 
         let newRow = JSON.parse(JSON.stringify(lastClass));
-        const p_split = row.Puller.split(" ");
-        if (p_split.length !== 2) {
-            console.log("Invalid Person:");
+
+        const puller = getPuller(row["Puller"]);
+        if (!puller) {
+            console.log("Invalid Puller:");
             console.log(row);
             return null;
         }
-        newRow.first_name = p_split[0];
-        newRow.last_name = p_split[1];
+        newRow = { ...newRow, ...puller };
 
         const d_split = row.Distance.toString().split(".");
         const feet = parseInt(d_split[0]);
