@@ -34,7 +34,7 @@ function checkTractor(tractor, brand) {
             case "John Deere":
             case "JD":
                 brand = "John Deere";
-                if (model === "3010D") {
+                if (model === "3010D" || model === "3010 D") {
                     model = "3010";
                 }
                 break;
@@ -134,6 +134,11 @@ function getPuller(puller) {
             json.last_name = "Coenen";
             break;
 
+        case "Guthrie":
+        case "Gurhrie":
+            json.last_name = "Guthrie";
+            break;
+
         case "Goelbel":
             json.last_name = "Goebel";
             break;
@@ -145,6 +150,7 @@ function getPuller(puller) {
             break;
 
         case "Kerl":
+        case "Kerrl":
             json.last_name = "Kerl";
             if (json.first_name === "Ruber") {
                 json.first_name = "Rubert";
@@ -152,6 +158,7 @@ function getPuller(puller) {
             break;
 
         case "Loeffelholz":
+        case "Loffelholz":
             json.last_name = "Loeffelholz";
             if (json.first_name === "Charles") {
                 json.first_name = "Charlie";
@@ -173,6 +180,11 @@ function getPuller(puller) {
             }
             break;
 
+        case "Sindlar":
+        case "Sindelar":
+            json.last_name = "Sindlar";
+            break;
+
         case "Seefeilt":
         case "Scoofield":
             json.last_name = "Seefeldt";
@@ -184,11 +196,18 @@ function getPuller(puller) {
             }
             break;
 
+        case "Tireney":
+        case "Tierney":
+            json.last_name = "Tierney";
+            break;
+
         case "Thilgin":
             json.last_name = "Thilgen";
             break;
 
+        case "Tschudy":
         case "Tshudy":
+        case "Tsudy":
             json.last_name = "Tschudy";
             break;
 
@@ -196,8 +215,13 @@ function getPuller(puller) {
             json.last_name = "Werner";
             break;
 
+        case "Weinger":
         case "Wehinger":
+        case "Wehenger":
             json.last_name = "Weinger";
+            if (json.first_name === "Richard") {
+                json.first_name = "Dick";
+            }
             break;
 
         case "Zoelick":
