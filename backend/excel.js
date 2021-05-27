@@ -9,42 +9,62 @@ function checkTractor(tractor, brand) {
         let model = tractor.replace(brand, "").trim();
         if (!model) return null;
 
-        if (brand === "Allis") {
-            brand = "Allis Chalmers";
-        } else if (brand === "AC") {
-            brand = "Allis Chalmers";
-        } else if (brand === "JD") {
-            brand = "John Deere";
-        } else if (brand === "MM") {
-            brand = "Minneapolis Moline";
-        }
+        switch (brand) {
+            case "Allis Chalmers":
+            case "Allis":
+            case "AC":
+                brand = "Allis Chalmers";
+                if (model === "WD45") {
+                    model = "WD 45";
+                }
+                break;
 
-        if (brand === "Allis Chalmers") {
-            if (model === "WD45") {
-                model = "WD 45";
-            }
-        } else if (brand === "Farmall") {
-            if (model === "SC") {
-                model = "Super C";
-            } else if (model === "SH") {
-                model = "Super H";
-            } else if (model === "SM") {
-                model = "Super M";
-            } else if (model === "SMTA") {
-                model = "Super MTA";
-            }
-        } else if (brand === "Oliver") {
-            if (model === "S88 Diesel") {
-                model = "Super 88 Diesel";
-            } else if (model === "NSSS88D") {
-                model = "Super 88 Diesel";
-            } else if (model === "S88") {
-                model = "Super 88";
-            } else if (model === "S77") {
-                model = "Super 77";
-            } else if (model === "70 Standard") {
-                model = "70";
-            }
+            case "Farmall":
+                if (model === "SC") {
+                    model = "Super C";
+                } else if (model === "SH") {
+                    model = "Super H";
+                } else if (model === "SM") {
+                    model = "Super M";
+                } else if (model === "SMTA") {
+                    model = "Super MTA";
+                }
+                break;
+
+            case "John Deere":
+            case "JD":
+                brand = "John Deere";
+                if (model === "3010D") {
+                    model = "3010";
+                }
+                break;
+
+            case "MF":
+                brand = "Massey";
+                break;
+
+            case "MM":
+                brand = "Minneapolis Moline";
+                break;
+
+            case "Oliver":
+                if (model === "S88 Diesel") {
+                    model = "Super 88 Diesel";
+                } else if (model === "NSSS88D") {
+                    model = "Super 88 Diesel";
+                } else if (model === "88 (Diesel)") {
+                    model = "88 Diesel";
+                } else if (model === "S88") {
+                    model = "Super 88";
+                } else if (model === "S77") {
+                    model = "Super 77";
+                } else if (model === "70 Standard") {
+                    model = "70";
+                }
+                break;
+
+            default:
+                break;
         }
 
         return { brand: brand, model: model };
@@ -66,6 +86,7 @@ function getTractor(tractor) {
         "John Deere",
         "JD",
         "Massey",
+        "MF",
         "Minneapolis Moline",
         "MM",
         "Oliver",
@@ -89,16 +110,72 @@ function getPuller(puller) {
         last_name: p_split[1]
     };
 
+    switch (json.first_name) {
+        case "Wally":
+            if (json.last_name === "R") {
+                json.last_name = "Reierson";
+            }
+            break;
+
+        default:
+            break;
+    }
+
     switch (json.last_name) {
         case "Clifton":
+        case "Cliffton":
             json.last_name = "Cliffton";
             if (json.first_name === "Dawn") {
                 json.first_name = "Don";
             }
             break;
 
+        case "Coener":
+            json.last_name = "Coenen";
+            break;
+
+        case "Goelbel":
+            json.last_name = "Goebel";
+            break;
+
+        case "Humphry":
+        case "Humphfry":
+        case "Humphery":
+            json.last_name = "Humphrey";
+            break;
+
+        case "Kerl":
+            json.last_name = "Kerl";
+            if (json.first_name === "Ruber") {
+                json.first_name = "Rubert";
+            }
+            break;
+
+        case "Loeffelholz":
+            json.last_name = "Loeffelholz";
+            if (json.first_name === "Charles") {
+                json.first_name = "Charlie";
+            }
+            break;
+
+        case "Mahony":
+            json.last_name = "Mahoney";
+            break;
+
         case "Maggsmen":
+        case "Maggsman":
             json.last_name = "Maggesmen";
+            break;
+
+        case "Olin":
+            if (json.first_name === "Elizabeth") {
+                json.first_name = "Beth";
+            }
+            break;
+
+        case "Seefeilt":
+        case "Scoofield":
+            json.last_name = "Seefeldt";
             break;
 
         case "Skogan":
@@ -107,8 +184,24 @@ function getPuller(puller) {
             }
             break;
 
+        case "Thilgin":
+            json.last_name = "Thilgen";
+            break;
+
         case "Tshudy":
             json.last_name = "Tschudy";
+            break;
+
+        case "Werren":
+            json.last_name = "Werner";
+            break;
+
+        case "Wehinger":
+            json.last_name = "Weinger";
+            break;
+
+        case "Zoelick":
+            json.last_name = "Zoellick";
             break;
 
         default:
