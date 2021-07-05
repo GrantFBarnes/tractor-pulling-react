@@ -143,8 +143,16 @@ function getPuller(puller) {
             }
             break;
 
+        case "Ganshert":
+        case "Ganchert":
+        case "Granshert":
+        case "Granchert":
+            json.last_name = "Ganshert";
+            break;
+
         case "Guthrie":
         case "Gurhrie":
+        case "Guthire":
             json.last_name = "Guthrie";
             break;
 
@@ -163,6 +171,13 @@ function getPuller(puller) {
         case "Humphfry":
         case "Humphery":
             json.last_name = "Humphrey";
+            break;
+
+        case "Jenamann":
+            json.last_name = "Jenamann";
+            if (json.first_name === "Jeremey") {
+                json.first_name = "Jeremy";
+            }
             break;
 
         case "Kerl":
@@ -203,6 +218,9 @@ function getPuller(puller) {
         case "Sindlar":
         case "Sindelar":
             json.last_name = "Sindlar";
+            if (json.first_name === "Jeffrey") {
+                json.first_name = "Jeff";
+            }
             break;
 
         case "Seefeilt":
@@ -236,6 +254,12 @@ function getPuller(puller) {
             json.last_name = "Tschudy";
             break;
 
+        case "Webber":
+        case "Weber":
+            json.last_name = "Webber";
+            break;
+
+        case "Werner":
         case "Werren":
             json.last_name = "Werner";
             break;
