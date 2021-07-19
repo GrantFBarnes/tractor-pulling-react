@@ -76,6 +76,7 @@ function checkTractor(tractor, brand) {
 function getTractor(tractor) {
     if (
         tractor === "D17" ||
+        tractor === "D19" ||
         tractor === "WC" ||
         tractor === "WD" ||
         tractor === "WD 45"
@@ -151,6 +152,7 @@ function getPuller(puller) {
             break;
 
         case "Eggleston":
+        case "Eggelston":
             json.last_name = "Eggleston";
             if (json.first_name === "Matt") {
                 json.first_name = "Matthew";
