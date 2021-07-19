@@ -74,9 +74,15 @@ function checkTractor(tractor, brand) {
 }
 
 function getTractor(tractor) {
-    if (tractor === "WD" || tractor === "WD 45") {
+    if (
+        tractor === "D17" ||
+        tractor === "WC" ||
+        tractor === "WD" ||
+        tractor === "WD 45"
+    ) {
         tractor = "Allis " + tractor;
     }
+
     for (let brand of [
         "Allis Chalmers",
         "Allis",
@@ -127,6 +133,11 @@ function getPuller(puller) {
     }
 
     switch (json.last_name) {
+        case "Albright":
+        case "Albrecht":
+            json.last_name = "Albright";
+            break;
+
         case "Clifton":
         case "Cliffton":
             json.last_name = "Cliffton";
@@ -144,6 +155,11 @@ function getPuller(puller) {
             if (json.first_name === "Matt") {
                 json.first_name = "Matthew";
             }
+            break;
+
+        case "Fluegel":
+        case "Flugel":
+            json.last_name = "Fluegel";
             break;
 
         case "Ganshert":
@@ -191,6 +207,13 @@ function getPuller(puller) {
             }
             break;
 
+        case "Lingle":
+            json.last_name = "Lingle";
+            if (json.first_name === "Teresa") {
+                json.first_name = "Theresa";
+            }
+            break;
+
         case "Loeffelholz":
         case "Loffelholz":
             json.last_name = "Loeffelholz";
@@ -209,6 +232,7 @@ function getPuller(puller) {
         case "Magsamen":
         case "Magsaman":
         case "Magsmen":
+        case "Magsman":
             json.last_name = "Maggesmen";
             break;
 
