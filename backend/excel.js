@@ -74,6 +74,9 @@ function checkTractor(tractor, brand) {
 }
 
 function getTractor(tractor) {
+    if (tractor === "WD" || tractor === "WD 45") {
+        tractor = "Allis " + tractor;
+    }
     for (let brand of [
         "Allis Chalmers",
         "Allis",
@@ -252,6 +255,11 @@ function getPuller(puller) {
         case "Tshudy":
         case "Tsudy":
             json.last_name = "Tschudy";
+            break;
+
+        case "Urban":
+        case "Urben":
+            json.last_name = "Urban";
             break;
 
         case "Webber":
