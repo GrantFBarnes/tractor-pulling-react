@@ -20,6 +20,8 @@ function checkTractor(tractor, brand) {
                 break;
 
             case "Farmall":
+            case "IH":
+                brand = "Farmall";
                 if (model === "SC") {
                     model = "Super C";
                 } else if (model === "SH") {
@@ -98,6 +100,7 @@ function getTractor(tractor) {
         "Duetz",
         "Farmall",
         "Ford",
+        "IH",
         "John Deere",
         "JD",
         "Massey",
