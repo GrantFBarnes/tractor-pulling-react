@@ -2,9 +2,21 @@
 
 This is a website used to show results from the Community Antique Tractor Pulling Club.
 
+_Note this site has been sunset and will no longer continue development._
+
+## Preview
+
+Here is a screenshot of the site once up and running:
+
+![Home Page](src/images/catp.jpeg)
+
+## Technology
+
+This website is a Node.js backend with a React frontend.
+
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your lcoal machine for development and testing purposes.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
